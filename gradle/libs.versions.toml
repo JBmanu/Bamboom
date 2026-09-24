@@ -1,0 +1,37 @@
+# gradle/libs.versions.toml
+#
+# Questo file è il "dizionario" delle versioni condiviso
+# tra tutti i servizi JVM del monorepo.
+#
+# È diviso in 4 sezioni:
+#   [versions]  → numeri di versione con un alias
+#   [libraries] → dipendenze, referenziano le versioni sopra
+#   [plugins]   → plugin Gradle, referenziano le versioni sopra
+#   [bundles]   → gruppi di librerie usate sempre insieme
+
+[versions]
+kotlin         = "2.4.0"
+coroutines     = "1.9.0"
+junit          = "5.11.0"
+logback        = "1.5.8"
+scala          = "3.3.6"
+scalatest      = "3.2.18"
+jvm-target     = "25"
+
+[libraries]
+kotlin-stdlib       = { module = "org.jetbrains.kotlin:kotlin-stdlib",            version.ref = "kotlin" }
+kotlin-reflect      = { module = "org.jetbrains.kotlin:kotlin-reflect",           version.ref = "kotlin" }
+kotlinx-coroutines  = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+junit-jupiter       = { module = "org.junit.jupiter:junit-jupiter",               version.ref = "junit" }
+logback-classic     = { module = "ch.qos.logback:logback-classic",                version.ref = "logback" }
+scala-library       = { module = "org.scala-lang:scala3-library_3",               version.ref = "scala" }
+scalatest           = { module = "org.scalatest:scalatest_3",                     version.ref = "scalatest" }
+
+[plugins]
+kotlin-jvm  = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+scala       = { id = "scala",                     version = "unspecified" }
+
+[bundles]
+# "kotlin-base" = le tre dipendenze che ogni servizio Kotlin usa sempre
+kotlin-base = ["kotlin-stdlib", "kotlin-reflect", "kotlinx-coroutines"]
+scala-base  = ["scala-library", "logback-classic"]

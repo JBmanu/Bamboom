@@ -1,0 +1,120 @@
+// build.gradle.kts (ROOT)
+//
+// La root non compila nulla di suo.
+// Il suo unico scopo è orchestrare le build
+// dei servizi tramite task che delegano
+// alle build incluse con gradle.includedBuild().
+
+// ── task aggregatori ──
+// Raggruppano tutti i servizi in un unico comando.
+// Quando aggiungeremo progress (JVM) aggiungeremo
+// il suo dependsOn qui.
+
+tasks.register("installAll") {
+    group       = "orchestration"
+    description = "Installs dependencies for all services"
+    dependsOn(
+        "installPlayerIdentity",
+        "installLobbyMatch",
+        "installDeckWorkshop",
+        "installCardForge"
+    )
+}
+
+tasks.register("buildAll") {
+    group       = "orchestration"
+    description = "Builds all services"
+    dependsOn(
+        "buildPlayerIdentity",
+        "buildLobbyMatch",
+        "buildDeckWorkshop",
+        "buildCardForge"
+    )
+}
+
+tasks.register("testAll") {
+    group       = "orchestration"
+    description = "Tests all services"
+    dependsOn(
+        "testPlayerIdentity",
+        "testLobbyMatch",
+        "testDeckWorkshop",
+        "testCardForge"
+    )
+}
+
+// ── player-identity ──
+tasks.register("installPlayerIdentity") {
+    group       = "orchestration"
+    description = "Installs npm dependencies for player-identity"
+    dependsOn(gradle.includedBuild("player-identity").task(":npmInstall"))
+}
+
+tasks.register("buildPlayerIdentity") {
+    group       = "orchestration"
+    description = "Builds player-identity"
+    dependsOn(gradle.includedBuild("player-identity").task(":build"))
+}
+
+tasks.register("testPlayerIdentity") {
+    group       = "orchestration"
+    description = "Tests player-identity"
+    dependsOn(gradle.includedBuild("player-identity").task(":test"))
+}
+
+// ── lobby-match ──
+tasks.register("installLobbyMatch") {
+    group       = "orchestration"
+    description = "Installs npm dependencies for lobby-match"
+    dependsOn(gradle.includedBuild("lobby-match").task(":npmInstall"))
+}
+
+tasks.register("buildLobbyMatch") {
+    group       = "orchestration"
+    description = "Builds lobby-match"
+    dependsOn(gradle.includedBuild("lobby-match").task(":build"))
+}
+
+tasks.register("testLobbyMatch") {
+    group       = "orchestration"
+    description = "Tests lobby-match"
+    dependsOn(gradle.includedBuild("lobby-match").task(":test"))
+}
+
+// ── deck-workshop ──
+tasks.register("installDeckWorkshop") {
+    group       = "orchestration"
+    description = "Installs npm dependencies for deck-workshop"
+    dependsOn(gradle.includedBuild("deck-workshop").task(":npmInstall"))
+}
+
+tasks.register("buildDeckWorkshop") {
+    group       = "orchestration"
+    description = "Builds deck-workshop"
+    dependsOn(gradle.includedBuild("deck-workshop").task(":build"))
+}
+
+tasks.register("testDeckWorkshop") {
+    group       = "orchestration"
+    description = "Tests deck-workshop"
+    dependsOn(gradle.includedBuild("deck-workshop").task(":test"))
+}
+
+// ── card-forge ──
+tasks.register("installCardForge") {
+    group       = "orchestration"
+    description = "Installs npm dependencies for card-forge"
+    dependsOn(gradle.includedBuild("card-forge").task(":npmInstall"))
+}
+
+tasks.register("buildCardForge") {
+    group       = "orchestration"
+    description = "Builds card-forge"
+    dependsOn(gradle.includedBuild("card-forge").task(":build"))
+}
+
+tasks.register("testCardForge") {
+    group       = "orchestration"
+    description = "Tests card-forge"
+    dependsOn(gradle.includedBuild("card-forge").task(":test"))
+}

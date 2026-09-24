@@ -1,0 +1,32 @@
+// micro-services/player-identity/build.gradle.kts
+//
+// Questo file è il punto di ingresso Gradle per player-identity.
+// Non compila nulla direttamente — delega tutto a npm.
+// In questo modo il servizio è autonomo: si può buildare
+// sia dalla root che dalla sua cartella con ./gradlew build.
+
+tasks.register<Exec>("npmInstall") {
+    group       = "node"
+    description = "Installs npm dependencies"
+    commandLine("sh", "-c", "npm install")
+}
+
+tasks.register<Exec>("build") {
+    group       = "build"
+    description = "Builds player-identity via npm"
+    commandLine("sh", "-c", "npm run build")
+    dependsOn("npmInstall")
+}
+
+tasks.register<Exec>("test") {
+    group       = "verification"
+    description = "Tests player-identity via npm"
+    commandLine("sh", "-c", "npm test")
+    dependsOn("npmInstall")
+}
+
+tasks.register<Exec>("clean") {
+    group       = "build"
+    description = "Cleans player-identity dist folder"
+    commandLine("sh", "-c", "npm run clean")
+}
