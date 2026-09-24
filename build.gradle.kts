@@ -17,7 +17,7 @@ tasks.register("installAll") {
         "installPlayerIdentity",
         "installLobbyMatch",
         "installDeckWorkshop",
-        "installCardForge"
+        "installCardForge",
     )
 }
 
@@ -28,7 +28,8 @@ tasks.register("buildAll") {
         "buildPlayerIdentity",
         "buildLobbyMatch",
         "buildDeckWorkshop",
-        "buildCardForge"
+        "buildCardForge",
+        "buildProgress"
     )
 }
 
@@ -39,7 +40,8 @@ tasks.register("testAll") {
         "testPlayerIdentity",
         "testLobbyMatch",
         "testDeckWorkshop",
-        "testCardForge"
+        "testCardForge",
+        "testProgress"
     )
 }
 
@@ -117,4 +119,17 @@ tasks.register("testCardForge") {
     group       = "orchestration"
     description = "Tests card-forge"
     dependsOn(gradle.includedBuild("card-forge").task(":test"))
+}
+
+// ── progress ──
+tasks.register("buildProgress") {
+    group       = "orchestration"
+    description = "Builds progress service (Kotlin + Scala)"
+    dependsOn(gradle.includedBuild("progress").task(":app:build"))
+}
+
+tasks.register("testProgress") {
+    group       = "orchestration"
+    description = "Tests progress service"
+    dependsOn(gradle.includedBuild("progress").task(":app:test"))
 }
