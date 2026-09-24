@@ -10,6 +10,13 @@
 // Quando aggiungeremo progress (JVM) aggiungeremo
 // il suo dependsOn qui.
 
+tasks.register("dockerBuildAll") {
+    group       = "docker"
+    description = "Builds Docker images for all services"
+    dependsOn("dockerBuildPlayerIdentity")
+    // aggiungeremo gli altri man mano
+}
+
 tasks.register("installAll") {
     group       = "orchestration"
     description = "Installs dependencies for all services"
@@ -46,6 +53,12 @@ tasks.register("testAll") {
 }
 
 // ── player-identity ──
+tasks.register("dockerBuildPlayerIdentity") {
+    group       = "docker"
+    description = "Builds Docker image for player-identity"
+    dependsOn(gradle.includedBuild("player-identity").task(":dockerBuild"))
+}
+
 tasks.register("installPlayerIdentity") {
     group       = "orchestration"
     description = "Installs npm dependencies for player-identity"

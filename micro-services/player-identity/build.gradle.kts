@@ -30,3 +30,16 @@ tasks.register<Exec>("clean") {
     description = "Cleans player-identity dist folder"
     commandLine("sh", "-c", "npm run clean")
 }
+
+// ── Docker ──
+tasks.register<Exec>("dockerBuild") {
+    group       = "docker"
+    description = "Builds Docker image for player-identity"
+    commandLine("sh", "-c", "docker build -t player-identity:latest .")
+}
+
+tasks.register<Exec>("dockerRun") {
+    group       = "docker"
+    description = "Runs player-identity container locally"
+    commandLine("sh", "-c", "docker run --rm -p 3000:3000 player-identity:latest")
+}
