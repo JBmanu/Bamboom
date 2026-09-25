@@ -28,7 +28,7 @@ tasks.register<Exec>("dockerBuild") {
 
 tasks.register<Exec>("dockerRun") {
     group       = "docker"
-    description = "Builds and runs the progress host on port 8080 and container on port 8080"
-    commandLine("sh", "-c", "docker run --rm -p 8080:8080 progress:latest")
+    description = "Builds and runs the progress (host 3005 → container 3000)"
+    commandLine("sh", "-c", "docker run --rm -p 3005:8080 progress:latest")
     dependsOn("dockerBuild")
 }

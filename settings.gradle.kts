@@ -16,6 +16,9 @@ includeBuild("build-logic")
 // Frontend
 includeBuild("frontend/web-app")
 
+// API Gateway
+includeBuild("api-gateway")
+
 // Servizi TypeScript
 includeBuild("micro-services/player-identity")
 includeBuild("micro-services/lobby-match")

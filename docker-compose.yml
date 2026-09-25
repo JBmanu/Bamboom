@@ -62,7 +62,7 @@ services:
       dockerfile: micro-services/progress/Dockerfile
     image: progress:latest
     ports:
-      - "8080:8080"
+      - "3005:8080"
     networks:
       - bamboom-network
 
