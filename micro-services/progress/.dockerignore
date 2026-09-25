@@ -1,0 +1,30 @@
+build/
+app/build/
+player-progress/build/
+game-observatory/build/
+*.md
+.gitignore
+
+# Git
+.git/
+
+# Gradle cache
+.gradle/
+
+# Documentazione
+docs/
+
+# Node modules e dist dei servizi TypeScript
+micro-services/player-identity/node_modules/
+micro-services/player-identity/dist/
+micro-services/lobby-match/node_modules/
+micro-services/lobby-match/dist/
+micro-services/deck-workshop/node_modules/
+micro-services/deck-workshop/dist/
+micro-services/card-forge/node_modules/
+micro-services/card-forge/dist/
+
+# Build JVM
+micro-services/progress/app/build/
+micro-services/progress/player-progress/build/
+micro-services/progress/game-observatory/build/
