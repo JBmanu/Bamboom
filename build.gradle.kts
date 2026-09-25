@@ -5,17 +5,10 @@
 // dei servizi tramite task che delegano
 // alle build incluse con gradle.includedBuild().
 
-// ── task aggregatori ──
+// -- task aggregatori --
 // Raggruppano tutti i servizi in un unico comando.
 // Quando aggiungeremo progress (JVM) aggiungeremo
 // il suo dependsOn qui.
-
-tasks.register("dockerBuildAll") {
-    group       = "docker"
-    description = "Builds Docker images for all services"
-    dependsOn("dockerBuildPlayerIdentity")
-    // aggiungeremo gli altri man mano
-}
 
 tasks.register("installAll") {
     group       = "orchestration"
@@ -52,13 +45,7 @@ tasks.register("testAll") {
     )
 }
 
-// ── player-identity ──
-tasks.register("dockerBuildPlayerIdentity") {
-    group       = "docker"
-    description = "Builds Docker image for player-identity"
-    dependsOn(gradle.includedBuild("player-identity").task(":dockerBuild"))
-}
-
+// -- player-identity --
 tasks.register("installPlayerIdentity") {
     group       = "orchestration"
     description = "Installs npm dependencies for player-identity"
@@ -77,7 +64,7 @@ tasks.register("testPlayerIdentity") {
     dependsOn(gradle.includedBuild("player-identity").task(":test"))
 }
 
-// ── lobby-match ──
+// -- lobby-match --
 tasks.register("installLobbyMatch") {
     group       = "orchestration"
     description = "Installs npm dependencies for lobby-match"
@@ -96,7 +83,7 @@ tasks.register("testLobbyMatch") {
     dependsOn(gradle.includedBuild("lobby-match").task(":test"))
 }
 
-// ── deck-workshop ──
+// -- deck-workshop --
 tasks.register("installDeckWorkshop") {
     group       = "orchestration"
     description = "Installs npm dependencies for deck-workshop"
@@ -115,7 +102,7 @@ tasks.register("testDeckWorkshop") {
     dependsOn(gradle.includedBuild("deck-workshop").task(":test"))
 }
 
-// ── card-forge ──
+// -- card-forge --
 tasks.register("installCardForge") {
     group       = "orchestration"
     description = "Installs npm dependencies for card-forge"
@@ -134,7 +121,7 @@ tasks.register("testCardForge") {
     dependsOn(gradle.includedBuild("card-forge").task(":test"))
 }
 
-// ── progress ──
+// -- progress --
 tasks.register("buildProgress") {
     group       = "orchestration"
     description = "Builds progress service (Kotlin + Scala)"
@@ -145,4 +132,35 @@ tasks.register("testProgress") {
     group       = "orchestration"
     description = "Tests progress service"
     dependsOn(gradle.includedBuild("progress").task(":app:test"))
+}
+
+// -- DOCKER COMPOSE (sviluppo locale) --
+tasks.register<Exec>("composeBuild") {
+    group       = "docker compose"
+    description = "Builds all service images via docker compose"
+    commandLine("sh", "-c", "docker compose build")
+}
+
+tasks.register<Exec>("composeUp") {
+    group       = "docker compose"
+    description = "Starts all services via docker compose (foreground)"
+    commandLine("sh", "-c", "docker compose up")
+}
+
+tasks.register<Exec>("composeUpDetached") {
+    group       = "docker compose"
+    description = "Starts all services via docker compose (background)"
+    commandLine("sh", "-c", "docker compose up -d")
+}
+
+tasks.register<Exec>("composeDown") {
+    group       = "docker compose"
+    description = "Stops and removes all services via docker compose"
+    commandLine("sh", "-c", "docker compose down")
+}
+
+tasks.register<Exec>("composeLogs") {
+    group       = "docker compose"
+    description = "Shows logs from all services"
+    commandLine("sh", "-c", "docker compose logs -f")
 }
