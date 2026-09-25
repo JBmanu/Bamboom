@@ -31,15 +31,16 @@ tasks.register<Exec>("clean") {
     commandLine("sh", "-c", "npm run clean")
 }
 
-// ── Docker ──
+// -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
-    description = "Builds Docker image for player-identity"
+    description = "Builds the Docker image for player-identity"
     commandLine("sh", "-c", "docker build -t player-identity:latest .")
 }
 
 tasks.register<Exec>("dockerRun") {
     group       = "docker"
-    description = "Runs player-identity container locally"
-    commandLine("sh", "-c", "docker run --rm -p 3000:3000 player-identity:latest")
+    description = "Runs the player-identity (host 3001 → container 3000)"
+    commandLine("sh", "-c", "docker run --rm -p 3001:3000 player-identity:latest")
+    dependsOn("dockerBuild")
 }
