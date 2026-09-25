@@ -13,7 +13,10 @@ rootProject.name = "Bamboom"
 // build-logic SEMPRE per prima
 includeBuild("build-logic")
 
-// Servizi TypeScript — ora sono build Gradle che delegano a npm
+// Frontend
+includeBuild("frontend/web-app")
+
+// Servizi TypeScript
 includeBuild("micro-services/player-identity")
 includeBuild("micro-services/lobby-match")
 includeBuild("micro-services/deck-workshop")

@@ -14,6 +14,7 @@ tasks.register("installAll") {
     group       = "orchestration"
     description = "Installs dependencies for all services"
     dependsOn(
+        "installWebApp",
         "installPlayerIdentity",
         "installLobbyMatch",
         "installDeckWorkshop",
@@ -25,6 +26,7 @@ tasks.register("buildAll") {
     group       = "orchestration"
     description = "Builds all services"
     dependsOn(
+        "buildWebApp",
         "buildPlayerIdentity",
         "buildLobbyMatch",
         "buildDeckWorkshop",
@@ -37,12 +39,32 @@ tasks.register("testAll") {
     group       = "orchestration"
     description = "Tests all services"
     dependsOn(
+        "testWebApp",
         "testPlayerIdentity",
         "testLobbyMatch",
         "testDeckWorkshop",
         "testCardForge",
         "testProgress"
     )
+}
+
+// -- web-app (frontend) --
+tasks.register("installWebApp") {
+    group       = "orchestration"
+    description = "Installs dependencies for web-app"
+    dependsOn(gradle.includedBuild("web-app").task(":npmInstall"))
+}
+
+tasks.register("buildWebApp") {
+    group       = "orchestration"
+    description = "Builds web-app"
+    dependsOn(gradle.includedBuild("web-app").task(":build"))
+}
+
+tasks.register("testWebApp") {
+    group       = "orchestration"
+    description = "Tests web-app"
+    dependsOn(gradle.includedBuild("web-app").task(":test"))
 }
 
 // -- player-identity --
