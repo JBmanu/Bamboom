@@ -3,21 +3,16 @@ FROM eclipse-temurin:25-jdk AS builder
 
 WORKDIR /monorepo
 
-# Copia build-logic — necessario per i convention plugin
 COPY build-logic/ ./build-logic/
-
-# Copia il version catalog condiviso
 COPY gradle/ ./gradle/
-
-# Copia progress come sotto-cartella
 COPY micro-services/progress/ ./micro-services/progress/
 
 WORKDIR /monorepo/micro-services/progress
 
 RUN chmod +x gradlew
 
-# Builda il progetto
-RUN ./gradlew :app:build --no-daemon
+# shadowJar produce il fat JAR eseguibile con tutte le dipendenze
+RUN ./gradlew :app:shadowJar --no-daemon
 
 # ── STAGE 2: runtime ──────────────────────────────────────
 FROM eclipse-temurin:25-jre AS runtime
@@ -26,7 +21,8 @@ RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 WORKDIR /app
 
-COPY --from=builder /monorepo/micro-services/progress/app/build/libs/*.jar ./app.jar
+# Il fat JAR di shadow ha il suffisso -all.jar
+COPY --from=builder /monorepo/micro-services/progress/app/build/libs/*-all.jar ./app.jar
 
 USER appuser
 

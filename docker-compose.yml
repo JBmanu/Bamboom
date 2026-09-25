@@ -1,0 +1,73 @@
+# docker-compose.yml (ROOT)
+#
+# Orchestrazione per SVILUPPO LOCALE.
+# Fa partire tutti i microservizi insieme, collegati
+# in una rete interna dove si vedono per nome.
+#
+# In produzione NON si usa questo — si usa Kubernetes.
+# Questo serve solo per sviluppare e testare localmente.
+
+services:
+  player-identity:
+    build:
+      context: ./micro-services/player-identity
+      dockerfile: Dockerfile
+    image: player-identity:latest
+    ports:
+      - "3001:3000"          # porta host 3001 → porta container 3000
+    networks:
+      - bamboom-network
+    environment:
+      - NODE_ENV=development
+
+  lobby-match:
+    build:
+      context: ./micro-services/lobby-match
+      dockerfile: Dockerfile
+    image: lobby-match:latest
+    ports:
+      - "3002:3000"
+    networks:
+      - bamboom-network
+    environment:
+      - NODE_ENV=development
+
+  deck-workshop:
+    build:
+      context: ./micro-services/deck-workshop
+      dockerfile: Dockerfile
+    image: deck-workshop:latest
+    ports:
+      - "3003:3000"
+    networks:
+      - bamboom-network
+    environment:
+      - NODE_ENV=development
+
+  card-forge:
+    build:
+      context: ./micro-services/card-forge
+      dockerfile: Dockerfile
+    image: card-forge:latest
+    ports:
+      - "3004:3000"
+    networks:
+      - bamboom-network
+    environment:
+      - NODE_ENV=development
+
+  progress:
+    build:
+      context: .                                    # contesto = root del monorepo
+      dockerfile: micro-services/progress/Dockerfile
+    image: progress:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - bamboom-network
+
+# Rete interna condivisa: i servizi si vedono per nome
+# es. player-identity può chiamare http://progress:8080
+networks:
+  bamboom-network:
+    driver: bridge

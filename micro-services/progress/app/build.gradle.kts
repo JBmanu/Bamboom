@@ -7,6 +7,7 @@
 plugins {
     id("kotlin-service-conventions")
     application
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
 group   = "com.bamboom"
