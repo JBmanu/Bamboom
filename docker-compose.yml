@@ -1,24 +1,61 @@
 # docker-compose.yml (ROOT)
 #
 # Orchestrazione per SVILUPPO LOCALE.
-# Fa partire tutti i microservizi insieme, collegati
-# in una rete interna dove si vedono per nome.
-#
-# In produzione NON si usa questo — si usa Kubernetes.
-# Questo serve solo per sviluppare e testare localmente.
+# Avvia tutti i componenti insieme in una rete condivisa
+# dove si vedono per NOME (non per porta host).
 
 services:
+
+  # -- FRONTEND --
+  web-app:
+    build:
+      context: ./frontend/web-app
+      dockerfile: Dockerfile
+    image: web-app:latest
+    ports:
+      - "5173:80"              # host 5173 → container 80 (Nginx)
+    networks:
+      - bamboom-network
+    depends_on:
+      - api-gateway
+
+  # -- API GATEWAY --
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    image: api-gateway:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - bamboom-network
+    environment:
+      # DENTRO la rete Docker i servizi si chiamano per NOME
+      # e usano la porta INTERNA (non la porta host).
+      # Es: player-identity ascolta su 3000 dentro il container,
+      # e il gateway lo raggiunge come http://player-identity:3000
+      - PLAYER_IDENTITY_URL=http://player-identity:3000
+      - LOBBY_MATCH_URL=http://lobby-match:3000
+      - DECK_WORKSHOP_URL=http://deck-workshop:3000
+      - CARD_FORGE_URL=http://card-forge:3000
+      - PROGRESS_URL=http://progress:8080
+    depends_on:
+      - player-identity
+      - lobby-match
+      - deck-workshop
+      - card-forge
+      - progress
+
+  # -- MICROSERVIZI --
   player-identity:
     build:
       context: ./micro-services/player-identity
       dockerfile: Dockerfile
     image: player-identity:latest
     ports:
-      - "3001:3000"          # porta host 3001 → porta container 3000
+      - "3001:3000"
     networks:
       - bamboom-network
-    environment:
-      - NODE_ENV=development
 
   lobby-match:
     build:
@@ -29,8 +66,6 @@ services:
       - "3002:3000"
     networks:
       - bamboom-network
-    environment:
-      - NODE_ENV=development
 
   deck-workshop:
     build:
@@ -41,8 +76,6 @@ services:
       - "3003:3000"
     networks:
       - bamboom-network
-    environment:
-      - NODE_ENV=development
 
   card-forge:
     build:
@@ -53,12 +86,10 @@ services:
       - "3004:3000"
     networks:
       - bamboom-network
-    environment:
-      - NODE_ENV=development
 
   progress:
     build:
-      context: .                                    # contesto = root del monorepo
+      context: .
       dockerfile: micro-services/progress/Dockerfile
     image: progress:latest
     ports:
@@ -66,8 +97,6 @@ services:
     networks:
       - bamboom-network
 
-# Rete interna condivisa: i servizi si vedono per nome
-# es. player-identity può chiamare http://progress:8080
 networks:
   bamboom-network:
     driver: bridge
