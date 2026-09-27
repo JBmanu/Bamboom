@@ -92,7 +92,27 @@ jobs:
     if: needs.changes.outputs.api-gateway == 'true'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "api-gateway è cambiato"
+      # Scarica il codice
+      - uses: actions/checkout@v4
+
+      # Installa Node.js sulla VM
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          # cache npm: velocizza i run successivi riusando le dipendenze
+          cache: npm
+          cache-dependency-path: api-gateway/package-lock.json
+
+      # Installa le dipendenze del servizio (incluso Biome)
+      - name: Install dependencies
+        working-directory: api-gateway
+        run: npm ci
+
+      # Esegue il lint Biome: se il codice non è formattato
+      # o ha problemi, questo step fallisce e blocca la PR
+      - name: Lint (Biome)
+        working-directory: api-gateway
+        run: npm run lint
 
   player-identity:
     needs: changes
