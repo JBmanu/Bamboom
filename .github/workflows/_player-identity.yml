@@ -1,0 +1,31 @@
+# .github/workflows/_player-identity.yml
+#
+# Workflow riutilizzabile per player-identity.
+# Chiamato da ci.yml quando player-identity cambia.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "player-identity è cambiato"
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: micro-services/player-identity/package-lock.json
+
+      - name: Install dependencies
+        working-directory: micro-services/player-identity
+        run: npm ci
+
+      - name: Lint (Biome)
+        working-directory: micro-services/player-identity
+        run: npm run lint

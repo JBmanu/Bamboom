@@ -95,30 +95,22 @@ jobs:
   player-identity:
     needs: changes
     if: needs.changes.outputs.player-identity == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "player-identity è cambiato"
+    uses: ./.github/workflows/_player-identity.yml
 
   lobby-match:
     needs: changes
     if: needs.changes.outputs.lobby-match == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "lobby-match è cambiato"
+    uses: ./.github/workflows/_lobby-match.yml
 
   deck-workshop:
     needs: changes
     if: needs.changes.outputs.deck-workshop == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "deck-workshop è cambiato"
+    uses: ./.github/workflows/_deck-workshop.yml
 
   card-forge:
     needs: changes
     if: needs.changes.outputs.card-forge == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "card-forge è cambiato"
+    uses: ./.github/workflows/_card-forge.yml
 
   progress:
     needs: changes

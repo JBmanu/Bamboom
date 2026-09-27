@@ -1,0 +1,31 @@
+# .github/workflows/_card-forge.yml
+#
+# Workflow riutilizzabile per card-forge.
+# Chiamato da ci.yml quando card-forge cambia.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "card-forge è cambiato"
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: micro-services/card-forge/package-lock.json
+
+      - name: Install dependencies
+        working-directory: micro-services/card-forge
+        run: npm ci
+
+      - name: Lint (Biome)
+        working-directory: micro-services/card-forge
+        run: npm run lint

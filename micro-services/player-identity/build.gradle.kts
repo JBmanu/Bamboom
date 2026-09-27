@@ -44,3 +44,11 @@ tasks.register<Exec>("dockerRun") {
     commandLine("sh", "-c", "docker run --rm -p 3001:3000 player-identity:latest")
     dependsOn("dockerBuild")
 }
+
+// -- BIOME --
+tasks.register<Exec>("lint") {
+    group       = "verification"
+    description = "Lints and checks formatting with Biome"
+    commandLine("sh", "-c", "npm run lint")
+    dependsOn("npmInstall")
+}
