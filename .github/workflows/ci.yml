@@ -90,9 +90,7 @@ jobs:
   api-gateway:
     needs: changes
     if: needs.changes.outputs.api-gateway == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "api-gateway è cambiato"
+    uses: ./.github/workflows/_api-gateway.yml
 
   player-identity:
     needs: changes

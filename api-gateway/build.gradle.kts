@@ -3,7 +3,7 @@
 // Punto di ingresso Gradle per l'API Gateway.
 // Delega build a npm/tsc e containerizzazione a Docker.
 
-// ── NODE / BUILD ──────────────────────────────────────────
+// -- NODE / BUILD --
 
 tasks.register<Exec>("npmInstall") {
     group       = "node"
@@ -38,7 +38,7 @@ tasks.register<Exec>("clean") {
     commandLine("sh", "-c", "npm run clean")
 }
 
-// ── DOCKER ────────────────────────────────────────────────
+// -- DOCKER --
 
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
@@ -51,4 +51,12 @@ tasks.register<Exec>("dockerRun") {
     description = "Builds and runs api-gateway (host 8000 → container 8000)"
     commandLine("sh", "-c", "docker run --rm -p 8000:8000 api-gateway:latest")
     dependsOn("dockerBuild")
+}
+
+// -- BIOME --
+tasks.register<Exec>("lint") {
+    group       = "verification"
+    description = "Lints and checks formatting with Biome"
+    commandLine("sh", "-c", "npm run lint")
+    dependsOn("npmInstall")
 }

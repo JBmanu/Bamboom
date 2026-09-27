@@ -1,0 +1,39 @@
+# .github/workflows/_api-gateway.yml
+#
+# Workflow RIUTILIZZABILE per api-gateway.
+# Non si attiva da solo: viene chiamato da ci.yml quando
+# il path filtering rileva modifiche a api-gateway/.
+# Contiene tutta e sola la logica CI di questo servizio.
+
+# ── TRIGGER: chiamabile da altri workflow ──
+on:
+  workflow_call:            # si attiva SOLO quando ci.yml lo chiama
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "player-identity è cambiato"
+
+      # Scarica il codice del repo
+      - uses: actions/checkout@v4
+
+      # Installa Node.js 22 con cache npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api-gateway/package-lock.json
+
+      # Installa le dipendenze (incluso Biome)
+      - name: Install dependencies
+        working-directory: api-gateway
+        run: npm ci
+
+      # Lint + format check con Biome
+      - name: Lint (Biome)
+        working-directory: api-gateway
+        run: npm run lint

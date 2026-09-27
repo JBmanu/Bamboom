@@ -16,11 +16,11 @@ const PORT = process.env.PORT || 8000
 // (es. http://player-identity:3000) — lo gestiremo
 // con variabili d'ambiente.
 const services = {
-    '/api/players':  process.env.PLAYER_IDENTITY_URL  || 'http://localhost:3001',
-    '/api/lobby':    process.env.LOBBY_MATCH_URL      || 'http://localhost:3002',
-    '/api/decks':    process.env.DECK_WORKSHOP_URL    || 'http://localhost:3003',
-    '/api/cards':    process.env.CARD_FORGE_URL       || 'http://localhost:3004',
-    '/api/progress': process.env.PROGRESS_URL         || 'http://localhost:3005',   // ← era 8080
+    '/api/players': process.env.PLAYER_IDENTITY_URL || 'http://localhost:3001',
+    '/api/lobby': process.env.LOBBY_MATCH_URL || 'http://localhost:3002',
+    '/api/decks': process.env.DECK_WORKSHOP_URL || 'http://localhost:3003',
+    '/api/cards': process.env.CARD_FORGE_URL || 'http://localhost:3004',
+    '/api/progress': process.env.PROGRESS_URL || 'http://localhost:3005', // ← era 8080
 }
 
 // Health check: utile per verificare che il gateway sia vivo
@@ -31,10 +31,13 @@ app.get('/health', (_req, res) => {
 
 // Registra un proxy per ogni servizio
 for (const [path, target] of Object.entries(services)) {
-    app.use(path, createProxyMiddleware({
-        target,
-        changeOrigin: true,
-    }))
+    app.use(
+        path,
+        createProxyMiddleware({
+            target,
+            changeOrigin: true,
+        }),
+    )
     console.log(`Routing ${path}/* → ${target}`)
 }
 
