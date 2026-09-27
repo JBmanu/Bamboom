@@ -31,7 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     # "outputs" espone i risultati del filtro agli altri job
     outputs:
-      web-app:         ${{ steps.filter.outputs.web-app }}
+      player:          ${{ steps.filter.outputs.player }}
+      admin:           ${{ steps.filter.outputs.admin }}
       api-gateway:     ${{ steps.filter.outputs.api-gateway }}
       player-identity: ${{ steps.filter.outputs.player-identity }}
       lobby-match:     ${{ steps.filter.outputs.lobby-match }}
@@ -48,8 +49,10 @@ jobs:
         id: filter                    # id per riferirci ai suoi output
         with:
           filters: |
-            web-app:
-              - 'frontend/web-app/**'
+            player:
+              - 'frontend/player/**'
+            admin:
+              - 'frontend/admin/**'
             api-gateway:
               - 'api-gateway/**'
             player-identity:
@@ -70,12 +73,19 @@ jobs:
   # La condizione "if" fa sì che il job parta SOLO se il filtro
   # ha rilevato modifiche a quel progetto.
 
-  web-app:
-    needs: changes                              # aspetta il job "changes"
-    if: needs.changes.outputs.web-app == 'true' # gira solo se web-app è cambiato
+  player:
+    needs: changes
+    if: needs.changes.outputs.player == 'true'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "web-app è cambiato — qui gireranno lint, test, build"
+      - run: echo "player frontend è cambiato — qui gireranno lint, test, build"
+
+  admin:
+    needs: changes
+    if: needs.changes.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "admin frontend è cambiato — qui gireranno lint, test, build"
 
   api-gateway:
     needs: changes

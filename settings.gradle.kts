@@ -14,7 +14,7 @@ rootProject.name = "Bamboom"
 includeBuild("build-logic")
 
 // Frontend
-includeBuild("frontend/web-app")
+includeBuild("frontend/player")
 
 // API Gateway
 includeBuild("api-gateway")
