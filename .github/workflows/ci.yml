@@ -31,8 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     # "outputs" espone i risultati del filtro agli altri job
     outputs:
-      player:          ${{ steps.filter.outputs.player }}
-      admin:           ${{ steps.filter.outputs.admin }}
+      player-frontend: ${{ steps.filter.outputs.player }}
+      admin-frontend:  ${{ steps.filter.outputs.admin }}
       api-gateway:     ${{ steps.filter.outputs.api-gateway }}
       player-identity: ${{ steps.filter.outputs.player-identity }}
       lobby-match:     ${{ steps.filter.outputs.lobby-match }}
@@ -49,10 +49,10 @@ jobs:
         id: filter                    # id per riferirci ai suoi output
         with:
           filters: |
-            player:
+            player-frontend:
               - 'frontend/player/**'
               - 'frontend/.prettierrc.json'
-            admin:
+            admin-frontend:
               - 'frontend/admin/**'
             api-gateway:
               - 'api-gateway/**'
@@ -74,12 +74,12 @@ jobs:
   # La condizione "if" fa sì che il job parta SOLO se il filtro
   # ha rilevato modifiche a quel progetto.
 
-  player:
+  player-frontend:
     needs: changes
     if: needs.changes.outputs.player == 'true'
     uses: ./.github/workflows/_player-frontend.yml
 
-  admin:
+  admin-frontend:
     needs: changes
     if: needs.changes.outputs.admin == 'true'
     runs-on: ubuntu-latest
