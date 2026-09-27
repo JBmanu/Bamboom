@@ -2,7 +2,7 @@
 # Reject a push from a branch that does not follow the Conventional Branch
 # specification. https://conventionalbranch.org/
 
-pattern='^(main|master|develop|(feat|fix|hotfix|release|chore|ai|copilot|cursor|claude|codex)/[a-z0-9]+(\.[a-z0-9]+)*(-[a-z0-9]+(\.[a-z0-9]+)*)*)$'
+pattern='^(main|master|develop|(feat|fix|hotfix|release|chore|cursor|test)/[a-z0-9]+(\.[a-z0-9]+)*(-[a-z0-9]+(\.[a-z0-9]+)*)*)$'
 branch=$(git symbolic-ref --short HEAD)
 
 if ! printf '%s' "$branch" | grep -qE "$pattern"; then

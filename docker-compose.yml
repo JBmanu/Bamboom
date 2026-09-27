@@ -7,13 +7,13 @@
 services:
 
   # -- FRONTEND --
-  web-app:
+  player:
     build:
-      context: ./frontend/web-app
+      context: ./frontend/player
       dockerfile: Dockerfile
-    image: web-app:latest
+    image: player:latest
     ports:
-      - "5173:80"              # host 5173 → container 80 (Nginx)
+      - "5173:80"       # host 5173 → container 80 (Nginx)
     networks:
       - bamboom-network
     depends_on:

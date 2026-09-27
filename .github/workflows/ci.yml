@@ -1,0 +1,130 @@
+# .github/workflows/ci.yml
+#
+# Workflow CI principale del monorepo Bamboom.
+# Rileva quali progetti sono cambiati in una PR e fa girare
+# solo i job dei progetti effettivamente toccati (path filtering).
+
+name: CI
+
+# ── TRIGGER: quando parte questo workflow ──
+on:
+  pull_request:              # a ogni apertura/aggiornamento di PR...
+    branches: [main]         # ...che punta a main
+  push:
+    branches: [main]         # e anche su push diretti a main (dopo il merge)
+
+# ── PERMESSI ──
+# contents: read       → leggere il codice del repo
+# pull-requests: read  → leggere i metadati della PR (lista file cambiati)
+#                        necessario a dorny/paths-filter sulle pull request
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+
+  # ── JOB 1: rileva cosa è cambiato ──
+  # Questo job gira sempre per primo. Usa dorny/paths-filter per
+  # capire quali progetti sono stati toccati nella PR, e "pubblica"
+  # il risultato come output che gli altri job leggeranno.
+  changes:
+    runs-on: ubuntu-latest
+    # "outputs" espone i risultati del filtro agli altri job
+    outputs:
+      player:          ${{ steps.filter.outputs.player }}
+      admin:           ${{ steps.filter.outputs.admin }}
+      api-gateway:     ${{ steps.filter.outputs.api-gateway }}
+      player-identity: ${{ steps.filter.outputs.player-identity }}
+      lobby-match:     ${{ steps.filter.outputs.lobby-match }}
+      deck-workshop:   ${{ steps.filter.outputs.deck-workshop }}
+      card-forge:      ${{ steps.filter.outputs.card-forge }}
+      progress:        ${{ steps.filter.outputs.progress }}
+    steps:
+      # Scarica il codice del repo nella VM
+      - uses: actions/checkout@v4
+
+      # dorny/paths-filter confronta i file cambiati con i pattern
+      # definiti sotto "filters" e produce un output true/false per ognuno
+      - uses: dorny/paths-filter@v3
+        id: filter                    # id per riferirci ai suoi output
+        with:
+          filters: |
+            player:
+              - 'frontend/player/**'
+            admin:
+              - 'frontend/admin/**'
+            api-gateway:
+              - 'api-gateway/**'
+            player-identity:
+              - 'micro-services/player-identity/**'
+            lobby-match:
+              - 'micro-services/lobby-match/**'
+            deck-workshop:
+              - 'micro-services/deck-workshop/**'
+            card-forge:
+              - 'micro-services/card-forge/**'
+            progress:
+              - 'micro-services/progress/**'
+              - 'build-logic/**'
+              - 'gradle/libs.versions.toml'
+
+  # ── JOB 2..N: uno scheletro per progetto ──
+  # Per ora ogni job stampa solo "sono cambiato".
+  # La condizione "if" fa sì che il job parta SOLO se il filtro
+  # ha rilevato modifiche a quel progetto.
+
+  player:
+    needs: changes
+    if: needs.changes.outputs.player == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "player frontend è cambiato — qui gireranno lint, test, build"
+
+  admin:
+    needs: changes
+    if: needs.changes.outputs.admin == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "admin frontend è cambiato — qui gireranno lint, test, build"
+
+  api-gateway:
+    needs: changes
+    if: needs.changes.outputs.api-gateway == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "api-gateway è cambiato"
+
+  player-identity:
+    needs: changes
+    if: needs.changes.outputs.player-identity == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "player-identity è cambiato"
+
+  lobby-match:
+    needs: changes
+    if: needs.changes.outputs.lobby-match == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "lobby-match è cambiato"
+
+  deck-workshop:
+    needs: changes
+    if: needs.changes.outputs.deck-workshop == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deck-workshop è cambiato"
+
+  card-forge:
+    needs: changes
+    if: needs.changes.outputs.card-forge == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "card-forge è cambiato"
+
+  progress:
+    needs: changes
+    if: needs.changes.outputs.progress == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "progress è cambiato"

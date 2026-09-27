@@ -1,7 +1,7 @@
 {
-  "name": "web-app",
+  "name": "player",
   "version": "0.1.0",
-  "description": "Bamboom web-app frontend (Vue 3 + Vite)",
+  "description": "Bamboom player frontend (Vue 3 + Vite)",
   "type": "module",
   "scripts": {
     "dev": "vite",
