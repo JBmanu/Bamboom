@@ -14,10 +14,12 @@ on:
     branches: [main]         # e anche su push diretti a main (dopo il merge)
 
 # ── PERMESSI ──
-# Diamo al workflow solo i permessi minimi necessari (best practice sicurezza).
-# "contents: read" = può leggere il codice, niente di più.
+# contents: read       → leggere il codice del repo
+# pull-requests: read  → leggere i metadati della PR (lista file cambiati)
+#                        necessario a dorny/paths-filter sulle pull request
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
 
