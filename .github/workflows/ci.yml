@@ -51,6 +51,7 @@ jobs:
           filters: |
             player:
               - 'frontend/player/**'
+              - 'frontend/.prettierrc.json'
             admin:
               - 'frontend/admin/**'
             api-gateway:
@@ -76,9 +77,7 @@ jobs:
   player:
     needs: changes
     if: needs.changes.outputs.player == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "player frontend è cambiato — qui gireranno lint, test, build"
+    uses: ./.github/workflows/_player-frontend.yml
 
   admin:
     needs: changes

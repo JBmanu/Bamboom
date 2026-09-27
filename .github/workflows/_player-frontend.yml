@@ -1,0 +1,31 @@
+# .github/workflows/_player-frontend.yml
+#
+# Workflow riutilizzabile per il frontend player (Vue).
+# Chiamato da ci.yml quando frontend/player cambia.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "player frontend è cambiato — qui gireranno lint, test, build"
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/player/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend/player
+        run: npm ci
+
+      - name: Lint (ESLint + Prettier)
+        working-directory: frontend/player
+        run: npm run lint
