@@ -1,52 +1,35 @@
-# .github/workflows/_progress.yml
-#
-# Workflow riutilizzabile per progress (Kotlin + Scala, Gradle).
-# Chiamato da ci.yml quando progress / build-logic / catalog cambia.
-#
-# Cosa copre ./gradlew lint:
-#   - app           → detekt (ktlint + analisi strutturale Kotlin)
-#   - player-progress → detekt (ktlint + analisi strutturale Kotlin)
-#   - game-observatory → Spotless/scalafmt + Scalafix + WartRemover (via compileScala)
-
 on:
   workflow_call:
-
 permissions:
   contents: read
-
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - run: echo "progress è cambiato"
-      # Scarica il codice del repo
       - uses: actions/checkout@v4
 
-      # Installa JDK 25 (Temurin) — la toolchain del progetto usa Java 25.
-      # Temurin è la stessa distribuzione usata in locale e nei Dockerfile.
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 25
 
-      # Cache e configurazione Gradle ottimale per CI.
-      # gradle/actions/setup-gradle gestisce la cache delle dipendenze
-      # Gradle tra i run (analogo del "cache: npm" nei workflow TS).
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Rende eseguibile il wrapper — il flag +x a volte si perde su git.
-      # Necessario per poter eseguire ./gradlew.
       - name: Make gradlew executable
         working-directory: micro-services/progress
         run: chmod +x gradlew
 
-      # Lancia lint aggregato su tutti i moduli:
-      # - :app:lint           → detekt Kotlin
-      # - :player-progress:lint → detekt Kotlin
-      # - :game-observatory:lint → Spotless + Scalafix + compileScala (WartRemover)
-      # Se uno qualsiasi fallisce, il job fallisce e blocca la PR.
       - name: Lint (detekt + Spotless + Scalafix + WartRemover)
         working-directory: micro-services/progress
         run: ./gradlew lint
+
+      - name: Test
+        working-directory: micro-services/progress
+        run: ./gradlew test
+
+      - name: Build (shadowJar)
+        working-directory: micro-services/progress
+        run: ./gradlew :app:shadowJar

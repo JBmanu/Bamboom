@@ -1,19 +1,15 @@
-# .github/workflows/_deck-workshop.yml
-#
-# Workflow riutilizzabile per deck-workshop.
-# Chiamato da ci.yml quando deck-workshop cambia.
-
 on:
   workflow_call:
-
+    
 permissions:
   contents: read
-
+  
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - run: echo "deck-workshop è cambiato"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -29,3 +25,15 @@ jobs:
       - name: Lint (Biome)
         working-directory: micro-services/deck-workshop
         run: npm run lint
+
+      - name: Type-check (tsc)
+        working-directory: micro-services/deck-workshop
+        run: npm run type-check
+
+      - name: Test (Jest)
+        working-directory: micro-services/deck-workshop
+        run: npm test
+
+      - name: Build (tsc)
+        working-directory: micro-services/deck-workshop
+        run: npm run build
