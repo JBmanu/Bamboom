@@ -10,6 +10,8 @@
 #   [bundles]   → gruppi di librerie usate sempre insieme
 
 [versions]
+spotless       = "8.7.0"
+wartremover    = "3.3.5"
 shadow         = "9.6.1"
 kotlin         = "2.4.0"
 detekt         = "2.0.0-alpha.5"
@@ -18,6 +20,8 @@ junit          = "5.11.0"
 logback        = "1.5.8"
 scala          = "3.3.6"
 scalatest      = "3.2.18"
+scalafmt       = "3.9.6"
+scalafix       = "0.3.0"
 jvm-target     = "25"
 
 [libraries]
@@ -28,12 +32,15 @@ junit-jupiter       = { module = "org.junit.jupiter:junit-jupiter",             
 logback-classic     = { module = "ch.qos.logback:logback-classic",                version.ref = "logback" }
 scala-library       = { module = "org.scala-lang:scala3-library_3",               version.ref = "scala" }
 scalatest           = { module = "org.scalatest:scalatest_3",                     version.ref = "scalatest" }
+#wartremover         = { module = "org.wartremover:wartremover_3.3.7",             version.ref = "wartremover" }
 
 [plugins]
+spotless    = { id = "com.diffplug.spotless",    version.ref = "spotless" }
 shadow      = { id = "com.gradleup.shadow",      version.ref = "shadow" }
 kotlin-jvm  = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 detekt      = { id = "dev.detekt",               version.ref = "detekt" }
 scala       = { id = "scala",                    version = "unspecified" }
+
 
 [bundles]
 # "kotlin-base" = le tre dipendenze che ogni servizio Kotlin usa sempre

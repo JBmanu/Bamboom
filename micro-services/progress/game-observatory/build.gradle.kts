@@ -12,6 +12,8 @@ group   = "com.bamboom"
 version = "0.1.0"
 
 dependencies {
-    implementation(libs.bundles.scala.base)
+//    implementation(libs.bundles.scala.base)
+    implementation("org.scala-lang:scala3-library_3:${libs.versions.scala.get()}")
     testImplementation(libs.scalatest)
+
 }
