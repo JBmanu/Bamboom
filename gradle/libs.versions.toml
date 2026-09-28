@@ -11,6 +11,7 @@
 
 [versions]
 spotless       = "8.7.0"
+wartremover    = "3.3.5"
 shadow         = "9.6.1"
 kotlin         = "2.4.0"
 detekt         = "2.0.0-alpha.5"
@@ -31,6 +32,7 @@ junit-jupiter       = { module = "org.junit.jupiter:junit-jupiter",             
 logback-classic     = { module = "ch.qos.logback:logback-classic",                version.ref = "logback" }
 scala-library       = { module = "org.scala-lang:scala3-library_3",               version.ref = "scala" }
 scalatest           = { module = "org.scalatest:scalatest_3",                     version.ref = "scalatest" }
+#wartremover         = { module = "org.wartremover:wartremover_3.3.7",             version.ref = "wartremover" }
 
 [plugins]
 spotless    = { id = "com.diffplug.spotless",    version.ref = "spotless" }

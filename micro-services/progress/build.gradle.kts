@@ -33,22 +33,27 @@ tasks.register<Exec>("dockerRun") {
     dependsOn("dockerBuild")
 }
 
-// -- LINT + KTLINT (detekt ) --
+// -- LINT / FORMAT aggregato: tutti i moduli che hanno il task lint/format --
 tasks.register("lint") {
     group       = "verification"
-    description = "Runs lint on all modules that support it"
+    description = "Runs lint on all modules (Kotlin: detekt, Scala: Spotless(scalafmt)+Scalafix+WartRemover)"
     dependsOn(
         subprojects
-            .filter { it.tasks.findByName("lint") != null }
+            .filter { subproject ->
+                subproject.tasks.findByName("lint") != null
+            }
             .map { "${it.path}:lint" }
     )
 }
+
 tasks.register("format") {
     group       = "formatting"
-    description = "Runs detekt auto-correct on all modules that support it"
+    description = "Formats all modules (Kotlin: detekt auto-correct, Scala: Spotless(scalafmt)+Scalafix)"
     dependsOn(
         subprojects
-            .filter { it.tasks.findByName("format") != null }
+            .filter { subproject ->
+                subproject.tasks.findByName("format") != null
+            }
             .map { "${it.path}:format" }
     )
 }
