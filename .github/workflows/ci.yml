@@ -19,7 +19,7 @@ on:
 #                        necessario a dorny/paths-filter sulle pull request
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
 
