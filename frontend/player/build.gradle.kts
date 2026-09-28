@@ -29,6 +29,13 @@ tasks.register<Exec>("test") {
     dependsOn("npmInstall")
 }
 
+tasks.register<Exec>("type-check") {
+    group       = "verification"
+    description = "Type-checks Vue + TypeScript without emitting files (vue-tsc --noEmit)"
+    commandLine("sh", "-c", "npm run type-check")
+    dependsOn("npmInstall")
+}
+
 tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans the player dist folder"

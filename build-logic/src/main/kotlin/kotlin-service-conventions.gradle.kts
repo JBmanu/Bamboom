@@ -10,6 +10,7 @@ val detektVersion = versionCatalogs.named("libs").findVersion("detekt").get().re
 plugins {
     kotlin("jvm")
     id("dev.detekt")          // NUOVO: applica detekt ai moduli Kotlin
+    id("jacoco")
 }
 
 repositories {
@@ -18,10 +19,6 @@ repositories {
 
 kotlin {
     jvmToolchain(25)
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -71,4 +68,21 @@ tasks.register<Detekt>("format") {
     setSource(files("src/main/kotlin", "src/test/kotlin"))
     config.setFrom(files("${rootDir}/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
+}
+
+// ── JACOCO (coverage) ──
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+    }
 }

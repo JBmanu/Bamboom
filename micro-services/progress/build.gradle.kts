@@ -57,3 +57,9 @@ tasks.register("format") {
             .map { "${it.path}:format" }
     )
 }
+
+tasks.register("shadowJar") {
+    group       = "build"
+    description = "Builds the fat JAR (delegates to :app:shadowJar)"
+    dependsOn(":app:shadowJar")
+}

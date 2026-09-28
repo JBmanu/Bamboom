@@ -20,6 +20,7 @@ plugins {
     java
     id("com.diffplug.spotless")
     id("io.github.cosmicsilence.scalafix")
+    id("jacoco")
 }
 
 // ── WARTREMOVER (come compiler plugin, senza plugin Gradle) ──
@@ -42,10 +43,6 @@ tasks.withType<ScalaCompile> {
     scalaCompileOptions.apply {
         additionalParameters = listOf("-feature")
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 // -- SPOTLESS (scalafmt) --
@@ -83,4 +80,21 @@ tasks.register("format") {
     group       = "formatting"
     description = "Formats Scala: Spotless (scalafmt) + Scalafix auto-fix. WartRemover requires manual fix."
     dependsOn("spotlessApply", "scalafix")
+}
+
+// ── JACOCO (coverage Scala) ──
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+    }
 }

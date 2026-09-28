@@ -1,13 +1,15 @@
 on:
   workflow_call:
+
 permissions:
   contents: read
+  pull-requests: write
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - run: echo "player-frontend è cambiato"
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -16,22 +18,25 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/player/package-lock.json
 
-      - name: Install dependencies
-        working-directory: frontend/player
-        run: npm ci
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Lint (ESLint + Prettier)
-        working-directory: frontend/player
-        run: npm run lint
+        run: ./gradlew :player:lint
 
       - name: Type-check (vue-tsc)
-        working-directory: frontend/player
-        run: npm run type-check
+        run: ./gradlew :player:type-check
 
       - name: Test (Vitest)
-        working-directory: frontend/player
-        run: npm test
+        run: ./gradlew :player:test
 
       - name: Build (vue-tsc + vite)
-        working-directory: frontend/player
-        run: npm run build
+        run: ./gradlew :player:build
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: frontend/player/coverage/lcov.info
+          flags: player-frontend
+          fail_ci_if_error: false
