@@ -10,10 +10,10 @@ dependencies {
     val kotlinVersion = libs.versions.kotlin.get()
     val detektVersion = libs.versions.detekt.get()
     val spotlessVersion = libs.versions.spotless.get()
-//    val scalafixVersion = libs.versions.scalafix.get()
+    val scalafixVersion = libs.versions.scalafix.get()
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("dev.detekt:dev.detekt.gradle.plugin:$detektVersion")
     implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:$spotlessVersion")
-//    implementation("io.github.cosmicsilence.scalafix:io.github.cosmicsilence.scalafix.gradle.plugin:${scalafixVersion}")
+    implementation("io.github.cosmicsilence.scalafix:io.github.cosmicsilence.scalafix.gradle.plugin:${scalafixVersion}")
 }

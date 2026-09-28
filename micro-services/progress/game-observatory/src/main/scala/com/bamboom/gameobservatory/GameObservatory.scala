@@ -11,10 +11,10 @@ case class GameEvent(
 )
 
 class GameObservatory {
-    private var events: List[GameEvent] = List.empty
+    private val events: List[GameEvent] = List.empty
 
-    def recordEvent(event: GameEvent): Unit =
-        events = event :: events
+    def recordEvent(event: GameEvent): List[GameEvent] =
+        event :: events
 
     // Ritorna Java List per interoperabilità con Kotlin
     def getEvents(gameId: String): JList[GameEvent] =

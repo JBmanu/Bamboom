@@ -8,6 +8,7 @@ plugins {
     scala
     java
     id("com.diffplug.spotless")
+    id("io.github.cosmicsilence.scalafix")
 }
 
 repositories {
@@ -47,12 +48,12 @@ spotless {
 // ── LINT / FORMAT (Spotless + Scalafix insieme) ──
 tasks.register("lint") {
     group       = "verification"
-    description = "Checks Scala formatting (scalafmt via Spotless)"
-    dependsOn("spotlessCheck")
+    description = "Checks Scala: formatting (Spotless) + linting (Scalafix)"
+    dependsOn("spotlessCheck", "checkScalafix")
 }
 
 tasks.register("format") {
     group       = "formatting"
-    description = "Formats Scala code (scalafmt via Spotless)"
-    dependsOn("spotlessApply")
+    description = "Formats Scala: Spotless + Scalafix auto-fix"
+    dependsOn("spotlessApply", "scalafix")
 }
