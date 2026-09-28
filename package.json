@@ -1,0 +1,56 @@
+{
+  "name": "bamboom-monorepo",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Bamboom monorepo — root package for git hooks and commit linting only",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.3.0"
+  },
+  "lint-staged": {
+    "api-gateway/src/**/*.ts": [
+      "bash -c './gradlew :api-gateway:format'",
+      "bash -c './gradlew :api-gateway:lint'"
+    ],
+    "micro-services/player-identity/src/**/*.ts": [
+      "bash -c './gradlew :player-identity:format'",
+      "bash -c './gradlew :player-identity:lint'"
+    ],
+    "micro-services/lobby-match/src/**/*.ts": [
+      "bash -c './gradlew :lobby-match:format'",
+      "bash -c './gradlew :lobby-match:lint'"
+    ],
+    "micro-services/deck-workshop/src/**/*.ts": [
+      "bash -c './gradlew :deck-workshop:format'",
+      "bash -c './gradlew :deck-workshop:lint'"
+    ],
+    "micro-services/card-forge/src/**/*.ts": [
+      "bash -c './gradlew :card-forge:format'",
+      "bash -c './gradlew :card-forge:lint'"
+    ],
+    "frontend/player/src/**/*.{ts,vue}": [
+      "bash -c './gradlew :player:format'",
+      "bash -c './gradlew :player:lint'"
+    ],
+    "micro-services/progress/app/**/*.kt": [
+      "bash -c 'cd micro-services/progress && ./gradlew :app:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :app:lint'"
+    ],
+    "micro-services/progress/game-observatory/**/*.scala": [
+      "bash -c 'cd micro-services/progress && ./gradlew :game-observatory:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :game-observatory:lint'"
+    ],
+    "micro-services/progress/player-progress/**/*.kt": [
+      "bash -c 'cd micro-services/progress && ./gradlew :player-progress:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :player-progress:lint'"
+    ],
+    "build-logic/**/*.kt": [
+      "bash -c 'cd micro-services/progress && ./gradlew :progress:lint'"
+    ]
+  }
+}

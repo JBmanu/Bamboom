@@ -1,0 +1,16 @@
+# ─────────────────────────────────────────────────────────────────
+# HOOK: pre-commit
+# QUANDO: prima che il commit venga creato
+# COSA FA: lancia lint solo sui file staged (via lint-staged)
+#          Veloce: linta SOLO i file che hai fatto git add
+#          Non lancia i test (quelli vanno nel pre-push)
+#
+# BYPASS (usa con cautela):
+#   git commit --no-verify    → bypassa pre-commit E commit-msg
+#   git commit -n             → shorthand di --no-verify
+#
+# NOTA: --no-verify bypassa gli hook LOCALI ma non la CI su GitHub.
+#       La CI è il cancello finale e non si bypassa.
+# ─────────────────────────────────────────────────────────────────
+
+npx lint-staged

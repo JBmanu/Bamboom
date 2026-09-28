@@ -7,4 +7,4 @@ Questo progetto utilizza due licenze distinte:
   [Creative Commons Attribuzione - Non Commerciale - Condividi allo stesso modo 4.0](LICENSE-ASSETS.md)
 
 In caso di dubbio su quale licenza si applichi a un file specifico, fa fede la posizione
-del file nel repository (`/src` → codice, `/assets` → materiale grafico).
+del file nel repository (`/src` → codice, `/assets` → materiale grafico).# test
