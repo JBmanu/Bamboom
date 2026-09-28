@@ -8,37 +8,44 @@
   "assignees": ["JBmanu"],
   "packageRules": [
     {
-      "description": "Raggruppa patch e minor npm in una PR sola",
+      "description": "npm patch e minor raggruppati (api-gateway, microservizi, frontend)",
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "npm dependencies (non-major)"
     },
     {
-      "description": "Raggruppa patch e minor Gradle in una PR sola",
-      "matchManagers": ["gradle", "gradle-wrapper"],
+      "description": "Gradle version catalog (libs.versions.toml) — patch e minor raggruppati",
+      "matchManagers": ["gradle"],
+      "matchFileNames": ["gradle/libs.versions.toml"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "gradle dependencies (non-major)"
+      "groupName": "gradle version catalog (non-major)"
     },
     {
-      "description": "Major sempre separati — richiedono attenzione",
+      "description": "Gradle wrapper — mai auto-mergere (versione Gradle critica)",
+      "matchManagers": ["gradle-wrapper"],
+      "automerge": false,
+      "groupName": "Gradle wrapper"
+    },
+    {
+      "description": "Major sempre separati e mai auto-mergiati",
       "matchUpdateTypes": ["major"],
       "automerge": false
     },
     {
-      "description": "Patch npm sicure auto-mergiate se CI verde",
+      "description": "Patch npm auto-mergiate se CI verde (sicure per definizione)",
       "matchUpdateTypes": ["patch"],
       "matchManagers": ["npm"],
       "automerge": true,
       "automergeType": "pr"
     },
     {
-      "description": "Immagini Docker — aggiorna ma non auto-mergere",
+      "description": "Docker base images — sempre review manuale",
       "matchManagers": ["dockerfile"],
       "automerge": false,
       "groupName": "Docker base images"
     },
     {
-      "description": "GitHub Actions — aggiorna sempre con review",
+      "description": "GitHub Actions — sempre review manuale",
       "matchManagers": ["github-actions"],
       "automerge": false,
       "groupName": "GitHub Actions"
