@@ -1,13 +1,21 @@
 on:
   workflow_call:
+
 permissions:
   contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - run: echo "progress è cambiato"
       - uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
 
       - name: Set up JDK 25
         uses: actions/setup-java@v4
@@ -23,13 +31,34 @@ jobs:
         run: chmod +x gradlew
 
       - name: Lint (detekt + Spotless + Scalafix + WartRemover)
-        working-directory: micro-services/progress
-        run: ./gradlew lint
+        run: ./gradlew :progress:lint
 
       - name: Test
-        working-directory: micro-services/progress
-        run: ./gradlew test
+        run: ./gradlew :progress:test
 
-      - name: Build (shadowJar)
-        working-directory: micro-services/progress
-        run: ./gradlew :app:shadowJar
+      - name: Build (fat JAR)
+        run: ./gradlew :progress:shadowJar
+
+      - name: Upload coverage — app (Kotlin)
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: micro-services/progress/app/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: progress-app
+          fail_ci_if_error: false
+
+      - name: Upload coverage — player-progress (Kotlin BC)
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: micro-services/progress/player-progress/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: progress-player-progress
+          fail_ci_if_error: false
+
+      - name: Upload coverage — game-observatory (Scala BC)
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: micro-services/progress/game-observatory/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: progress-game-observatory
+          fail_ci_if_error: false

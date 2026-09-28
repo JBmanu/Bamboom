@@ -18,22 +18,31 @@ jobs:
           cache: npm
           cache-dependency-path: api-gateway/package-lock.json
 
-      - name: Install dependencies
-        working-directory: api-gateway
-        run: npm ci
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Lint (Biome)
-        working-directory: api-gateway
-        run: npm run lint
+        run: ./gradlew :api-gateway:lint
 
       - name: Type-check (tsc)
-        working-directory: api-gateway
-        run: npm run type-check
+        run: ./gradlew :api-gateway:type-check
 
       - name: Test (Jest)
-        working-directory: api-gateway
-        run: npm test
+        run: ./gradlew :api-gateway:test
 
       - name: Build (tsc)
-        working-directory: api-gateway
-        run: npm run build
+        run: ./gradlew :api-gateway:build
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: api-gateway/coverage/lcov.info
+          flags: api-gateway
+          fail_ci_if_error: false

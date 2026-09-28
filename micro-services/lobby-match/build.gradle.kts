@@ -18,6 +18,13 @@ tasks.register<Exec>("test") {
     dependsOn("npmInstall")
 }
 
+tasks.register<Exec>("type-check") {
+    group       = "verification"
+    description = "Type-checks TypeScript without emitting files (tsc --noEmit)"
+    commandLine("sh", "-c", "npm run type-check")
+    dependsOn("npmInstall")
+}
+
 tasks.register<Exec>("clean") {
     group = "build"
     description = "Cleans lobby-match dist folder"
