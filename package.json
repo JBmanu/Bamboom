@@ -14,34 +14,43 @@
   },
   "lint-staged": {
     "api-gateway/src/**/*.ts": [
-      "bash -c 'cd api-gateway && npm run lint'"
+      "bash -c './gradlew :api-gateway:format'",
+      "bash -c './gradlew :api-gateway:lint'"
     ],
     "micro-services/player-identity/src/**/*.ts": [
-      "bash -c 'cd micro-services/player-identity && npm run lint'"
+      "bash -c './gradlew :player-identity:format'",
+      "bash -c './gradlew :player-identity:lint'"
     ],
     "micro-services/lobby-match/src/**/*.ts": [
-      "bash -c 'cd micro-services/lobby-match && npm run lint'"
+      "bash -c './gradlew :lobby-match:format'",
+      "bash -c './gradlew :lobby-match:lint'"
     ],
     "micro-services/deck-workshop/src/**/*.ts": [
-      "bash -c 'cd micro-services/deck-workshop && npm run lint'"
+      "bash -c './gradlew :deck-workshop:format'",
+      "bash -c './gradlew :deck-workshop:lint'"
     ],
     "micro-services/card-forge/src/**/*.ts": [
-      "bash -c 'cd micro-services/card-forge && npm run lint'"
+      "bash -c './gradlew :card-forge:format'",
+      "bash -c './gradlew :card-forge:lint'"
     ],
     "frontend/player/src/**/*.{ts,vue}": [
-      "bash -c 'cd frontend/player && npm run lint'"
+      "bash -c './gradlew :player:format'",
+      "bash -c './gradlew :player:lint'"
     ],
-    "frontend/admin/src/**/*.{ts,vue}": [
-      "bash -c 'cd frontend/admin && npm run lint'"
+    "micro-services/progress/app/**/*.kt": [
+      "bash -c 'cd micro-services/progress && ./gradlew :app:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :app:lint'"
     ],
-    "micro-services/progress/**/*.kt": [
-      "bash -c 'cd micro-services/progress && ./gradlew lint'"
+    "micro-services/progress/game-observatory/**/*.scala": [
+      "bash -c 'cd micro-services/progress && ./gradlew :game-observatory:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :game-observatory:lint'"
     ],
-    "micro-services/progress/**/*.scala": [
-      "bash -c 'cd micro-services/progress && ./gradlew lint'"
+    "micro-services/progress/player-progress/**/*.kt": [
+      "bash -c 'cd micro-services/progress && ./gradlew :player-progress:format'",
+      "bash -c 'cd micro-services/progress && ./gradlew :player-progress:lint'"
     ],
     "build-logic/**/*.kt": [
-      "bash -c 'cd micro-services/progress && ./gradlew lint'"
+      "bash -c 'cd micro-services/progress && ./gradlew :progress:lint'"
     ]
   }
 }

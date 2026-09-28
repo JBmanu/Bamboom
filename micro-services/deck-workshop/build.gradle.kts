@@ -45,3 +45,10 @@ tasks.register<Exec>("lint") {
     commandLine("sh", "-c", "npm run lint")
     dependsOn("npmInstall")
 }
+
+tasks.register<Exec>("format") {
+    group       = "formatting"
+    description = "Formats and auto-fixes with Biome"
+    commandLine("sh", "-c", "npm run format")
+    dependsOn("npmInstall")
+}

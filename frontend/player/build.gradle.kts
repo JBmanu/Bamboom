@@ -57,3 +57,10 @@ tasks.register<Exec>("lint") {
     commandLine("sh", "-c", "npm run lint")
     dependsOn("npmInstall")
 }
+
+tasks.register<Exec>("format") {
+    group       = "formatting"
+    description = "Formats with ESLint --fix and Prettier --write"
+    commandLine("sh", "-c", "npm run format")
+    dependsOn("npmInstall")
+}
