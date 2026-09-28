@@ -13,7 +13,7 @@ case class GameEvent(
 class GameObservatory {
     private val events: List[GameEvent] = List.empty
 
-    def recordEvent(event: GameEvent): List[GameEvent] =
+    def recordEvent(event: GameEvent): Unit =
         event :: events
 
     // Ritorna Java List per interoperabilità con Kotlin

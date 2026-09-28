@@ -1,8 +1,3 @@
-# .github/workflows/_player-identity.yml
-#
-# Workflow riutilizzabile per player-identity.
-# Chiamato da ci.yml quando player-identity cambia.
-
 on:
   workflow_call:
 
@@ -14,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "player-identity è cambiato"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -29,3 +25,15 @@ jobs:
       - name: Lint (Biome)
         working-directory: micro-services/player-identity
         run: npm run lint
+
+      - name: Type-check (tsc)
+        working-directory: micro-services/player-identity
+        run: npm run type-check
+
+      - name: Test (Jest)
+        working-directory: micro-services/player-identity
+        run: npm test
+
+      - name: Build (tsc)
+        working-directory: micro-services/player-identity
+        run: npm run build
