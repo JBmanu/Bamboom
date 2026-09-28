@@ -1,0 +1,54 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": ["every weekend"],
+  "labels": ["dependencies"],
+  "assignees": ["JBmanu"],
+  "packageRules": [
+    {
+      "description": "npm patch e minor raggruppati (api-gateway, microservizi, frontend)",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "npm dependencies (non-major)"
+    },
+    {
+      "description": "Gradle version catalog (libs.versions.toml) — patch e minor raggruppati",
+      "matchManagers": ["gradle"],
+      "matchFileNames": ["gradle/libs.versions.toml"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "gradle version catalog (non-major)"
+    },
+    {
+      "description": "Gradle wrapper — mai auto-mergere (versione Gradle critica)",
+      "matchManagers": ["gradle-wrapper"],
+      "automerge": false,
+      "groupName": "Gradle wrapper"
+    },
+    {
+      "description": "Major sempre separati e mai auto-mergiati",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Patch npm auto-mergiate se CI verde (sicure per definizione)",
+      "matchUpdateTypes": ["patch"],
+      "matchManagers": ["npm"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Docker base images — sempre review manuale",
+      "matchManagers": ["dockerfile"],
+      "automerge": false,
+      "groupName": "Docker base images"
+    },
+    {
+      "description": "GitHub Actions — sempre review manuale",
+      "matchManagers": ["github-actions"],
+      "automerge": false,
+      "groupName": "GitHub Actions"
+    }
+  ]
+}
