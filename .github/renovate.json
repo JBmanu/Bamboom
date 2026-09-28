@@ -1,0 +1,47 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "schedule": ["every weekend"],
+  "labels": ["dependencies"],
+  "assignees": ["JBmanu"],
+  "packageRules": [
+    {
+      "description": "Raggruppa patch e minor npm in una PR sola",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "npm dependencies (non-major)"
+    },
+    {
+      "description": "Raggruppa patch e minor Gradle in una PR sola",
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "gradle dependencies (non-major)"
+    },
+    {
+      "description": "Major sempre separati — richiedono attenzione",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Patch npm sicure auto-mergiate se CI verde",
+      "matchUpdateTypes": ["patch"],
+      "matchManagers": ["npm"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Immagini Docker — aggiorna ma non auto-mergere",
+      "matchManagers": ["dockerfile"],
+      "automerge": false,
+      "groupName": "Docker base images"
+    },
+    {
+      "description": "GitHub Actions — aggiorna sempre con review",
+      "matchManagers": ["github-actions"],
+      "automerge": false,
+      "groupName": "GitHub Actions"
+    }
+  ]
+}
