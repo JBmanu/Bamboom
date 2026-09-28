@@ -1,0 +1,80 @@
+# ─────────────────────────────────────────────────────────────────
+# HOOK: pre-push
+# QUANDO: prima che git push invii i commit al remote
+# COSA FA: (1) valida il nome del branch
+#          (2) lancia type-check + test sui servizi modificati
+#
+# MODALITÀ DI PUSH:
+#   git push                    → hook gira
+#   git push origin HEAD        → hook gira
+#   git push -u origin HEAD     → hook gira (+ set upstream)
+#   git push --no-verify / -n   → BYPASSA tutti gli hook
+#   git push --force / -f       → hook gira (force non bypassa)
+#   git push --force-with-lease → hook gira (più sicuro di --force)
+#
+# BYPASS (usa con cautela):
+#   git push --no-verify        → bypassa hook ma NON la CI su GitHub
+# ─────────────────────────────────────────────────────────────────
+
+# ── 1. Valida nome del branch ────────────────────────────────────
+PATTERN='^(main|master|develop|(feat|fix|hotfix|release|chore|cursor|test|ci)/[a-z0-9]+(\.[a-z0-9]+)*(-[a-z0-9]+(\.[a-z0-9]+)*)*)$'
+BRANCH=$(git symbolic-ref --short HEAD)
+
+if ! printf '%s' "$BRANCH" | grep -qE "$PATTERN"; then
+    echo "✖ Branch '$BRANCH' non segue la Conventional Branch specification." >&2
+    echo "  Formato atteso: <type>/<description>" >&2
+    echo "  Esempi: feat/login-page, fix/matchmaking-bug, ci/add-codecov" >&2
+    exit 1
+fi
+
+# ── 2. Type-check + test sui servizi modificati ──────────────────
+# Confronta il branch con main per sapere cosa è cambiato
+BASE=$(git merge-base HEAD origin/main 2>/dev/null || echo "HEAD~1")
+CHANGED=$(git diff --name-only "$BASE" HEAD)
+
+EXIT_CODE=0
+
+has_changes() {
+    echo "$CHANGED" | grep -q "^$1"
+}
+
+# api-gateway
+if has_changes "api-gateway/"; then
+    echo "→ type-check + test: api-gateway"
+    cd api-gateway && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ..
+fi
+
+# microservizi TS
+for SERVICE in player-identity lobby-match deck-workshop card-forge; do
+    if has_changes "micro-services/$SERVICE/"; then
+        echo "→ type-check + test: $SERVICE"
+        cd "micro-services/$SERVICE" && npm run type-check && npm test
+        [ $? -ne 0 ] && EXIT_CODE=1
+        cd ../..
+    fi
+done
+
+# frontend player
+if has_changes "frontend/player/"; then
+    echo "→ type-check + test: frontend/player"
+    cd frontend/player && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
+# progress (Kotlin + Scala)
+if has_changes "micro-services/progress/" || has_changes "build-logic/"; then
+    echo "→ test + build: progress"
+    cd micro-services/progress && ./gradlew test && ./gradlew :app:shadowJar
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "✖ Pre-push fallito: correggi gli errori prima di pushare."
+fi
+
+exit $EXIT_CODE

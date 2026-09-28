@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────────────────────────
+# HOOK: commit-msg
+# QUANDO: dopo aver scritto il messaggio di commit
+# COSA FA: valida che il messaggio segua i Conventional Commits
+#
+# FORMATO: <type>(<scope>): <description>
+#
+# TYPES:
+#   feat     → nuova funzionalità         (bump minor in Changesets)
+#   fix      → correzione bug             (bump patch)
+#   docs     → solo documentazione        (nessun rilascio)
+#   style    → formattazione, spazi       (nessun rilascio)
+#   refactor → refactoring                (nessun rilascio)
+#   test     → aggiunta/modifica test     (nessun rilascio)
+#   chore    → manutenzione, config       (nessun rilascio)
+#   ci       → modifiche CI/CD           (nessun rilascio)
+#   perf     → miglioramento performance  (bump patch)
+#   build    → modifiche build system     (nessun rilascio)
+#   revert   → reverte commit precedente  (dipende dal tipo)
+#
+# SCOPE (opzionale): es. (auth), (api), (player), (lobby)
+# BREAKING CHANGE: aggiungi ! → feat!: o feat(auth)!:
+#                 produce bump major in Changesets
+#
+# ESEMPI:
+#   feat: aggiunge autenticazione JWT
+#   fix(lobby): corregge race condition nel matchmaking
+#   ci: aggiunge lint Biome per api-gateway
+#   feat(player)!: cambia struttura API pubblica
+# ─────────────────────────────────────────────────────────────────
+
+npx --no -- commitlint --edit "$1"
