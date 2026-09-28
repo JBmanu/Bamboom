@@ -44,4 +44,4 @@ for (const [path, target] of Object.entries(services)) {
 app.listen(PORT, () => {
     console.log(`API Gateway up and running on port ${PORT}`)
 })
-// test format
+// test
