@@ -31,8 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     # "outputs" espone i risultati del filtro agli altri job
     outputs:
-      player-frontend: ${{ steps.filter.outputs.player }}
-      admin-frontend:  ${{ steps.filter.outputs.admin }}
+      player-frontend: ${{ steps.filter.outputs.player-frontend }}
+      admin-frontend:  ${{ steps.filter.outputs.admin-frontend }}
       api-gateway:     ${{ steps.filter.outputs.api-gateway }}
       player-identity: ${{ steps.filter.outputs.player-identity }}
       lobby-match:     ${{ steps.filter.outputs.lobby-match }}
@@ -54,6 +54,7 @@ jobs:
               - 'frontend/.prettierrc.json'
             admin-frontend:
               - 'frontend/admin/**'
+              - 'frontend/.prettierrc.json'
             api-gateway:
               - 'api-gateway/**'
             player-identity:
@@ -76,12 +77,12 @@ jobs:
 
   player-frontend:
     needs: changes
-    if: needs.changes.outputs.player == 'true'
+    if: needs.changes.outputs.player-frontend == 'true'
     uses: ./.github/workflows/_player-frontend.yml
 
   admin-frontend:
     needs: changes
-    if: needs.changes.outputs.admin == 'true'
+    if: needs.changes.outputs.admin-frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - run: echo "admin frontend è cambiato — qui gireranno lint, test, build"
