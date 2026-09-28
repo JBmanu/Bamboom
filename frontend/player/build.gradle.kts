@@ -49,3 +49,11 @@ tasks.register<Exec>("dockerRun") {
     commandLine("sh", "-c", "docker run --rm -p 5173:80 player:latest")
     dependsOn("dockerBuild")
 }
+
+// -- Eslint + prettier --
+tasks.register<Exec>("lint") {
+    group       = "verification"
+    description = "Lints and checks formatting with Biome"
+    commandLine("sh", "-c", "npm run lint")
+    dependsOn("npmInstall")
+}
