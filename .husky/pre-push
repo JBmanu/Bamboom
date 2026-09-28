@@ -64,12 +64,43 @@ if has_changes "frontend/player/"; then
     cd ../..
 fi
 
-# progress (Kotlin + Scala)
+# progress (Kotlin + Scala) — test suddivisi per modulo
 if has_changes "micro-services/progress/" || has_changes "build-logic/"; then
-    echo "→ test + build: progress"
-    cd micro-services/progress && ./gradlew test && ./gradlew :app:shadowJar
-    [ $? -ne 0 ] && EXIT_CODE=1
-    cd ../..
+
+    # Kotlin — app
+    if has_changes "micro-services/progress/app/" || has_changes "build-logic/"; then
+        echo "→ test: progress/app (Kotlin)"
+        cd micro-services/progress && ./gradlew :app:test
+        [ $? -ne 0 ] && EXIT_CODE=1
+        cd ../..
+    fi
+
+    # Kotlin — player-progress
+    if has_changes "micro-services/progress/player-progress/" || has_changes "build-logic/"; then
+        echo "→ test: progress/player-progress (Kotlin)"
+        cd micro-services/progress && ./gradlew :player-progress:test
+        [ $? -ne 0 ] && EXIT_CODE=1
+        cd ../..
+    fi
+
+    # Scala — game-observatory
+    if has_changes "micro-services/progress/game-observatory/"; then
+        echo "→ test: progress/game-observatory (Scala)"
+        cd micro-services/progress && ./gradlew :game-observatory:test
+        [ $? -ne 0 ] && EXIT_CODE=1
+        cd ../..
+    fi
+
+    # Build — shadowJar (solo se app è cambiato, è lui che produce il JAR)
+    if has_changes "micro-services/progress/app/" || \
+       has_changes "micro-services/progress/player-progress/" || \
+       has_changes "micro-services/progress/game-observatory/" || \
+       has_changes "build-logic/"; then
+        echo "→ build: progress shadowJar"
+        cd micro-services/progress && ./gradlew :app:shadowJar
+        [ $? -ne 0 ] && EXIT_CODE=1
+        cd ../..
+    fi
 fi
 
 if [ $EXIT_CODE -ne 0 ]; then
