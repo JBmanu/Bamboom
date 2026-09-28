@@ -17,6 +17,17 @@ subprojects {
     }
 }
 
+// -- TEST aggregato: tutti i moduli
+tasks.register("test") {
+    group       = "verification"
+    description = "Runs tests on all modules"
+    dependsOn(
+        subprojects
+            .filter { it.tasks.findByName("test") != null }
+            .map { "${it.path}:test" }
+    )
+}
+
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
