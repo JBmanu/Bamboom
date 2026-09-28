@@ -20,3 +20,4 @@ class GameObservatory {
     def getEvents(gameId: String): JList[GameEvent] =
         events.filter(_.gameId == gameId).asJava
 }
+// test
