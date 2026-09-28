@@ -7,7 +7,7 @@
 plugins {
     id("kotlin-service-conventions")
     application
-    id("com.gradleup.shadow") version "8.3.5"
+    alias(libs.plugins.shadow)
 }
 
 group   = "com.bamboom"
@@ -27,4 +27,9 @@ dependencies {
 
 application {
     mainClass.set("com.bamboom.progress.MainKt")
+}
+
+tasks.shadowJar {
+    // Unisce i file di servizio (META-INF/services) correttamente
+    mergeServiceFiles()
 }

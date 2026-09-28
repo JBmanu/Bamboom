@@ -10,7 +10,9 @@
 #   [bundles]   → gruppi di librerie usate sempre insieme
 
 [versions]
+shadow         = "9.6.1"
 kotlin         = "2.4.0"
+detekt         = "2.0.0-alpha.5"
 coroutines     = "1.9.0"
 junit          = "5.11.0"
 logback        = "1.5.8"
@@ -28,8 +30,10 @@ scala-library       = { module = "org.scala-lang:scala3-library_3",             
 scalatest           = { module = "org.scalatest:scalatest_3",                     version.ref = "scalatest" }
 
 [plugins]
+shadow      = { id = "com.gradleup.shadow",      version.ref = "shadow" }
 kotlin-jvm  = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-scala       = { id = "scala",                     version = "unspecified" }
+detekt      = { id = "dev.detekt",               version.ref = "detekt" }
+scala       = { id = "scala",                    version = "unspecified" }
 
 [bundles]
 # "kotlin-base" = le tre dipendenze che ogni servizio Kotlin usa sempre

@@ -114,6 +114,4 @@ jobs:
   progress:
     needs: changes
     if: needs.changes.outputs.progress == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "progress è cambiato"
+    uses: ./.github/workflows/_progress.yml

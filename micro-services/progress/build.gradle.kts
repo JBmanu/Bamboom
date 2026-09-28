@@ -32,3 +32,23 @@ tasks.register<Exec>("dockerRun") {
     commandLine("sh", "-c", "docker run --rm -p 3005:8080 progress:latest")
     dependsOn("dockerBuild")
 }
+
+// -- LINT + KTLINT (detekt ) --
+tasks.register("lint") {
+    group       = "verification"
+    description = "Runs lint on all modules that support it"
+    dependsOn(
+        subprojects
+            .filter { it.tasks.findByName("lint") != null }
+            .map { "${it.path}:lint" }
+    )
+}
+tasks.register("format") {
+    group       = "formatting"
+    description = "Runs detekt auto-correct on all modules that support it"
+    dependsOn(
+        subprojects
+            .filter { it.tasks.findByName("format") != null }
+            .map { "${it.path}:format" }
+    )
+}

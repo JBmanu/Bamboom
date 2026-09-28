@@ -1,0 +1,37 @@
+# micro-services/progress/config/detekt/detekt.yml
+#
+# allRules=true (nel convention plugin) attiva TUTTE le regole.
+# Qui mettiamo solo: personalizzazioni di soglie + regole da spegnere.
+# Nomi aggiornati a detekt 2.x (ktlint invece di formatting,
+# allowedLines/allowedComplexity invece di threshold).
+
+# ── FORMATTAZIONE (ruleset ktlint nella 2.x) ──
+ktlint:
+  active: true
+  autoCorrect: true
+  MaximumLineLength:
+    maxLineLength: 180
+  Indentation:
+    indentSize: 4
+
+# ── STILE ──
+style:
+  MaxLineLength:
+    maxLineLength: 180
+  MagicNumber:
+    active: false        # troppi numeri legittimi in un gioco di carte
+
+# ── COMPLESSITÀ (nomi 2.x: allowedLines / allowedComplexity) ──
+complexity:
+  LongMethod:
+    allowedLines: 60
+  CyclomaticComplexMethod:
+    allowedComplexity: 15
+
+comments:
+  UndocumentedPublicFunction:
+    active: false        # non pretendere KDoc su ogni funzione pubblica
+  UndocumentedPublicClass:
+    active: false        # idem per le classi
+  UndocumentedPublicProperty:
+    active: false        # idem per le proprietà
