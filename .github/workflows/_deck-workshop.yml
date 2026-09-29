@@ -43,7 +43,7 @@ jobs:
         run: docker build -t deck-workshop:scan -f micro-services/deck-workshop/Dockerfile .
 
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: deck-workshop:scan
           format: table

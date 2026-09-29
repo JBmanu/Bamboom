@@ -43,7 +43,7 @@ jobs:
         run: docker build -t api-gateway:scan -f api-gateway/Dockerfile .
 
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: api-gateway:scan
           format: table
