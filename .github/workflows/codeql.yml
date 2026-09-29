@@ -57,7 +57,7 @@ jobs:
       working-directory: micro-services/progress
       run: |
         chmod +x gradlew
-        ./gradlew :app:compileKotlin :player-progress:compileKotlin --rerun-tasks
+        ./gradlew :app:compileKotlin :player-progress:compileKotlin --rerun-tasks --no-daemon -Dkotlin.compiler.execution.strategy=in-process
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
