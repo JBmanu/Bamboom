@@ -1,0 +1,25 @@
+# .github/workflows/release-please.yml
+#
+# Automatizza il versioning con release-please.
+# Legge i Conventional Commits, apre/aggiorna Release PR per ogni
+# componente toccato. Quando una Release PR viene mergiata,
+# crea il tag git corrispondente (es. progress-v0.2.0).
+
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write         # per creare tag, commit di versione, release
+  pull-requests: write    # per aprire/aggiornare le Release PR
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
