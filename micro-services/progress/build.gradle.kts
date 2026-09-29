@@ -9,6 +9,7 @@ plugins {
     id("scala-service-conventions")  apply false
 }
 
+version = "0.1.0"
 
 // Configurazione applicata a TUTTI i sotto-moduli
 subprojects {
