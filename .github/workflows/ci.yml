@@ -39,6 +39,8 @@ jobs:
       deck-workshop:   ${{ steps.filter.outputs.deck-workshop }}
       card-forge:      ${{ steps.filter.outputs.card-forge }}
       progress:        ${{ steps.filter.outputs.progress }}
+      codeql-js-ts: ${{ steps.filter.outputs.codeql-js-ts }}
+      codeql-kotlin: ${{ steps.filter.outputs.codeql-kotlin }}
     steps:
       # Scarica il codice del repo nella VM
       - uses: actions/checkout@v4
@@ -69,6 +71,18 @@ jobs:
               - 'micro-services/progress/**'
               - 'build-logic/**'
               - 'gradle/libs.versions.toml'
+            codeql-js-ts:
+              - 'api-gateway/src/**'
+              - 'frontend/player/src/**'
+              - 'micro-services/player-identity/src/**'
+              - 'micro-services/lobby-match/src/**'
+              - 'micro-services/deck-workshop/src/**'
+              - 'micro-services/card-forge/src/**'
+              - '.github/workflows/**'
+            codeql-kotlin:
+              - 'micro-services/progress/app/**'
+              - 'micro-services/progress/player-progress/**'
+              - 'build-logic/**'
 
   # ── JOB 2..N: uno scheletro per progetto ──
   # Per ora ogni job stampa solo "sono cambiato".
@@ -116,3 +130,42 @@ jobs:
     needs: changes
     if: needs.changes.outputs.progress == 'true'
     uses: ./.github/workflows/_progress.yml
+
+  codeql-js-ts:
+    needs: changes
+    if: needs.changes.outputs.codeql-js-ts == 'true'
+    uses: ./.github/workflows/_codeql-js-ts.yml
+
+  codeql-kotlin:
+    needs: changes
+    if: needs.changes.outputs.codeql-kotlin == 'true'
+    uses: ./.github/workflows/_codeql-kotlin.yml
+
+  gate:
+    name: CI Gate
+    if: always()
+    needs:
+      - changes
+      - api-gateway
+      - player-identity
+      - lobby-match
+      - deck-workshop
+      - card-forge
+      - player-frontend
+      - admin-frontend
+      - progress
+      - codeql-js-ts
+      - codeql-kotlin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all jobs status
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "❌ Almeno un job è fallito"
+            exit 1
+          fi
+          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "❌ Almeno un job è stato cancellato"
+            exit 1
+          fi
+          echo "✅ Tutti i job eseguiti sono passati (gli altri sono stati saltati)"
