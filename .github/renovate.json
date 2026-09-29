@@ -5,7 +5,7 @@
   ],
   "schedule": ["every weekend"],
   "labels": ["dependencies"],
-  "assignees": ["JBmanu"],
+  "assignees": ["JBmanu, TeoV00"],
   "packageRules": [
     {
       "description": "npm patch e minor raggruppati (api-gateway, microservizi, frontend)",
