@@ -39,6 +39,18 @@ jobs:
       - name: Build (tsc)
         run: ./gradlew :deck-workshop:build
 
+      - name: Build Docker image
+        run: docker build -t deck-workshop:scan -f micro-services/deck-workshop/Dockerfile .
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: deck-workshop:scan
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
