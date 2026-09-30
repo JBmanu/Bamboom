@@ -16,7 +16,7 @@ RUN ./gradlew :app:shadowJar --no-daemon
 
 # ── STAGE 2: runtime ──────────────────────────────────────
 FROM eclipse-temurin:25-jre AS runtime
-
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 WORKDIR /app
