@@ -1,0 +1,11 @@
+# CVE nelle dipendenze INTERNE di npm stesso (non nostre, non del progetto).
+# Riguardano tutti i servizi Node/TS che condividono l'immagine base node:22-alpine.
+# npm@latest le include ancora — non risolvibile dal nostro lato,
+# in attesa di una release npm che patchi le sue dipendenze interne.
+# Verificato: /usr/local/lib/node_modules/npm/node_modules/brace-expansion
+#
+# Rivedere periodicamente: rimuovere le righe quando npm rilascia il fix.
+
+CVE-2026-102276
+CVE-2026-102278
+CVE-2026-19534
