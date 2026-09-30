@@ -3,7 +3,7 @@
   "frontend/player": "0.2.0",
   "micro-services/player-identity": "0.2.0",
   "micro-services/lobby-match": "0.2.0",
-  "micro-services/deck-workshop": "0.2.0",
+  "micro-services/deck-workshop": "0.2.1",
   "micro-services/card-forge": "0.2.0",
   "micro-services/progress": "0.3.0"
 }
