@@ -45,3 +45,4 @@ app.listen(PORT, () => {
     console.log(`API Gateway up and running on port ${PORT}`)
 })
 // test: trigger release-please for ghcr.io validation
+// test: verify release-please and ghcr.io flow after OWNER_LC fix
