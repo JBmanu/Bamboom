@@ -33,9 +33,10 @@ tasks.register<Exec>("clean") {
 
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
-    group = "docker"
-    description = "Builds the Docker image for card-forge"
-    commandLine("sh", "-c", "docker build -t card-forge:latest .")
+    group       = "docker"
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t card-forge:$version .")
 }
 
 tasks.register<Exec>("dockerRun") {

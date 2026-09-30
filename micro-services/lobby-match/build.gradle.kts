@@ -33,9 +33,10 @@ tasks.register<Exec>("clean") {
 
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
-    group = "docker"
-    description = "Builds the Docker image for lobby-match"
-    commandLine("sh", "-c", "docker build -t lobby-match:latest .")
+    group       = "docker"
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t lobby-match:$version .")
 }
 
 tasks.register<Exec>("dockerRun") {

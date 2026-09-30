@@ -24,6 +24,8 @@ RUN npm run build
 # niente Node, niente node_modules.
 FROM nginx:alpine AS runtime
 
+RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+
 # Copia la nostra configurazione Nginx personalizzata
 # (gestisce il routing SPA — spiegato sotto)
 COPY nginx.conf /etc/nginx/conf.d/default.conf

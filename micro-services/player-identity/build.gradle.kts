@@ -41,10 +41,10 @@ tasks.register<Exec>("clean") {
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
-    description = "Builds the Docker image for player-identity"
-    commandLine("sh", "-c", "docker build -t player-identity:latest .")
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t player-identity:$version .")
 }
-
 tasks.register<Exec>("dockerRun") {
     group       = "docker"
     description = "Runs the player-identity (host 3001 → container 3000)"

@@ -1,0 +1,40 @@
+name: Release card-forge
+
+on:
+  push:
+    tags:
+      - 'card-forge-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#card-forge-v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build image with version tag
+        run: ./gradlew :card-forge:dockerBuild -PimageVersion=${{ steps.version.outputs.version }}
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push
+        run: |
+          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/card-forge:${{ steps.version.outputs.version }}
+          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/card-forge:latest
+          docker push ghcr.io/${{ github.repository_owner }}/card-forge:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/card-forge:latest
