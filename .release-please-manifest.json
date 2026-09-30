@@ -1,6 +1,6 @@
 {
   "api-gateway": "0.1.0",
-  "frontend/player": "0.1.0",
+  "frontend/player": "0.2.0",
   "micro-services/player-identity": "0.1.0",
   "micro-services/lobby-match": "0.1.0",
   "micro-services/deck-workshop": "0.1.0",
