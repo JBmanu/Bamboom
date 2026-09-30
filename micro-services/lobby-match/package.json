@@ -1,6 +1,6 @@
 {
   "name": "lobby-match",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Lobby and match bounded context",
   "main": "dist/index.js",
   "scripts": {
