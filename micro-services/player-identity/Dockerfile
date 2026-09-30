@@ -17,7 +17,8 @@ RUN npm run build
 # ── STAGE 2: runtime ──────────────────────────────────────
 FROM node:22-alpine AS runtime
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN npm install -g npm@latest && \
+    addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
