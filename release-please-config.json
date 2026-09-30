@@ -18,7 +18,7 @@
     },
     "frontend/player": {
       "release-type": "node",
-      "package-name": "player",
+      "package-name": "player-frontend",
       "changelog-path": "CHANGELOG.md"
     },
     "micro-services/player-identity": {

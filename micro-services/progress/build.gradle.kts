@@ -32,12 +32,12 @@ tasks.register("test") {
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
-    description = "Builds the Docker image for progress (fat JAR JVM)"
+    description = "Builds the Docker image for progress (fat JAR JVM) — use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest'"
     workingDir  = rootDir.parentFile.parentFile
+    val version = project.findProperty("imageVersion") ?: "latest"
     commandLine("sh", "-c",
-        "docker build -t progress:latest -f micro-services/progress/Dockerfile .")
+        "docker build -t progress:$version -f micro-services/progress/Dockerfile .")
 }
-
 tasks.register<Exec>("dockerRun") {
     group       = "docker"
     description = "Builds and runs the progress (host 3005 → container 3000)"

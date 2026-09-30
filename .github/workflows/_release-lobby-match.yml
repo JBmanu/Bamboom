@@ -1,0 +1,40 @@
+name: Release lobby-match
+
+on:
+  push:
+    tags:
+      - 'lobby-match-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#lobby-match-v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build image with version tag
+        run: ./gradlew :lobby-match:dockerBuild -PimageVersion=${{ steps.version.outputs.version }}
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push
+        run: |
+          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/lobby-match:${{ steps.version.outputs.version }}
+          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/lobby-match:latest
+          docker push ghcr.io/${{ github.repository_owner }}/lobby-match:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/lobby-match:latest

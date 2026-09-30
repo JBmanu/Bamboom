@@ -33,9 +33,10 @@ tasks.register<Exec>("clean") {
 
 // -- DOCKER --
 tasks.register<Exec>("dockerBuild") {
-    group = "docker"
-    description = "Builds the Docker image for deck-workshop"
-    commandLine("sh", "-c", "docker build -t deck-workshop:latest .")
+    group       = "docker"
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t deck-workshop:$version .")
 }
 
 tasks.register<Exec>("dockerRun") {

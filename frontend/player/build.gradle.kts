@@ -43,13 +43,12 @@ tasks.register<Exec>("clean") {
 }
 
 // -- DOCKER --
-
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
-    description = "Builds the Docker image for player frontend"
-    commandLine("sh", "-c", "docker build -t player:latest .")
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t player-frontend:$version .")
 }
-
 tasks.register<Exec>("dockerRun") {
     group       = "docker"
     description = "Builds and runs player frontend (host 5173 → container 80)"
