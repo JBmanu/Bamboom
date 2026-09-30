@@ -1,6 +1,6 @@
 {
   "name": "api-gateway",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bamboom API Gateway — single entry point, routes to microservices",
   "main": "dist/index.js",
   "scripts": {
@@ -28,6 +28,9 @@
     "typescript": "^5.7.2"
   },
   "jest": {
-    "coverageReporters": ["lcov", "text-summary"]
+    "coverageReporters": [
+      "lcov",
+      "text-summary"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "card-forge",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Card forge bounded context",
   "main": "dist/index.js",
   "scripts": {
