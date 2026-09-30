@@ -1,6 +1,6 @@
 {
   "name": "deck-workshop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deck workshop bounded context",
   "main": "dist/index.js",
   "scripts": {
@@ -23,6 +23,9 @@
     "typescript": "^5.4.5"
   },
   "jest": {
-    "coverageReporters": ["lcov", "text-summary"]
+    "coverageReporters": [
+      "lcov",
+      "text-summary"
+    ]
   }
 }
