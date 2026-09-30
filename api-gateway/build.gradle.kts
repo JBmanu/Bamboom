@@ -49,8 +49,9 @@ tasks.register<Exec>("clean") {
 
 tasks.register<Exec>("dockerBuild") {
     group       = "docker"
-    description = "Builds the Docker image for api-gateway"
-    commandLine("sh", "-c", "docker build -t api-gateway:latest .")
+    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
+    val version = project.findProperty("imageVersion") ?: "latest"
+    commandLine("sh", "-c", "docker build -t api-gateway:$version .")
 }
 
 tasks.register<Exec>("dockerRun") {

@@ -29,7 +29,10 @@ jobs:
           VERSION="${TAG#api-gateway-v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      # Login al registry con le credenziali automatiche del workflow
+      # Builda l'immagine con il tag Gradle (task riusato da Trivy)
+      - name: Build image with version tag
+        run: ./gradlew :api-gateway:dockerBuild -PimageVersion=${{ steps.version.outputs.version }}
+
       - name: Log in to ghcr.io
         uses: docker/login-action@v3
         with:
@@ -37,14 +40,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Costruisce l'immagine e la pubblica con DUE tag:
-      # uno con la versione esatta, uno "latest" per comodità
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: api-gateway/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/api-gateway:latest
+      # Ritagga l'immagine locale con il path completo di ghcr.io
+      # e la pubblica con due tag: la versione esatta + "latest"
+      - name: Tag and push
+        run: |
+          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.version.outputs.version }}
+          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/api-gateway:latest
+          docker push ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/api-gateway:latest
