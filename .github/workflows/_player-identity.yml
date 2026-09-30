@@ -40,16 +40,17 @@ jobs:
         run: ./gradlew :player-identity:build
 
       - name: Build Docker image
-        run: docker build -t player-identity:scan -f micro-services/player-identity/Dockerfile .
+        run: ./gradlew :player-identity:dockerBuild
 
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          image-ref: player-identity:scan
+          image-ref: player-identity:latest
           format: table
           severity: CRITICAL,HIGH
           exit-code: 1
           ignore-unfixed: true
+          trivyignores: .trivyignore
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
