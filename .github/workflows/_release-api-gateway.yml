@@ -46,11 +46,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Ritagga l'immagine locale con il path completo di ghcr.io
-      # e la pubblica con due tag: la versione esatta + "latest"
       - name: Tag and push
         run: |
-          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.version.outputs.version }}
-          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/api-gateway:latest
-          docker push ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/api-gateway:latest
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/api-gateway:${{ steps.version.outputs.version }}
+          docker tag api-gateway:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/api-gateway:latest
+          docker push ghcr.io/$OWNER_LC/api-gateway:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/api-gateway:latest

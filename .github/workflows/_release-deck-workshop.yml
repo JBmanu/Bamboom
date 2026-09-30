@@ -40,7 +40,8 @@ jobs:
 
       - name: Tag and push
         run: |
-          docker tag deck-workshop:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/deck-workshop:${{ steps.version.outputs.version }}
-          docker tag deck-workshop:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/deck-workshop:latest
-          docker push ghcr.io/${{ github.repository_owner }}/deck-workshop:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/deck-workshop:latest
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag deck-workshop:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/deck-workshop:${{ steps.version.outputs.version }}
+          docker tag deck-workshop:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/deck-workshop:latest
+          docker push ghcr.io/$OWNER_LC/deck-workshop:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/deck-workshop:latest

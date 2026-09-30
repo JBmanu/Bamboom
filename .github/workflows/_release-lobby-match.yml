@@ -40,7 +40,8 @@ jobs:
 
       - name: Tag and push
         run: |
-          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/lobby-match:${{ steps.version.outputs.version }}
-          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/lobby-match:latest
-          docker push ghcr.io/${{ github.repository_owner }}/lobby-match:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/lobby-match:latest
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/lobby-match:${{ steps.version.outputs.version }}
+          docker tag lobby-match:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/lobby-match:latest
+          docker push ghcr.io/$OWNER_LC/lobby-match:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/lobby-match:latest

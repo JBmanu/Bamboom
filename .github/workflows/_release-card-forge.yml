@@ -40,7 +40,8 @@ jobs:
 
       - name: Tag and push
         run: |
-          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/card-forge:${{ steps.version.outputs.version }}
-          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/card-forge:latest
-          docker push ghcr.io/${{ github.repository_owner }}/card-forge:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/card-forge:latest
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/card-forge:${{ steps.version.outputs.version }}
+          docker tag card-forge:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/card-forge:latest
+          docker push ghcr.io/$OWNER_LC/card-forge:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/card-forge:latest
