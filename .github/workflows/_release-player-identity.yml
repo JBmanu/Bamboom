@@ -40,7 +40,8 @@ jobs:
 
       - name: Tag and push
         run: |
-          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/player-identity:${{ steps.version.outputs.version }}
-          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/${{ github.repository_owner }}/player-identity:latest
-          docker push ghcr.io/${{ github.repository_owner }}/player-identity:${{ steps.version.outputs.version }}
-          docker push ghcr.io/${{ github.repository_owner }}/player-identity:latest
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/player-identity:${{ steps.version.outputs.version }}
+          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/player-identity:latest
+          docker push ghcr.io/$OWNER_LC/player-identity:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/player-identity:latest
