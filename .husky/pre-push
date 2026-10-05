@@ -17,7 +17,7 @@
 # ─────────────────────────────────────────────────────────────────
 
 # ── 1. Valida nome del branch ────────────────────────────────────
-PATTERN='^(main|master|develop|(feat|fix|hotfix|release|chore|cursor|test|ci)/[a-z0-9]+(\.[a-z0-9]+)*(-[a-z0-9]+(\.[a-z0-9]+)*)*)$'
+PATTERN='^(main|master|develop|(feat|fix|refactor|hotfix|release|chore|cursor|test|ci)/[a-z0-9]+(\.[a-z0-9]+)*(-[a-z0-9]+(\.[a-z0-9]+)*)*)$'
 BRANCH=$(git symbolic-ref --short HEAD)
 
 if ! printf '%s' "$BRANCH" | grep -qE "$PATTERN"; then
