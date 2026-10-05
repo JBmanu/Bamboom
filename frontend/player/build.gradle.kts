@@ -1,6 +1,12 @@
-// frontend/player/build.gradle.kts
+plugins {
+    id("docker-conventions")
+}
 
-// -- NODE / BUILD --
+dockerImage {
+    imageName = "player-frontend"
+    hostPort = 5173
+    containerPort = 80
+}
 
 tasks.register<Exec>("npmInstall") {
     group       = "node"
@@ -40,20 +46,6 @@ tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans the player dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t player-frontend:$version .")
-}
-tasks.register<Exec>("dockerRun") {
-    group       = "docker"
-    description = "Builds and runs player frontend (host 5173 → container 80)"
-    commandLine("sh", "-c", "docker run --rm -p 5173:80 player:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- Eslint + prettier --

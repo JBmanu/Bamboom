@@ -1,3 +1,13 @@
+plugins {
+    id("docker-conventions")
+}
+
+dockerImage {
+    imageName = "deck-workshop"
+    hostPort = 3003
+    containerPort = 3000
+}
+
 tasks.register<Exec>("npmInstall") {
     group       = "node"
     description = "Installs npm dependencies"
@@ -29,21 +39,6 @@ tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans deck-workshop dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t deck-workshop:$version .")
-}
-
-tasks.register<Exec>("dockerRun") {
-    group = "docker"
-    description = "Runs the deck-workshop (host 3003 → container 3000)"
-    commandLine("sh", "-c", "docker run --rm -p 3003:3000 deck-workshop:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- BIOME --

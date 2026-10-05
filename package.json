@@ -54,7 +54,7 @@
       "bash -c 'cd micro-services/progress && ./gradlew :player-progress:lint'"
     ],
     "build-logic/**/*.kt": [
-      "bash -c 'cd micro-services/progress && ./gradlew :progress:lint'"
+      "bash -c 'cd micro-services/progress && ./gradlew lint'"
     ]
   }
 }

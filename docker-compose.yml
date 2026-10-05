@@ -1,17 +1,10 @@
-# docker-compose.yml (ROOT)
-#
-# Orchestrazione per SVILUPPO LOCALE.
-# Avvia tutti i componenti insieme in una rete condivisa
-# dove si vedono per NOME (non per porta host).
-
 services:
-
   # -- FRONTEND --
   player:
     build:
       context: ./frontend/player
       dockerfile: Dockerfile
-    image: player:latest
+    image: player-frontend:latest
     ports:
       - "5173:80"       # host 5173 → container 80 (Nginx)
     networks:
@@ -30,15 +23,11 @@ services:
     networks:
       - bamboom-network
     environment:
-      # DENTRO la rete Docker i servizi si chiamano per NOME
-      # e usano la porta INTERNA (non la porta host).
-      # Es: player-identity ascolta su 3000 dentro il container,
-      # e il gateway lo raggiunge come http://player-identity:3000
       - PLAYER_IDENTITY_URL=http://player-identity:3000
       - LOBBY_MATCH_URL=http://lobby-match:3000
       - DECK_WORKSHOP_URL=http://deck-workshop:3000
       - CARD_FORGE_URL=http://card-forge:3000
-      - PROGRESS_URL=http://progress:8080
+      - PROGRESS_URL=http://progress:3000
     depends_on:
       - player-identity
       - lobby-match
@@ -93,7 +82,7 @@ services:
       dockerfile: micro-services/progress/Dockerfile
     image: progress:latest
     ports:
-      - "3005:8080"
+      - "3005:3000"
     networks:
       - bamboom-network
 

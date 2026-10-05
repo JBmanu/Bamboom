@@ -26,7 +26,7 @@ COPY --from=builder /monorepo/micro-services/progress/app/build/libs/*-all.jar .
 
 USER appuser
 
-EXPOSE 8080
+EXPOSE 3000
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 

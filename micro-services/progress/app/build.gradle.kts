@@ -1,17 +1,8 @@
-// micro-services/progress/app/build.gradle.kts
-//
-// Modulo assembly: dipende da player-progress e game-observatory
-// ed è l'unico modulo con un main eseguibile.
-// Produce il JAR finale che va nel container Docker.
-
 plugins {
-    id("kotlin-service-conventions")
     application
     alias(libs.plugins.shadow)
+    id("kotlin-service-conventions")
 }
-
-group   = "com.bamboom"
-version = "0.1.0"
 
 dependencies {
     // Dipende dai due bounded context interni

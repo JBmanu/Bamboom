@@ -1,3 +1,13 @@
+plugins {
+    id("docker-conventions")
+}
+
+dockerImage {
+    imageName = "lobby-match"
+    hostPort = 3002
+    containerPort = 3000
+}
+
 tasks.register<Exec>("npmInstall") {
     group = "node"
     description = "Installs npm dependencies"
@@ -29,21 +39,6 @@ tasks.register<Exec>("clean") {
     group = "build"
     description = "Cleans lobby-match dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t lobby-match:$version .")
-}
-
-tasks.register<Exec>("dockerRun") {
-    group = "docker"
-    description = "Runs the lobby-match (host 3002 → container 3000)"
-    commandLine("sh", "-c", "docker run --rm -p 3002:3000 lobby-match:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- BIOME --
