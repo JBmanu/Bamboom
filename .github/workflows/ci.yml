@@ -1,38 +1,21 @@
-# .github/workflows/ci.yml
-#
-# Workflow CI principale del monorepo Bamboom.
-# Rileva quali progetti sono cambiati in una PR e fa girare
-# solo i job dei progetti effettivamente toccati (path filtering).
-
 name: CI
 
-# ── TRIGGER: quando parte questo workflow ──
 on:
-  pull_request:              # a ogni apertura/aggiornamento di PR...
-    branches: [main]         # ...che punta a main
+  pull_request:
+    branches: [main]
   push:
-    branches: [main]         # e anche su push diretti a main (dopo il merge)
+    branches: [main]
 
-# ── PERMESSI ──
-# contents: read       → leggere il codice del repo
-# pull-requests: read  → leggere i metadati della PR (lista file cambiati)
-#                        necessario a dorny/paths-filter sulle pull request
 permissions:
   contents: read
   pull-requests: write
   actions: read
-  packages: read
+  packages: write
   security-events: write
 
 jobs:
-
-  # ── JOB 1: rileva cosa è cambiato ──
-  # Questo job gira sempre per primo. Usa dorny/paths-filter per
-  # capire quali progetti sono stati toccati nella PR, e "pubblica"
-  # il risultato come output che gli altri job leggeranno.
   changes:
     runs-on: ubuntu-latest
-    # "outputs" espone i risultati del filtro agli altri job
     outputs:
       player-frontend: ${{ steps.filter.outputs.player-frontend }}
       admin-frontend:  ${{ steps.filter.outputs.admin-frontend }}
@@ -45,13 +28,10 @@ jobs:
       codeql-js-ts: ${{ steps.filter.outputs.codeql-js-ts }}
       codeql-kotlin: ${{ steps.filter.outputs.codeql-kotlin }}
     steps:
-      # Scarica il codice del repo nella VM
       - uses: actions/checkout@v4
 
-      # dorny/paths-filter confronta i file cambiati con i pattern
-      # definiti sotto "filters" e produce un output true/false per ognuno
       - uses: dorny/paths-filter@v3
-        id: filter                    # id per riferirci ai suoi output
+        id: filter
         with:
           filters: |
             player-frontend:
@@ -87,15 +67,10 @@ jobs:
               - 'micro-services/progress/player-progress/**'
               - 'build-logic/**'
 
-  # ── JOB 2..N: uno scheletro per progetto ──
-  # Per ora ogni job stampa solo "sono cambiato".
-  # La condizione "if" fa sì che il job parta SOLO se il filtro
-  # ha rilevato modifiche a quel progetto.
-
   player-frontend:
     needs: changes
     if: needs.changes.outputs.player-frontend == 'true'
-    uses: ./.github/workflows/_player-frontend.yml
+    uses: ./.github/workflows/svc-player-frontend.yml
 
   admin-frontend:
     needs: changes
@@ -107,42 +82,40 @@ jobs:
   api-gateway:
     needs: changes
     if: needs.changes.outputs.api-gateway == 'true'
-    uses: ./.github/workflows/_api-gateway.yml
+    uses: ./.github/workflows/svc-api-gateway.yml
 
   player-identity:
     needs: changes
     if: needs.changes.outputs.player-identity == 'true'
-    uses: ./.github/workflows/_player-identity.yml
+    uses: ./.github/workflows/svc-player-identity.yml
 
   lobby-match:
     needs: changes
     if: needs.changes.outputs.lobby-match == 'true'
-    uses: ./.github/workflows/_lobby-match.yml
+    uses: ./.github/workflows/svc-lobby-match.yml
 
   deck-workshop:
     needs: changes
     if: needs.changes.outputs.deck-workshop == 'true'
-    uses: ./.github/workflows/_deck-workshop.yml
+    uses: ./.github/workflows/svc-deck-workshop.yml
 
   card-forge:
     needs: changes
     if: needs.changes.outputs.card-forge == 'true'
-    uses: ./.github/workflows/_card-forge.yml
+    uses: ./.github/workflows/svc-card-forge.yml
 
   progress:
     needs: changes
     if: needs.changes.outputs.progress == 'true'
-    uses: ./.github/workflows/_progress.yml
+    uses: ./.github/workflows/svc-progress.yml
 
-  codeql-js-ts:
+  codeql:
     needs: changes
-    if: needs.changes.outputs.codeql-js-ts == 'true'
-    uses: ./.github/workflows/_codeql-js-ts.yml
-
-  codeql-kotlin:
-    needs: changes
-    if: needs.changes.outputs.codeql-kotlin == 'true'
-    uses: ./.github/workflows/_codeql-kotlin.yml
+    if: needs.changes.outputs.codeql-js-ts == 'true' || needs.changes.outputs.codeql-kotlin == 'true'
+    uses: ./.github/workflows/codeql.yml
+    with:
+      js-ts: ${{ needs.changes.outputs.codeql-js-ts == 'true' }}
+      kotlin: ${{ needs.changes.outputs.codeql-kotlin == 'true' }}
 
   gate:
     name: CI Gate
@@ -157,8 +130,7 @@ jobs:
       - player-frontend
       - admin-frontend
       - progress
-      - codeql-js-ts
-      - codeql-kotlin
+      - codeql
     runs-on: ubuntu-latest
     steps:
       - name: Check all jobs status
