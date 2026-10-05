@@ -109,15 +109,13 @@ jobs:
     if: needs.changes.outputs.progress == 'true'
     uses: ./.github/workflows/svc-progress.yml
 
-  codeql-js-ts:
+  codeql:
     needs: changes
-    if: needs.changes.outputs.codeql-js-ts == 'true'
-    uses: ./.github/workflows/_codeql-js-ts.yml
-
-  codeql-kotlin:
-    needs: changes
-    if: needs.changes.outputs.codeql-kotlin == 'true'
-    uses: ./.github/workflows/_codeql-kotlin.yml
+    if: needs.changes.outputs.codeql-js-ts == 'true' || needs.changes.outputs.codeql-kotlin == 'true'
+    uses: ./.github/workflows/codeql.yml
+    with:
+      js-ts: ${{ needs.changes.outputs.codeql-js-ts == 'true' }}
+      kotlin: ${{ needs.changes.outputs.codeql-kotlin == 'true' }}
 
   gate:
     name: CI Gate
@@ -132,8 +130,7 @@ jobs:
       - player-frontend
       - admin-frontend
       - progress
-      - codeql-js-ts
-      - codeql-kotlin
+      - codeql
     runs-on: ubuntu-latest
     steps:
       - name: Check all jobs status
