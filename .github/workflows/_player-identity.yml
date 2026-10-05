@@ -1,11 +1,18 @@
+name: player-identity
+
 on:
   workflow_call:
+  push:
+    tags:
+      - 'player-identity-v*'
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   verify:
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "player-identity è cambiato"
@@ -59,3 +66,40 @@ jobs:
           files: micro-services/player-identity/coverage/lcov.info
           flags: player-identity
           fail_ci_if_error: false
+
+  release:
+    if: ${{ startsWith(github.ref, 'refs/tags/player-identity-v') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#player-identity-v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Build image with version tag
+        run: ./gradlew :player-identity:dockerBuild -PimageVersion=${{ steps.version.outputs.version }}
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push
+        run: |
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/player-identity:${{ steps.version.outputs.version }}
+          docker tag player-identity:${{ steps.version.outputs.version }} ghcr.io/$OWNER_LC/player-identity:latest
+          docker push ghcr.io/$OWNER_LC/player-identity:${{ steps.version.outputs.version }}
+          docker push ghcr.io/$OWNER_LC/player-identity:latest
