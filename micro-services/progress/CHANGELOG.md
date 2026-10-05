@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/JBmanu/Bamboom/compare/progress-v0.3.0...progress-v0.3.1) (2026-10-05)
+
+
+### Code Refactoring
+
+* share docker build tasks via docker-conventions plugin ([#59](https://github.com/JBmanu/Bamboom/issues/59)) ([99bbd53](https://github.com/JBmanu/Bamboom/commit/99bbd5367c9955240063a63f6e1d49cd10e0fae5))
+
 ## [0.3.0](https://github.com/JBmanu/Bamboom/compare/progress-v0.2.1...progress-v0.3.0) (2026-09-30)
 
 
