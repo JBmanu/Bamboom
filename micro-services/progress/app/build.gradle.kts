@@ -1,7 +1,7 @@
 plugins {
     application
     alias(libs.plugins.shadow)
-    id("kotlin-service-conventions")
+    id("kotlin-conventions")
 }
 
 dependencies {

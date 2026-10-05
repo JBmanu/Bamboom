@@ -1,6 +1,6 @@
 import dev.detekt.gradle.Detekt
 
-// build-logic/src/main/kotlin/kotlin-service-conventions.gradle.kts
+// build-logic/src/main/kotlin/kotlin-conventions.gradle.kts
 
 // In cima al blocco, recupera la versione dal catalog.
 // Nei precompiled script plugin, il version catalog si accede
