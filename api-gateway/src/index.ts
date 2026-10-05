@@ -20,7 +20,7 @@ const services = {
     '/api/lobby': process.env.LOBBY_MATCH_URL || 'http://localhost:3002',
     '/api/decks': process.env.DECK_WORKSHOP_URL || 'http://localhost:3003',
     '/api/cards': process.env.CARD_FORGE_URL || 'http://localhost:3004',
-    '/api/progress': process.env.PROGRESS_URL || 'http://localhost:3005', // ← era 8080
+    '/api/progress': process.env.PROGRESS_URL || 'http://localhost:3005',
 }
 
 // Health check: utile per verificare che il gateway sia vivo
@@ -44,7 +44,3 @@ for (const [path, target] of Object.entries(services)) {
 app.listen(PORT, () => {
     console.log(`API Gateway up and running on port ${PORT}`)
 })
-// test: trigger release-please for ghcr.io validation
-// test: verify release-please and ghcr.io flow after OWNER_LC fix
-// test: verify signed commits requirement with release-please
-// test: verify GitHub App produces signed release-please commits

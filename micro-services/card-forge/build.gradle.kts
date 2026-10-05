@@ -1,3 +1,13 @@
+plugins {
+    id("docker-conventions")
+}
+
+dockerImage {
+    imageName = "card-forge"
+    hostPort = 3004
+    containerPort = 3000
+}
+
 tasks.register<Exec>("npmInstall") {
     group       = "node"
     description = "Installs npm dependencies"
@@ -29,21 +39,6 @@ tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans card-forge dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t card-forge:$version .")
-}
-
-tasks.register<Exec>("dockerRun") {
-    group = "docker"
-    description = "Runs the card-forge (host 3004 → container 3000)"
-    commandLine("sh", "-c", "docker run --rm -p 3004:3000 card-forge:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- BIOME --

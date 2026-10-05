@@ -1,24 +1,24 @@
-// micro-services/progress/build.gradle.kts
-//
-// File ROOT di progress. NON compila codice: contiene solo
-// la configurazione comune ai 3 moduli interni
-// (player-progress, game-observatory, app) e i task Docker.
+import org.gradle.kotlin.dsl.apply
 
 plugins {
+    id("docker-conventions")
     id("kotlin-service-conventions") apply false
     id("scala-service-conventions")  apply false
 }
 
-version = "0.1.0"
-
-// Configurazione applicata a TUTTI i sotto-moduli
 subprojects {
     repositories {
         mavenCentral()
     }
 }
 
-// -- TEST aggregato: tutti i moduli
+dockerImage {
+    imageName = "progress"
+    hostPort = 3005
+    containerPort = 3000
+    buildFromRepoRoot = true
+}
+
 tasks.register("test") {
     group       = "verification"
     description = "Runs tests on all modules"
@@ -27,22 +27,6 @@ tasks.register("test") {
             .filter { it.tasks.findByName("test") != null }
             .map { "${it.path}:test" }
     )
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image for progress (fat JAR JVM) — use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest'"
-    workingDir  = rootDir.parentFile.parentFile
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c",
-        "docker build -t progress:$version -f micro-services/progress/Dockerfile .")
-}
-tasks.register<Exec>("dockerRun") {
-    group       = "docker"
-    description = "Builds and runs the progress (host 3005 → container 3000)"
-    commandLine("sh", "-c", "docker run --rm -p 3005:8080 progress:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- LINT / FORMAT aggregato: tutti i moduli che hanno il task lint/format --

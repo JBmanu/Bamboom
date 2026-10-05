@@ -1,10 +1,14 @@
-// api-gateway/build.gradle.kts
-//
-// Punto di ingresso Gradle per l'API Gateway.
-// Delega build a npm/tsc e containerizzazione a Docker.
+plugins {
+    id("docker-conventions")
+}
+
+dockerImage {
+    imageName = "api-gateway"
+    hostPort = 8000
+    containerPort = 8000
+}
 
 // -- NODE / BUILD --
-
 tasks.register<Exec>("npmInstall") {
     group       = "node"
     description = "Installs npm dependencies"
@@ -43,22 +47,6 @@ tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans the API Gateway dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t api-gateway:$version .")
-}
-
-tasks.register<Exec>("dockerRun") {
-    group       = "docker"
-    description = "Builds and runs api-gateway (host 8000 → container 8000)"
-    commandLine("sh", "-c", "docker run --rm -p 8000:8000 api-gateway:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- BIOME --

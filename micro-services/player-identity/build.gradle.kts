@@ -1,9 +1,12 @@
-// micro-services/player-identity/build.gradle.kts
-//
-// Questo file è il punto di ingresso Gradle per player-identity.
-// Non compila nulla direttamente — delega tutto a npm.
-// In questo modo il servizio è autonomo: si può buildare
-// sia dalla root che dalla sua cartella con ./gradlew build.
+plugins {
+    id("docker-conventions")
+}
+
+dockerImage {
+    imageName = "player-identity"
+    hostPort = 3001
+    containerPort = 3000
+}
 
 tasks.register<Exec>("npmInstall") {
     group       = "node"
@@ -36,20 +39,6 @@ tasks.register<Exec>("clean") {
     group       = "build"
     description = "Cleans player-identity dist folder"
     commandLine("sh", "-c", "npm run clean")
-}
-
-// -- DOCKER --
-tasks.register<Exec>("dockerBuild") {
-    group       = "docker"
-    description = "Builds the Docker image (use -PimageVersion=X.Y.Z for a specific tag, defaults to 'latest')"
-    val version = project.findProperty("imageVersion") ?: "latest"
-    commandLine("sh", "-c", "docker build -t player-identity:$version .")
-}
-tasks.register<Exec>("dockerRun") {
-    group       = "docker"
-    description = "Runs the player-identity (host 3001 → container 3000)"
-    commandLine("sh", "-c", "docker run --rm -p 3001:3000 player-identity:latest")
-    dependsOn("dockerBuild")
 }
 
 // -- BIOME --
