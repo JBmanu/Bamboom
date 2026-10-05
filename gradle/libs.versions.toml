@@ -20,7 +20,7 @@ junit          = "5.11.0"
 logback        = "1.5.8"
 scala          = "3.3.6"
 scalatest      = "3.2.18"
-scalafmt       = "3.9.6"
+scalafmt       = "3.11.5"
 scalafix       = "0.3.0"
 jvm-target     = "25"
 
