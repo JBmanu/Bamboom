@@ -1,6 +1,6 @@
 {
   "name": "player-identity",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Player identity bounded context",
   "main": "dist/index.js",
   "scripts": {
