@@ -72,7 +72,7 @@ tasks.register<Detekt>("format") {
 
 // ── JACOCO (coverage) ──
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.15"
 }
 
 tasks.withType<Test> {
