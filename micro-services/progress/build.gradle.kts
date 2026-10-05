@@ -2,8 +2,8 @@ import org.gradle.kotlin.dsl.apply
 
 plugins {
     id("docker-conventions")
-    id("kotlin-service-conventions") apply false
-    id("scala-service-conventions")  apply false
+    id("kotlin-conventions") apply false
+    id("scala-conventions")  apply false
 }
 
 subprojects {

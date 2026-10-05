@@ -1,5 +1,5 @@
 plugins {
-    id("scala-service-conventions")
+    id("scala-conventions")
 }
 
 dependencies {
