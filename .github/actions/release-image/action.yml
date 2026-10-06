@@ -1,0 +1,47 @@
+name: Release image
+description: Builds the versioned Docker image of a service and pushes it to ghcr.io
+inputs:
+  project:
+    description: Gradle project name (card-forge, player, ...)
+    required: true
+  image:
+    description: Image name (card-forge, player-frontend, ...)
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup-jvm
+
+    - name: Read version from tag
+      id: version
+      shell: bash
+      run: |
+        VERSION="${GITHUB_REF_NAME##*-v}"
+        [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]] || { echo "Unexpected tag: $GITHUB_REF_NAME"; exit 1; }
+        echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Build image
+      shell: bash
+      env:
+        PROJECT: ${{ inputs.project }}
+        VERSION: ${{ steps.version.outputs.value }}
+      run: ./gradlew ":$PROJECT:dockerBuild" -PimageVersion="$VERSION"
+
+    - uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Tag and push
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+        VERSION: ${{ steps.version.outputs.value }}
+      run: |
+        # Docker richiede nomi in minuscolo (JBmanu -> jbmanu)
+        TARGET="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/$IMAGE"
+        docker tag "$IMAGE:$VERSION" "$TARGET:$VERSION"
+        docker tag "$IMAGE:$VERSION" "$TARGET:latest"
+        docker push "$TARGET:$VERSION"
+        docker push "$TARGET:latest"
