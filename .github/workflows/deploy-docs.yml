@@ -2,8 +2,10 @@ name: Deploy VitePress site to Pages
 
 on:
   push:
-    branches: [main]
-
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0 # Not needed if lastUpdated is not enabled
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v6
