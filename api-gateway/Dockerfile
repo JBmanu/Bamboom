@@ -1,6 +1,6 @@
 # ── STAGE 1: builder ──────────────────────────────────────
 # Compila TypeScript → JavaScript
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
@@ -9,7 +9,7 @@ COPY src/ ./src/
 RUN npm run build
 
 # ── STAGE 2: runtime ──────────────────────────────────────
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 
 # Aggiorna npm (fix CVE) e crea l'utente non-root in un solo layer
 RUN npm install -g npm@latest && \

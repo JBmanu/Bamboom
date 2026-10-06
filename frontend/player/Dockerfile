@@ -1,6 +1,6 @@
 # ── STAGE 1: builder ──────────────────────────────────────
 # Compila l'app Vue con Node → produce file statici in dist/
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
