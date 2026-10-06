@@ -1,0 +1,17 @@
+name: Trivy scan
+description: Scans a local Docker image for CRITICAL/HIGH CVEs
+inputs:
+  image:
+    description: Image to scan (name:tag)
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: ${{ inputs.image }}
+        format: table
+        severity: CRITICAL,HIGH
+        exit-code: 1
+        ignore-unfixed: true
+        trivyignores: .trivyignore
