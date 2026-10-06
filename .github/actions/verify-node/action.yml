@@ -18,7 +18,7 @@ runs:
   steps:
     - uses: actions/setup-node@v4
       with:
-        node-version: 22
+        node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: ${{ inputs.path }}/package-lock.json
     - uses: ./.github/actions/setup-jvm
