@@ -48,9 +48,8 @@ runs:
       with:
         image: ${{ inputs.image }}:latest
 
-    - uses: codecov/codecov-action@v5
+    - uses: ./.github/actions/upload-coverage
       with:
         token: ${{ inputs.codecov-token }}
         files: ${{ inputs.path }}/coverage/lcov.info
         flags: ${{ inputs.image }}
-        fail_ci_if_error: false

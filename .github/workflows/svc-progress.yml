@@ -37,29 +37,23 @@ jobs:
         with:
           image: progress:latest
 
-      - name: Upload coverage — app (Kotlin)
-        uses: codecov/codecov-action@v5
+      - uses: ./.github/actions/upload-coverage
         with:
+          files: progress-app
+          flags: micro-services/progress/app/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: micro-services/progress/app/build/reports/jacoco/test/jacocoTestReport.xml
-          flags: progress-app
-          fail_ci_if_error: false
 
-      - name: Upload coverage — player-progress (Kotlin BC)
-        uses: codecov/codecov-action@v5
+      - uses: ./.github/actions/upload-coverage
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: micro-services/progress/player-progress/build/reports/jacoco/test/jacocoTestReport.xml
           flags: progress-player-progress
-          fail_ci_if_error: false
 
-      - name: Upload coverage — game-observatory (Scala BC)
-        uses: codecov/codecov-action@v5
+      - uses: ./.github/actions/upload-coverage
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: micro-services/progress/game-observatory/build/reports/jacoco/test/jacocoTestReport.xml
           flags: progress-game-observatory
-          fail_ci_if_error: false
 
   release:
     if: ${{ startsWith(github.ref, 'refs/tags/progress-v') }}
