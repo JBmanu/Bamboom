@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.2...deck-workshop-v0.2.3) (2026-10-06)
+
+
+### Bug Fixes
+
+* correct deck-workshop tag prefix in release condition ([#68](https://github.com/JBmanu/Bamboom/issues/68)) ([4f08438](https://github.com/JBmanu/Bamboom/commit/4f08438a106915fd5e92d4ad2e01c71e588a1b7b))
+
 ## [0.2.2](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.1...deck-workshop-v0.2.2) (2026-10-05)
 
 
