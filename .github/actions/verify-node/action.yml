@@ -1,0 +1,56 @@
+name: Verify Node service
+description: Lint, type-check, test, build, image scan and coverage for a TS service
+inputs:
+  project:
+    description: Gradle project name (card-forge, player, ...)
+    required: true
+  path:
+    description: Service folder (micro-services/card-forge, ...)
+    required: true
+  image:
+    description: Docker image name (card-forge, player-frontend, ...)
+    required: true
+  codecov-token:
+    description: Passed as input because secrets are not visible inside actions
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+        cache-dependency-path: ${{ inputs.path }}/package-lock.json
+    - uses: ./.github/actions/setup-jvm
+
+    - name: Lint
+      shell: bash
+      env: { PROJECT: "${{ inputs.project }}" }
+      run: ./gradlew ":$PROJECT:lint"
+    - name: Type-check
+      shell: bash
+      env: { PROJECT: "${{ inputs.project }}" }
+      run: ./gradlew ":$PROJECT:type-check"
+    - name: Test
+      shell: bash
+      env: { PROJECT: "${{ inputs.project }}" }
+      run: ./gradlew ":$PROJECT:test"
+    - name: Build
+      shell: bash
+      env: { PROJECT: "${{ inputs.project }}" }
+      run: ./gradlew ":$PROJECT:build"
+    - name: Build Docker image
+      shell: bash
+      env: { PROJECT: "${{ inputs.project }}" }
+      run: ./gradlew ":$PROJECT:dockerBuild"
+
+    - uses: ./.github/actions/trivy-scan
+      with:
+        image: ${{ inputs.image }}:latest
+
+    - uses: codecov/codecov-action@v5
+      with:
+        token: ${{ inputs.codecov-token }}
+        files: ${{ inputs.path }}/coverage/lcov.info
+        flags: ${{ inputs.image }}
+        fail_ci_if_error: false

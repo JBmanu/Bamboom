@@ -15,56 +15,13 @@ jobs:
     if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "player-frontend è cambiato"
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/verify-node
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/player/package-lock.json
-
-      - name: Set up JDK 25
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 25
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Lint (ESLint + Prettier)
-        run: ./gradlew :player:lint
-
-      - name: Type-check (vue-tsc)
-        run: ./gradlew :player:type-check
-
-      - name: Test (Vitest)
-        run: ./gradlew :player:test
-
-      - name: Build (vue-tsc + vite)
-        run: ./gradlew :player:build
-
-      - name: Build Docker image
-        run: ./gradlew :player:dockerBuild
-
-      - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: player-frontend:latest
-          format: table
-          severity: CRITICAL,HIGH
-          exit-code: 1
-          ignore-unfixed: true
-          trivyignores: .trivyignore
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: frontend/player/coverage/lcov.info
-          flags: player-frontend
-          fail_ci_if_error: false
+          project: player
+          path: frontend/player
+          image: player-frontend
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
   release:
     if: ${{ startsWith(github.ref, 'refs/tags/player-frontend-v') }}

@@ -34,34 +34,52 @@ jobs:
         id: filter
         with:
           filters: |
+            shared: &shared
+              - 'build-logic/**'
+              - '.github/actions/**'
             player-frontend:
+              - *shared
+              - '.github/workflows/svc-player-frontend.yml'
               - 'frontend/player/**'
               - 'frontend/.prettierrc.json'
             admin-frontend:
+              - *shared
               - 'frontend/admin/**'
               - 'frontend/.prettierrc.json'
             api-gateway:
+              - *shared
+              - '.github/workflows/svc-api-gateway.yml'
               - 'api-gateway/**'
             player-identity:
+              - *shared
+              - '.github/workflows/svc-player-identity.yml'
               - 'micro-services/player-identity/**'
             lobby-match:
+              - *shared
+              - '.github/workflows/svc-lobby-match.yml'
               - 'micro-services/lobby-match/**'
             deck-workshop:
+              - *shared
+              - '.github/workflows/svc-deck-workshop.yml'
               - 'micro-services/deck-workshop/**'
             card-forge:
+              - *shared
+              - '.github/workflows/svc-card-forge.yml'
               - 'micro-services/card-forge/**'
             progress:
+              - *shared
+              - '.github/workflows/svc-progress.yml'
               - 'micro-services/progress/**'
-              - 'build-logic/**'
               - 'gradle/libs.versions.toml'
             codeql-js-ts:
               - 'api-gateway/src/**'
               - 'frontend/player/src/**'
+              - 'frontend/admin/src/**'
               - 'micro-services/player-identity/src/**'
               - 'micro-services/lobby-match/src/**'
               - 'micro-services/deck-workshop/src/**'
               - 'micro-services/card-forge/src/**'
-              - '.github/workflows/**'
+              - '.github/**'
             codeql-kotlin:
               - 'micro-services/progress/app/**'
               - 'micro-services/progress/player-progress/**'
