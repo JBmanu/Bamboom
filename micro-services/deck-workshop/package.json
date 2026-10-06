@@ -1,6 +1,6 @@
 {
   "name": "deck-workshop",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Deck workshop bounded context",
   "main": "dist/index.js",
   "scripts": {
