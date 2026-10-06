@@ -1,0 +1,21 @@
+name: Upload coverage
+description: Uploads a coverage report to Codecov under a flag
+inputs:
+  token:
+    description: Codecov token (passed as input, secrets are not visible in actions)
+    required: true
+  files:
+    description: Coverage report path
+    required: true
+  flags:
+    description: Codecov flag
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: codecov/codecov-action@v5
+      with:
+        token: ${{ inputs.token }}
+        files: ${{ inputs.files }}
+        flags: ${{ inputs.flags }}
+        fail_ci_if_error: false
