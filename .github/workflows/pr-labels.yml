@@ -1,0 +1,95 @@
+name: PR labels
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  label:
+    # le PR da fork non hanno un token con permessi di scrittura
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Validate the title and set labels
+        env:
+          # il titolo è un input non fidato: va passato solo via env, mai dentro il run
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+
+          # type(scope)?!?: description  (stessi tipi di commitlint)
+          RE='^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\([A-Za-z0-9._/-]+\))?(!)?: .+'
+          if [[ ! "$TITLE" =~ $RE ]]; then
+            echo "::error::PR title must be a Conventional Commit: type(scope)?: description"
+            exit 1
+          fi
+          TYPE="${BASH_REMATCH[1]}"
+          BANG="${BASH_REMATCH[3]:-}"
+
+          # Impatto sul rilascio, come da release-please-config.json
+          if [[ -n "$BANG" ]]; then
+            REL=major
+          else
+            case "$TYPE" in
+              feat) REL=minor ;;
+              fix|perf|revert) REL=patch ;;
+              *) REL=none ;;
+            esac
+          fi
+
+          # Cartella -> servizio (le label sono svc/<nome>)
+          declare -A SERVICES=(
+            [api-gateway]=api-gateway
+            [frontend/player]=player-frontend
+            [micro-services/player-identity]=player-identity
+            [micro-services/lobby-match]=lobby-match
+            [micro-services/deck-workshop]=deck-workshop
+            [micro-services/card-forge]=card-forge
+            [micro-services/progress]=progress
+          )
+          # File generati: non contano per la dimensione
+          LOCK_RE='(^|/)(package-lock\.json|[^/]*\.lockfile)$'
+
+          # Un file per riga: percorso <TAB> righe cambiate
+          FILES=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" \
+            --jq '.[] | "\(.filename)\t\(.additions + .deletions)"')
+
+          LINES=0
+          declare -A TOUCHED=()
+          while IFS=$'\t' read -r path n; do
+            [[ -n "$path" ]] || continue
+            for dir in "${!SERVICES[@]}"; do
+              if [[ "$path" == "$dir/"* ]]; then TOUCHED["svc/${SERVICES[$dir]}"]=1; fi
+            done
+            if [[ ! "$path" =~ $LOCK_RE ]]; then LINES=$((LINES + n)); fi
+          done <<< "$FILES"
+
+          # Dimensione del diff come stima della difficoltà
+          if   (( LINES < 20 ));  then SIZE="⭐"
+          elif (( LINES < 100 )); then SIZE="⭐⭐"
+          elif (( LINES < 300 )); then SIZE="⭐⭐⭐"
+          elif (( LINES < 800 )); then SIZE="⭐⭐⭐⭐"
+          else SIZE="⭐⭐⭐⭐⭐"; fi
+
+          ADD=("type/$TYPE" "release/$REL" "size/$SIZE")
+          for l in "${!TOUCHED[@]}"; do ADD+=("$l"); done
+
+          # Togli le label gestite qui che non valgono più
+          REMOVE=()
+          while IFS= read -r l; do
+            case "$l" in type/*|release/*|size/*|svc/*) ;; *) continue ;; esac
+            [[ " ${ADD[*]} " == *" $l "* ]] || REMOVE+=("$l")
+          done < <(gh pr view "$PR" --json labels --jq '.labels[].name')
+
+          args=()
+          for l in "${ADD[@]}"; do args+=(--add-label "$l"); done
+          for l in "${REMOVE[@]}"; do args+=(--remove-label "$l"); done
+          gh pr edit "$PR" "${args[@]}"
