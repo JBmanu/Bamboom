@@ -2,7 +2,7 @@ name: PR labels
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   label:
-    # le PR da fork non hanno un token con permessi di scrittura
+    name: PR title and labels
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     permissions:
@@ -18,7 +18,6 @@ jobs:
     steps:
       - name: Validate the title and set labels
         env:
-          # il titolo è un input non fidato: va passato solo via env, mai dentro il run
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
@@ -94,3 +93,9 @@ jobs:
           for l in "${ADD[@]}"; do args+=(--add-label "$l"); done
           for l in "${REMOVE[@]}"; do args+=(--remove-label "$l"); done
           gh pr edit "$PR" "${args[@]}"
+          
+          # Garanzia finale: type, release e size devono esserci tutte
+          NOW=$(gh pr view "$PR" --json labels --jq '.labels[].name')
+          for p in type release size; do
+            grep -q "^$p/" <<< "$NOW" || { echo "::error::Missing $p/ label"; exit 1; }
+          done
