@@ -56,6 +56,14 @@ for SERVICE in player-identity lobby-match deck-workshop card-forge; do
     fi
 done
 
+# frontend admin
+if has_changes "frontend/admin/"; then
+    echo "→ type-check + test: frontend/admin"
+    cd frontend/admin && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
 # frontend player
 if has_changes "frontend/player/"; then
     echo "→ type-check + test: frontend/player"

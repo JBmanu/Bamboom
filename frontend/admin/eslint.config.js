@@ -1,5 +1,5 @@
 import pluginVue from 'eslint-plugin-vue'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import {defineConfigWithVueTs, vueTsConfigs} from '@vue/eslint-config-typescript'
 import prettierConfig from 'eslint-config-prettier'
 
 export default defineConfigWithVueTs(

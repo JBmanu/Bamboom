@@ -49,6 +49,7 @@ jobs:
           declare -A SERVICES=(
             [api-gateway]=api-gateway
             [frontend/player]=player-frontend
+            [frontend/admin]=admin-frontend
             [micro-services/player-identity]=player-identity
             [micro-services/lobby-match]=lobby-match
             [micro-services/deck-workshop]=deck-workshop

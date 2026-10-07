@@ -21,6 +21,11 @@
       "package-name": "api-gateway",
       "changelog-path": "CHANGELOG.md"
     },
+    "frontend/admin": {
+      "release-type": "node",
+      "package-name": "admin-frontend",
+      "changelog-path": "CHANGELOG.md"
+    },
     "frontend/player": {
       "release-type": "node",
       "package-name": "player-frontend",
