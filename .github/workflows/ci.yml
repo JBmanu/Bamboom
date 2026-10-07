@@ -63,6 +63,7 @@ jobs:
               - 'micro-services/deck-workshop/**'
             card-forge:
               - *shared
+              - .github/workflows/_node-service.yml
               - '.github/workflows/svc-card-forge.yml'
               - 'micro-services/card-forge/**'
             progress:
@@ -108,7 +109,12 @@ jobs:
   card-forge:
     needs: changes
     if: needs.changes.outputs.card-forge == 'true'
-    uses: ./.github/workflows/svc-card-forge.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: card-forge
+      path: micro-services/card-forge
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   progress:
     needs: changes
