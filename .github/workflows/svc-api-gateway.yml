@@ -34,7 +34,7 @@ jobs:
       - uses: ./.github/actions/codeql-js-ts
         with:
           name: api-gateway
-          path: micro-services/api-gateway
+          path: api-gateway
 
   release:
     if: ${{ github.ref_type == 'tag' }}

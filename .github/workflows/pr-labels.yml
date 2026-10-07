@@ -74,8 +74,8 @@ jobs:
 
           # Dimensione del diff come stima della difficoltà
           if   (( LINES < 20 ));  then SIZE="⭐"
-          elif (( LINES < 100 )); then SIZE="⭐⭐"
-          elif (( LINES < 300 )); then SIZE="⭐⭐⭐"
+          elif (( LINES < 200 )); then SIZE="⭐⭐"
+          elif (( LINES < 400 )); then SIZE="⭐⭐⭐"
           elif (( LINES < 800 )); then SIZE="⭐⭐⭐⭐"
           else SIZE="⭐⭐⭐⭐⭐"; fi
 
