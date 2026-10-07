@@ -1,12 +1,24 @@
 services:
   # -- FRONTEND --
+  admin:
+    build:
+      context: ./frontend/admin
+      dockerfile: Dockerfile
+    image: admin-frontend:latest
+    ports:
+      - "5174:80"
+    networks:
+      - bamboom-network
+    depends_on:
+      - api-gateway
+
   player:
     build:
       context: ./frontend/player
       dockerfile: Dockerfile
     image: player-frontend:latest
     ports:
-      - "5173:80"       # host 5173 → container 80 (Nginx)
+      - "5173:80"
     networks:
       - bamboom-network
     depends_on:
