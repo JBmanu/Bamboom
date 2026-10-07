@@ -15,6 +15,9 @@ on:
         description: Gradle project, only when it differs from name (the player frontend is "player")
         type: string
         default: ''
+  push:
+    tags:
+      - '${{ inputs.name }}-v*'
 
 permissions:
   contents: read
