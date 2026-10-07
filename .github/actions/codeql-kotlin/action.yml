@@ -1,0 +1,22 @@
+name: CodeQL Kotlin
+description: Analyzes the Kotlin modules of progress
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 25
+    - uses: github/codeql-action/init@v4
+      with:
+        languages: java-kotlin
+        build-mode: manual
+    - name: Build Kotlin modules
+      shell: bash
+      working-directory: micro-services/progress
+      run: |
+        chmod +x gradlew
+        ./gradlew :app:compileKotlin :player-progress:compileKotlin --no-daemon --max-workers=1
+    - uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:java-kotlin"

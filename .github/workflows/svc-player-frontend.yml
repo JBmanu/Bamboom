@@ -22,6 +22,20 @@ jobs:
           image: player-frontend
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
+  codeql:
+    if: ${{ github.ref_type != 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/codeql-js-ts
+        with:
+          name: player-frontend
+          path: frontend/player
+
   release:
     if: ${{ github.ref_type == 'tag' }}
     runs-on: ubuntu-latest

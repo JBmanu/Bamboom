@@ -25,8 +25,7 @@ jobs:
       deck-workshop:   ${{ steps.filter.outputs.deck-workshop }}
       card-forge:      ${{ steps.filter.outputs.card-forge }}
       progress:        ${{ steps.filter.outputs.progress }}
-      codeql-js-ts: ${{ steps.filter.outputs.codeql-js-ts }}
-      codeql-kotlin: ${{ steps.filter.outputs.codeql-kotlin }}
+      codeql-actions:  ${{ steps.filter.outputs.codeql-actions }}
     steps:
       - uses: actions/checkout@v4
 
@@ -71,19 +70,8 @@ jobs:
               - '.github/workflows/svc-progress.yml'
               - 'micro-services/progress/**'
               - 'gradle/libs.versions.toml'
-            codeql-js-ts:
-              - 'api-gateway/src/**'
-              - 'frontend/player/src/**'
-              - 'frontend/admin/src/**'
-              - 'micro-services/player-identity/src/**'
-              - 'micro-services/lobby-match/src/**'
-              - 'micro-services/deck-workshop/src/**'
-              - 'micro-services/card-forge/src/**'
+            codeql-actions:
               - '.github/**'
-            codeql-kotlin:
-              - 'micro-services/progress/app/**'
-              - 'micro-services/progress/player-progress/**'
-              - 'build-logic/**'
 
   player-frontend:
     needs: changes
@@ -127,13 +115,12 @@ jobs:
     if: needs.changes.outputs.progress == 'true'
     uses: ./.github/workflows/svc-progress.yml
 
-  codeql:
+  codeql-actions:
     needs: changes
-    if: needs.changes.outputs.codeql-js-ts == 'true' || needs.changes.outputs.codeql-kotlin == 'true'
+    if: needs.changes.outputs.codeql-actions == 'true'
     uses: ./.github/workflows/codeql.yml
     with:
-      js-ts: ${{ needs.changes.outputs.codeql-js-ts == 'true' }}
-      kotlin: ${{ needs.changes.outputs.codeql-kotlin == 'true' }}
+      actions: true
 
   gate:
     name: CI Gate
@@ -148,7 +135,7 @@ jobs:
       - player-frontend
       - admin-frontend
       - progress
-      - codeql
+      - codeql-actions
     runs-on: ubuntu-latest
     steps:
       - name: Check all jobs status

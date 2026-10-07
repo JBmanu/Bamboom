@@ -1,0 +1,22 @@
+name: CodeQL JS/TS (one service)
+description: Analyzes only the sources of one service, with its own alert category
+inputs:
+  name:
+    description: Service name, used in the alert category (card-forge, player-frontend, ...)
+    required: true
+  path:
+    description: Service folder (micro-services/card-forge, frontend/player, ...)
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: github/codeql-action/init@v4
+      with:
+        languages: javascript-typescript
+        build-mode: none
+        config: |
+          paths:
+            - ${{ inputs.path }}/src
+    - uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:javascript-typescript/service:${{ inputs.name }}"
