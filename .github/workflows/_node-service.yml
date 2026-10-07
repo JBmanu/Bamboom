@@ -46,7 +46,7 @@ jobs:
           name: ${{ inputs.name }}
           path: ${{ inputs.path }}
 
-  release:
+  release-image:
     if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, format('{0}-v', inputs.name)) }}
     runs-on: ubuntu-latest
     permissions:

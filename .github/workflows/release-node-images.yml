@@ -1,0 +1,37 @@
+name: Release Node images
+
+on:
+  push:
+    tags:
+      - '*-v*'
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+  packages: write
+
+jobs:
+  api-gateway:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: api-gateway, path: api-gateway }
+
+  player-frontend:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: player-frontend, path: frontend/player, project: player }
+
+  player-identity:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: player-identity, path: micro-services/player-identity }
+
+  lobby-match:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: lobby-match, path: micro-services/lobby-match }
+
+  deck-workshop:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: deck-workshop, path: micro-services/deck-workshop }
+
+  card-forge:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: card-forge, path: micro-services/card-forge }
