@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/JBmanu/Bamboom/compare/card-forge-v0.2.2...card-forge-v0.2.3) (2026-10-07)
+
+
+### Bug Fixes
+
+* publish the card-forge image through the shared release workflow ([#80](https://github.com/JBmanu/Bamboom/issues/80)) ([3fdfb52](https://github.com/JBmanu/Bamboom/commit/3fdfb52e1b0be71e67ffa15698dd9d0d66dcb255))
+
 ## [0.2.2](https://github.com/JBmanu/Bamboom/compare/card-forge-v0.2.1...card-forge-v0.2.2) (2026-10-05)
 
 
