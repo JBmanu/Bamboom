@@ -5,5 +5,3 @@ const main = (): void => {
 }
 
 main()
-// test: verify release-please and ghcr.io flow after OWNER_LC fix
-// codeql filter check
