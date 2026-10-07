@@ -3,58 +3,49 @@ name: CodeQL
 on:
   workflow_call:
     inputs:
-      js-ts:
-        type: boolean
-        default: false
-      kotlin:
+      actions:
         type: boolean
         default: false
   schedule:
     - cron: '26 19 * * 3'
+  workflow_dispatch:     # scansione completa a richiesta
 
 permissions:
   contents: read
   actions: read
-  packages: read
   security-events: write
 
 jobs:
-  js-ts:
-    if: ${{ github.event_name == 'schedule' || inputs.js-ts }}
+  # Workflow e action in .github/: non appartengono a nessun servizio
+  actions:
+    if: ${{ inputs.actions || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ javascript-typescript, actions ]
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
+          languages: actions
           build-mode: none
       - uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{ matrix.language }}"
+          category: "/language:actions"
 
-
-  kotlin:
-    if: ${{ github.event_name == 'schedule' || inputs.kotlin }}
+  js-ts-full:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 25
       - uses: github/codeql-action/init@v4
         with:
-          languages: java-kotlin
-          build-mode: manual
-      - name: Build Kotlin modules manually
-        working-directory: micro-services/progress
-        run: |
-          chmod +x gradlew
-          ./gradlew :app:compileKotlin :player-progress:compileKotlin --no-daemon --max-workers=1
+          languages: javascript-typescript
+          build-mode: none
       - uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:java-kotlin"
+          category: "/language:javascript-typescript"
+
+  kotlin-full:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/codeql-kotlin

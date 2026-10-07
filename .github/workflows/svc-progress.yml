@@ -54,6 +54,17 @@ jobs:
           files: micro-services/progress/game-observatory/build/reports/jacoco/test/jacocoTestReport.xml
           flags: progress-game-observatory
 
+  codeql:
+    if: ${{ github.ref_type != 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/codeql-kotlin
+
   release:
     if: ${{ github.ref_type == 'tag'}}
     runs-on: ubuntu-latest
