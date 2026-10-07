@@ -113,8 +113,7 @@ jobs:
     with:
       name: card-forge
       path: micro-services/card-forge
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    secrets: inherit
 
   progress:
     needs: changes

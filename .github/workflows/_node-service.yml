@@ -15,9 +15,6 @@ on:
         description: Gradle project, only when it differs from name (the player frontend is "player")
         type: string
         default: ''
-    secrets:
-      CODECOV_TOKEN:
-        required: false
 
 permissions:
   contents: read
