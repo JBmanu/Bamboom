@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
   push:
-    branches: [main]
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -38,33 +38,33 @@ jobs:
               - '.github/actions/**'
             player-frontend:
               - *shared
-              - '.github/workflows/svc-player-frontend.yml'
+              - '.github/workflows/_node-service.yml'
               - 'frontend/player/**'
               - 'frontend/.prettierrc.json'
             admin-frontend:
               - *shared
+              - '.github/workflows/_node-service.yml'
               - 'frontend/admin/**'
               - 'frontend/.prettierrc.json'
             api-gateway:
               - *shared
-              - '.github/workflows/svc-api-gateway.yml'
+              - '.github/workflows/_node-service.yml'
               - 'api-gateway/**'
             player-identity:
               - *shared
-              - '.github/workflows/svc-player-identity.yml'
+              - '.github/workflows/_node-service.yml'
               - 'micro-services/player-identity/**'
             lobby-match:
               - *shared
-              - '.github/workflows/svc-lobby-match.yml'
+              - '.github/workflows/_node-service.yml'
               - 'micro-services/lobby-match/**'
             deck-workshop:
               - *shared
-              - '.github/workflows/svc-deck-workshop.yml'
+              - '.github/workflows/_node-service.yml'
               - 'micro-services/deck-workshop/**'
             card-forge:
               - *shared
-              - .github/workflows/_node-service.yml
-              - '.github/workflows/svc-card-forge.yml'
+              - '.github/workflows/_node-service.yml'
               - 'micro-services/card-forge/**'
             progress:
               - *shared
@@ -77,34 +77,58 @@ jobs:
   player-frontend:
     needs: changes
     if: needs.changes.outputs.player-frontend == 'true'
-    uses: ./.github/workflows/svc-player-frontend.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: player-frontend
+      path: frontend/player
+      project: player
+    secrets: inherit
 
   admin-frontend:
     needs: changes
     if: needs.changes.outputs.admin-frontend == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "admin frontend è cambiato — qui gireranno lint, test, build"
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: admin-frontend
+      path: frontend/admin
+      project: admin
+    secrets: inherit
 
   api-gateway:
     needs: changes
     if: needs.changes.outputs.api-gateway == 'true'
-    uses: ./.github/workflows/svc-api-gateway.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: api-gateway
+      path: api-gateway
+    secrets: inherit
 
   player-identity:
     needs: changes
     if: needs.changes.outputs.player-identity == 'true'
-    uses: ./.github/workflows/svc-player-identity.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: player-identity
+      path: micro-services/player-identity
+    secrets: inherit
 
   lobby-match:
     needs: changes
     if: needs.changes.outputs.lobby-match == 'true'
-    uses: ./.github/workflows/svc-lobby-match.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: lobby-match
+      path: micro-services/lobby-match
+    secrets: inherit
 
   deck-workshop:
     needs: changes
     if: needs.changes.outputs.deck-workshop == 'true'
-    uses: ./.github/workflows/svc-deck-workshop.yml
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: deck-workshop
+      path: micro-services/deck-workshop
+    secrets: inherit
 
   card-forge:
     needs: changes
