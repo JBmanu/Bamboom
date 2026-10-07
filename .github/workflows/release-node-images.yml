@@ -20,6 +20,10 @@ jobs:
     uses: ./.github/workflows/_node-service.yml
     with: { name: player-frontend, path: frontend/player, project: player }
 
+  admin-frontend:
+    uses: ./.github/workflows/_node-service.yml
+    with: { name: admin-frontend, path: frontend/admin, project: admin }
+
   player-identity:
     uses: ./.github/workflows/_node-service.yml
     with: { name: player-identity, path: micro-services/player-identity }

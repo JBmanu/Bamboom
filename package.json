@@ -37,6 +37,10 @@
       "bash -c './gradlew :card-forge:format'",
       "bash -c './gradlew :card-forge:lint'"
     ],
+    "frontend/admin/src/**/*.{ts,vue}": [
+      "bash -c './gradlew :admin:format'",
+      "bash -c './gradlew :admin:lint'"
+    ],
     "frontend/player/src/**/*.{ts,vue}": [
       "bash -c './gradlew :player:format'",
       "bash -c './gradlew :player:lint'"
