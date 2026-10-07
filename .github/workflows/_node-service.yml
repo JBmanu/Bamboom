@@ -1,0 +1,60 @@
+name: node-service
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: Service name, used for the image, the tag prefix and the CodeQL category (card-forge, player-frontend, ...)
+        type: string
+        required: true
+      path:
+        description: Service folder (micro-services/card-forge, ...)
+        type: string
+        required: true
+      project:
+        description: Gradle project, only when it differs from name (the player frontend is "player")
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: ${{ github.ref_type != 'tag' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/verify-node
+        with:
+          project: ${{ inputs.project || inputs.name }}
+          path: ${{ inputs.path }}
+          image: ${{ inputs.name }}
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+
+  codeql:
+    if: ${{ github.ref_type != 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/codeql-js-ts
+        with:
+          name: ${{ inputs.name }}
+          path: ${{ inputs.path }}
+
+  release:
+    if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, format('{0}-v', inputs.name)) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/release-image
+        with:
+          project: ${{ inputs.project || inputs.name }}
+          image: ${{ inputs.name }}
