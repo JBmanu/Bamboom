@@ -1,0 +1,13 @@
+// config for browser/app
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "outDir": "./node_modules/.tmp/tsconfig-app",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "exclude": ["node_modules", "dist"]
+}

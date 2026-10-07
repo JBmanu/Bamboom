@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "outDir": "./node_modules/.tmp/tsconfig-node",
+    "types": ["node", "vitest/config"]
+  },
+  "include": ["vite.config.ts"]
+}
