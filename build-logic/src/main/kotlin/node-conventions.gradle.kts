@@ -1,12 +1,18 @@
 import bamboom.NODE_SERVICE_SCRIPTS
+import bamboom.NodeExtension
+
+val node = extensions.create<NodeExtension>("node")
+node.workspaceMember.convention(false)
 
 val npmInstall = tasks.register<Exec>("npmInstall") {
     group = "node"
     description = "Installs npm dependencies"
-    commandLine("sh", "-c", "npm install")
+    doFirst {
+        val flag = if (node.workspaceMember.get()) " --include-workspace-root" else ""
+        commandLine("sh", "-c", "npm install$flag")
+    }
 }
 
-// Un task per ogni script del contratto: stessi nomi, gruppi e dipendenze di prima
 NODE_SERVICE_SCRIPTS.forEach { script ->
     tasks.register<Exec>(script.taskName) {
         group = script.group
