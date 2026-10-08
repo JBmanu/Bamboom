@@ -37,7 +37,7 @@ jobs:
               - 'build-logic/**'
               - '.github/actions/**'  
             frontend-shared: &frontend-shared
-                - 'frontend/*'
+              - 'frontend/*'
             player-frontend:
               - *shared
               - *frontend-shared
