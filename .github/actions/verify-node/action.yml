@@ -13,6 +13,11 @@ inputs:
   codecov-token:
     description: Passed as input because secrets are not visible inside actions
     required: true
+  lockfile:
+    description: Lockfile used as npm cache key (defaults to <path>/package-lock.json)
+    required: false
+    default: ''
+
 runs:
   using: composite
   steps:
@@ -20,7 +25,7 @@ runs:
       with:
         node-version-file: .nvmrc
         cache: npm
-        cache-dependency-path: ${{ inputs.path }}/package-lock.json
+        cache-dependency-path: ${{ inputs.lockfile || format('{0}/package-lock.json', inputs.path) }}
     - uses: ./.github/actions/setup-jvm
 
     - name: Lint

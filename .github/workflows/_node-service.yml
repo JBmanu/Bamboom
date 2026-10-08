@@ -31,6 +31,7 @@ jobs:
           path: ${{ inputs.path }}
           image: ${{ inputs.name }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          lockfile: frontend/package-lock.json
 
   codeql:
     if: ${{ github.ref_type != 'tag' }}
