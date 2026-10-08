@@ -4,7 +4,8 @@
   "type": "module",
   "workspaces": [
     "player",
-    "admin"
+    "admin",
+    "common"
   ],
   "overrides": {
     "vite": "$vite"
