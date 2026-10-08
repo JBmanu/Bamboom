@@ -4,6 +4,7 @@ rootProject.name = "Bamboom"
 includeBuild("build-logic")
 
 // Frontend
+includeBuild("frontend/common")
 includeBuild("frontend/admin")
 includeBuild("frontend/player")
 
