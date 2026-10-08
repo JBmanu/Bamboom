@@ -1,0 +1,12 @@
+**/node_modules/
+**/dist/
+**/coverage/
+**/.env*
+
+**/.gradle/
+**/gradlew
+**/gradlew.bat
+**/gradle/
+**/tests/
+**/*.md
+**/.gitignore
