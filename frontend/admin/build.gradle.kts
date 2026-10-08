@@ -8,6 +8,7 @@ node {
 }
 
 dockerImage {
+    contextDir = ".."
     imageName = "admin-frontend"
     hostPort = 5174
     containerPort = 80

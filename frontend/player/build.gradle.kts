@@ -8,6 +8,7 @@ node {
 }
 
 dockerImage {
+    contextDir = ".."
     imageName = "player-frontend"
     hostPort = 5173
     containerPort = 80
