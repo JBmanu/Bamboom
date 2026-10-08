@@ -6,7 +6,6 @@ internal data class NpmScript(
     val group: String,
     val description: String,
     val command: String,
-    // clean non ha bisogno delle dipendenze installate
     val installFirst: Boolean = true,
 )
 

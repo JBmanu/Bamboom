@@ -2,8 +2,10 @@ services:
   # -- FRONTEND --
   admin:
     build:
-      context: ./frontend/admin
+      context: ./frontend
       dockerfile: Dockerfile
+      args:
+        APP: admin
     image: admin-frontend:latest
     ports:
       - "5174:80"
@@ -14,8 +16,10 @@ services:
 
   player:
     build:
-      context: ./frontend/player
+      context: ./frontend
       dockerfile: Dockerfile
+      args:
+        APP: admin
     image: player-frontend:latest
     ports:
       - "5173:80"

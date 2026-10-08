@@ -1,5 +1,5 @@
 import pluginVue from 'eslint-plugin-vue'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import {defineConfigWithVueTs, vueTsConfigs} from '@vue/eslint-config-typescript'
 import prettierConfig from 'eslint-config-prettier'
 
 export default defineConfigWithVueTs(
@@ -7,6 +7,6 @@ export default defineConfigWithVueTs(
     vueTsConfigs.recommended,
     prettierConfig,
     {
-        ignores: ['dist/**', 'node_modules/**', '*.config.ts', '*.config.js', 'coverage/**']
+        ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**', '**/*.config.ts', '**/*.config.js']
     }
 )

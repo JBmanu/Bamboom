@@ -35,17 +35,19 @@ jobs:
           filters: |
             shared: &shared
               - 'build-logic/**'
-              - '.github/actions/**'
+              - '.github/actions/**'  
+            frontend-shared: &frontend-shared
+              - 'frontend/*'
             player-frontend:
               - *shared
+              - *frontend-shared
               - '.github/workflows/_node-service.yml'
               - 'frontend/player/**'
-              - 'frontend/.prettierrc.json'
             admin-frontend:
               - *shared
+              - *frontend-shared
               - '.github/workflows/_node-service.yml'
               - 'frontend/admin/**'
-              - 'frontend/.prettierrc.json'
             api-gateway:
               - *shared
               - '.github/workflows/_node-service.yml'
@@ -82,6 +84,7 @@ jobs:
       name: player-frontend
       path: frontend/player
       project: player
+      lockfile: frontend/package-lock.json
     secrets: inherit
 
   admin-frontend:
@@ -92,6 +95,7 @@ jobs:
       name: admin-frontend
       path: frontend/admin
       project: admin
+      lockfile: frontend/package-lock.json
     secrets: inherit
 
   api-gateway:
