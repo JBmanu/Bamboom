@@ -8,6 +8,8 @@ node {
 }
 
 dockerImage {
+    dockerfile = "Dockerfile"
+    buildArgs.put("APP", "admin")
     contextDir = ".."
     imageName = "admin-frontend"
     hostPort = 5174

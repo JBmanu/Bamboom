@@ -8,6 +8,8 @@ node {
 }
 
 dockerImage {
+    dockerfile = "Dockerfile"
+    buildArgs.put("APP", "player")
     contextDir = ".."
     imageName = "player-frontend"
     hostPort = 5173
