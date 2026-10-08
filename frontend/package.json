@@ -1,6 +1,7 @@
 {
   "name": "bamboom-frontend",
   "private": true,
+  "type": "module",
   "workspaces": [
     "player",
     "admin"
