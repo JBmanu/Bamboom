@@ -1,6 +1,6 @@
 // config for browser/app
 {
-  "extends": "../tsconfig.common.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
     "outDir": "./node_modules/.tmp/tsconfig-app",
