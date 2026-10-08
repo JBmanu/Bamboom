@@ -14,7 +14,7 @@ inputs:
     description: Passed as input because secrets are not visible inside actions
     required: true
   lockfile:
-    description: Lockfile used as npm cache key (defaults to <path>/package-lock.json)
+    description: Lockfile for the npm cache; defaults to <path>/package-lock.json
     required: false
     default: ''
 

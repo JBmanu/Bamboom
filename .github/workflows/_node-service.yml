@@ -15,6 +15,10 @@ on:
         description: Gradle project, only when it differs from name (the player frontend is "player")
         type: string
         default: ''
+      lockfile:
+        description: Lockfile used as the npm cache key, only when it is not <path>/package-lock.json (the frontend apps share frontend/package-lock.json)
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -31,7 +35,7 @@ jobs:
           path: ${{ inputs.path }}
           image: ${{ inputs.name }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          lockfile: frontend/package-lock.json
+          lockfile: ${{ inputs.lockfile }}
 
   codeql:
     if: ${{ github.ref_type != 'tag' }}
