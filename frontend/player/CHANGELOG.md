@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.2...player-frontend-v0.2.3) (2026-10-09)
+
+
+### Bug Fixes
+
+* test release player ([#90](https://github.com/JBmanu/Bamboom/issues/90)) ([9dcb62a](https://github.com/JBmanu/Bamboom/commit/9dcb62ad73b74778bad20aa82be7542b4dc43ab4))
+
 ## [0.2.2](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.1...player-frontend-v0.2.2) (2026-10-05)
 
 
