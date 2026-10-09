@@ -3,8 +3,10 @@ FROM node:24-alpine AS builder
 ARG APP
 WORKDIR /app
 COPY package.json package-lock.json tsconfig.base.json ./
+COPY common/package.json common/
 COPY ${APP}/package.json ${APP}/
-RUN npm ci --include-workspace-root -w ${APP}
+RUN npm ci --include-workspace-root -w ${APP} -w common
+COPY common/src common/src
 COPY ${APP}/tsconfig*.json ${APP}/vite.config.ts ${APP}/index.html ${APP}/
 COPY ${APP}/src ${APP}/src
 RUN npm run build -w ${APP}
