@@ -17,6 +17,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
+      common-frontend: ${{ steps.filter.outputs.common-frontend }}
       player-frontend: ${{ steps.filter.outputs.player-frontend }}
       admin-frontend:  ${{ steps.filter.outputs.admin-frontend }}
       api-gateway:     ${{ steps.filter.outputs.api-gateway }}
@@ -38,15 +39,22 @@ jobs:
               - '.github/actions/**'  
             frontend-shared: &frontend-shared
               - 'frontend/*'
+            common-frontend:
+              - *shared
+              - *frontend-shared
+              - '.github/workflows/_node-service.yml'
+              - 'frontend/common/**'
             player-frontend:
               - *shared
               - *frontend-shared
               - '.github/workflows/_node-service.yml'
+              - 'frontend/common/**'
               - 'frontend/player/**'
             admin-frontend:
               - *shared
               - *frontend-shared
               - '.github/workflows/_node-service.yml'
+              - 'frontend/common/**'
               - 'frontend/admin/**'
             api-gateway:
               - *shared
@@ -75,6 +83,18 @@ jobs:
               - 'gradle/libs.versions.toml'
             codeql-actions:
               - '.github/**'
+
+  common-frontend:
+    needs: changes
+    if: needs.changes.outputs.common-frontend == 'true'
+    uses: ./.github/workflows/_node-service.yml
+    with:
+      name: common
+      path: frontend/common
+      project: common
+      lockfile: frontend/package-lock.json
+      has-image: false
+    secrets: inherit
 
   player-frontend:
     needs: changes
