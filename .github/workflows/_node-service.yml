@@ -19,6 +19,10 @@ on:
         description: Lockfile used as the npm cache key, only when it is not <path>/package-lock.json (the frontend apps share frontend/package-lock.json)
         type: string
         default: ''
+      has-image:
+        description: Whether the service ships a Docker image (build + Trivy scan). False for libraries such as frontend/common.
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -36,6 +40,7 @@ jobs:
           image: ${{ inputs.name }}
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           lockfile: ${{ inputs.lockfile }}
+          build-image: ${{ inputs.has-image }}
 
   codeql:
     if: ${{ github.ref_type != 'tag' }}
@@ -52,7 +57,7 @@ jobs:
           path: ${{ inputs.path }}
 
   release-image:
-    if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, format('{0}-v', inputs.name)) }}
+    if: ${{ inputs.has-image && github.ref_type == 'tag' && startsWith(github.ref_name, format('{0}-v', inputs.name)) }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -1,15 +1,3 @@
-// build.gradle.kts (ROOT)
-//
-// La root non compila nulla di suo.
-// Il suo unico scopo è orchestrare le build
-// dei servizi tramite task che delegano
-// alle build incluse con gradle.includedBuild().
-
-// -- task aggregatori --
-// Raggruppano tutti i servizi in un unico comando.
-// Quando aggiungeremo progress (JVM) aggiungeremo
-// il suo dependsOn qui.
-
 tasks.register("installAll") {
     group       = "orchestration"
     description = "Installs dependencies for all services"

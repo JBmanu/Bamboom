@@ -38,6 +38,34 @@ has_changes() {
     echo "$CHANGED" | grep -q "^$1"
 }
 
+frontend_shared_changed() {
+    echo "$CHANGED" | grep -qE '^frontend/[^/]+$'
+}
+
+# frontend common (consumed as source by both apps)
+if has_changes "frontend/common/" || frontend_shared_changed; then
+    echo "→ type-check + test: frontend/common"
+    cd frontend/common && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
+# frontend admin
+if has_changes "frontend/admin/" || has_changes "frontend/common/" || frontend_shared_changed; then
+    echo "→ type-check + test: frontend/admin"
+    cd frontend/admin && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
+# frontend player
+if has_changes "frontend/player/" || has_changes "frontend/common/" || frontend_shared_changed; then
+    echo "→ type-check + test: frontend/player"
+    cd frontend/player && npm run type-check && npm test
+    [ $? -ne 0 ] && EXIT_CODE=1
+    cd ../..
+fi
+
 # api-gateway
 if has_changes "api-gateway/"; then
     echo "→ type-check + test: api-gateway"
@@ -55,22 +83,6 @@ for SERVICE in player-identity lobby-match deck-workshop card-forge; do
         cd ../..
     fi
 done
-
-# frontend admin
-if has_changes "frontend/admin/"; then
-    echo "→ type-check + test: frontend/admin"
-    cd frontend/admin && npm run type-check && npm test
-    [ $? -ne 0 ] && EXIT_CODE=1
-    cd ../..
-fi
-
-# frontend player
-if has_changes "frontend/player/"; then
-    echo "→ type-check + test: frontend/player"
-    cd frontend/player && npm run type-check && npm test
-    [ $? -ne 0 ] && EXIT_CODE=1
-    cd ../..
-fi
 
 # progress (Kotlin + Scala) — test suddivisi per modulo
 if has_changes "micro-services/progress/" || has_changes "build-logic/"; then

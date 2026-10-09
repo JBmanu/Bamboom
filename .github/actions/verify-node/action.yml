@@ -17,6 +17,10 @@ inputs:
     description: Lockfile for the npm cache; defaults to <path>/package-lock.json
     required: false
     default: ''
+  build-image:
+    description: Build and scan the Docker image; set to 'false' for libraries that have none
+    required: false
+    default: 'true'
 
 runs:
   using: composite
@@ -26,30 +30,37 @@ runs:
         node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: ${{ inputs.lockfile || format('{0}/package-lock.json', inputs.path) }}
+
     - uses: ./.github/actions/setup-jvm
 
     - name: Lint
       shell: bash
       env: { PROJECT: "${{ inputs.project }}" }
       run: ./gradlew ":$PROJECT:lint"
+
     - name: Type-check
       shell: bash
       env: { PROJECT: "${{ inputs.project }}" }
       run: ./gradlew ":$PROJECT:type-check"
+
     - name: Test
       shell: bash
       env: { PROJECT: "${{ inputs.project }}" }
       run: ./gradlew ":$PROJECT:test"
+
     - name: Build
       shell: bash
       env: { PROJECT: "${{ inputs.project }}" }
       run: ./gradlew ":$PROJECT:build"
+
     - name: Build Docker image
+      if: inputs.build-image == 'true'
       shell: bash
       env: { PROJECT: "${{ inputs.project }}" }
       run: ./gradlew ":$PROJECT:dockerBuild"
 
-    - uses: ./.github/actions/trivy-scan
+    - if: inputs.build-image == 'true'
+      uses: ./.github/actions/trivy-scan
       with:
         image: ${{ inputs.image }}:latest
 
