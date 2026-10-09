@@ -4,3 +4,5 @@ import { AppButton } from '@bamboom/common' // temporary, to prove the Docker bu
 
 createApp(App).mount('#app')
 console.log(AppButton)
+
+// test per ruleset per i tag
