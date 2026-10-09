@@ -185,6 +185,7 @@ jobs:
       - lobby-match
       - deck-workshop
       - card-forge
+      - common-frontend
       - player-frontend
       - admin-frontend
       - progress
