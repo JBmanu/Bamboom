@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b",
     "test": "vitest run --coverage",
     "type-check": "vue-tsc --noEmit",
     "test:watch": "vitest",
