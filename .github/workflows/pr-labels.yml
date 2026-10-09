@@ -48,6 +48,7 @@ jobs:
           # Cartella -> servizio (le label sono svc/<nome>)
           declare -A SERVICES=(
             [api-gateway]=api-gateway
+            [frontend/common]=common
             [frontend/player]=player-frontend
             [frontend/admin]=admin-frontend
             [micro-services/player-identity]=player-identity
@@ -70,6 +71,11 @@ jobs:
             for dir in "${!SERVICES[@]}"; do
               if [[ "$path" == "$dir/"* ]]; then TOUCHED["svc/${SERVICES[$dir]}"]=1; fi
             done
+            if [[ "$path" =~ ^frontend/[^/]+$ ]]; then
+              TOUCHED["svc/player-frontend"]=1
+              TOUCHED["svc/admin-frontend"]=1
+              TOUCHED["svc/common"]=1
+            fi
             if [[ ! "$path" =~ $LOCK_RE ]]; then LINES=$((LINES + n)); fi
           done <<< "$FILES"
 
