@@ -19,7 +19,10 @@ export default defineConfig({
         coverage: {
             provider: 'v8',
             reporter: ['lcov', 'text-summary'],
-            reportsDirectory: './coverage'
+            reportsDirectory: './coverage',
+            // include: ['src/**/*.{ts,vue}'],
+            // exclude: [...coverageConfigDefaults.exclude, 'src/main.ts', 'src/**/index.ts', 'src/**/*.d.ts'],
+            // thresholds: { lines: 80, functions: 80, statements: 80, branches: 70 },
         }
     }
 })
