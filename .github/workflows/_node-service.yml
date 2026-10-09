@@ -64,6 +64,15 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure the tagged commit is on main
+        run: |
+          # Fails when the tag points to a commit that never reached main.
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::${GITHUB_REF_NAME} points to a commit that is not on main."
+            exit 1
+          fi
       - uses: ./.github/actions/release-image
         with:
           project: ${{ inputs.project || inputs.name }}
