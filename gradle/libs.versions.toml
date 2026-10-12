@@ -11,7 +11,7 @@
 
 [versions]
 spotless       = "8.10.4"
-wartremover    = "3.3.5"
+wartremover    = "3.6.3"
 shadow         = "9.6.1"
 kotlin         = "2.4.21"
 detekt         = "2.0.0-alpha.6"
