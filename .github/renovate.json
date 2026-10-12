@@ -3,50 +3,110 @@
   "extends": [
     "config:recommended"
   ],
-  "schedule": ["every weekend"],
-  "labels": ["dependencies"],
-  "assignees": ["JBmanu"],
+  "schedule": [
+    "every weekend"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "assignees": [
+    "JBmanu"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^gradle/libs\\.versions\\.toml$/"
+      ],
+      "matchStrings": [
+        "wartremover\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "wartremover/wartremover",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    }
+  ],
   "packageRules": [
     {
+      "groupName": "vite toolchain",
+      "matchPackageNames": [
+        "vite",
+        "vitest",
+        "@vitest/**",
+        "@vitejs/**"
+      ]
+    },
+    {
+      "groupName": "scala and wartremover",
+      "matchDepNames": [
+        "wartremover/wartremover",
+        "org.scala-lang:scala3-library_3"
+      ]
+    },
+    {
       "description": "npm patch e minor raggruppati (api-gateway, microservizi, frontend)",
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
       "groupName": "npm dependencies (non-major)"
     },
     {
       "description": "Gradle version catalog (libs.versions.toml) — patch e minor raggruppati",
-      "matchManagers": ["gradle"],
-      "matchFileNames": ["gradle/libs.versions.toml"],
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchFileNames": [
+        "gradle/libs.versions.toml"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
       "groupName": "gradle version catalog (non-major)"
     },
     {
       "description": "Gradle wrapper — mai auto-mergere (versione Gradle critica)",
-      "matchManagers": ["gradle-wrapper"],
+      "matchManagers": [
+        "gradle-wrapper"
+      ],
       "automerge": false,
       "groupName": "Gradle wrapper"
     },
     {
       "description": "Major sempre separati e mai auto-mergiati",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false
     },
     {
       "description": "Patch npm auto-mergiate se CI verde (sicure per definizione)",
-      "matchUpdateTypes": ["patch"],
-      "matchManagers": ["npm"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
       "automerge": true,
       "automergeType": "pr"
     },
     {
       "description": "Docker base images — sempre review manuale",
-      "matchManagers": ["dockerfile"],
+      "matchManagers": [
+        "dockerfile"
+      ],
       "automerge": false,
       "groupName": "Docker base images"
     },
     {
       "description": "GitHub Actions — sempre review manuale",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "automerge": false,
       "groupName": "GitHub Actions"
     }
