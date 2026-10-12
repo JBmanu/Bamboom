@@ -1,23 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "schedule": ["every weekend"],
   "labels": ["dependencies"],
   "assignees": ["JBmanu"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^gradle/libs\\.versions\\.toml$/"],
+      "matchStrings": ["wartremover\\s*=\\s*\"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "wartremover/wartremover",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    }
+  ],
   "packageRules": [
+    {
+      "description": "ts-jest peer range is <7; remove when it supports TypeScript 7",
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "groupName": "vite toolchain",
+      "matchPackageNames": ["jest","ts-jest","@types/jest","@jest/**","babel-jest"]
+    },
+    {
+      "groupName": "scala and wartremover",
+      "matchDepNames": ["wartremover/wartremover","org.scala-lang:scala3-library_3"]
+    },
     {
       "description": "npm patch e minor raggruppati (api-gateway, microservizi, frontend)",
       "matchManagers": ["npm"],
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchUpdateTypes": ["patch","minor"],
       "groupName": "npm dependencies (non-major)"
     },
     {
       "description": "Gradle version catalog (libs.versions.toml) — patch e minor raggruppati",
       "matchManagers": ["gradle"],
       "matchFileNames": ["gradle/libs.versions.toml"],
-      "matchUpdateTypes": ["patch", "minor"],
+      "matchUpdateTypes": ["patch","minor"],
       "groupName": "gradle version catalog (non-major)"
     },
     {
