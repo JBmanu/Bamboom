@@ -14,7 +14,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./theme.css": "./src/styles/theme.css"
+    "./theme.css": "./src/style/theme.css"
   },
   "peerDependencies": {
     "vue": "^3.5.13"
