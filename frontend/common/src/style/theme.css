@@ -1,0 +1,24 @@
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme static {
+    --color-background: light-dark(#F0F8EB, #121A15);
+    --color-surface: light-dark(#FDFDFC, #1A241E);
+    --color-foreground: light-dark(#2B3A2F, #DDE8E0);
+    --color-foreground-muted: light-dark(#5E6F64, #94A399);
+    --color-border: light-dark(#EAF1E5, #2A372F);
+    --color-primary: light-dark(#7ED64A, #6FCF4A);
+    --color-on-primary: light-dark(#22381B, #10200C);
+    --color-link: light-dark(#2E7A1C, #6FCF4A);
+    --color-error: light-dark(#BE3A34, #F58B84);
+
+    --color-border-strong: color-mix(in srgb, var(--color-border) 45%, var(--color-foreground));
+    --color-focus-ring: var(--color-link);
+    --color-surface-muted: color-mix(in srgb, var(--color-surface), var(--color-foreground) 5%);
+    --color-primary-hover: color-mix(in srgb, var(--color-primary), var(--color-foreground) 8%);
+    --color-error-soft: color-mix(in srgb, var(--color-error) 10%, var(--color-surface));
+    --color-overlay: rgb(0 0 0 / 0.5);
+    --color-primary-edge: color-mix(in srgb, var(--color-primary) 65%, var(--color-on-primary));
+}
+
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
