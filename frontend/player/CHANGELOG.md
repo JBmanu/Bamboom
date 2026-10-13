@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.3...player-frontend-v0.2.4) (2026-10-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pinia to v4 ([#108](https://github.com/JBmanu/Bamboom/issues/108)) ([d7cb4ab](https://github.com/JBmanu/Bamboom/commit/d7cb4ab9b9a0676fe1c27895027c77bb1098fd3f))
+* **deps:** update dependency vue-router to v5 ([#109](https://github.com/JBmanu/Bamboom/issues/109)) ([5fabe9b](https://github.com/JBmanu/Bamboom/commit/5fabe9b72cc57ca2cc8aa4d0cc9455b31e5404bf))
+
 ## [0.2.3](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.2...player-frontend-v0.2.3) (2026-10-09)
 
 
