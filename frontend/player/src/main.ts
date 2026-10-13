@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import './main.css'
+
 import { AppButton } from '@bamboom/common' // temporary, to prove the Docker build
 
 createApp(App).mount('#app')
