@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
-export const THEME_PINIA_KEY = 'pinia-theme'
-export const THEME_STORAGE_KEY = 'storage-theme'
+export const THEME_STORAGE_KEY = 'bamboom-theme'
+const THEME_PINIA_KEY = 'pinia-theme'
 
 export const themes = {
     system: 'system',
@@ -10,6 +10,7 @@ export const themes = {
 }
 
 export const useThemeStore = defineStore(THEME_PINIA_KEY, () => {
-    const theme = localStorage.getItem(THEME_STORAGE_KEY) ?? themes.system
+    const storageValue = localStorage.getItem(THEME_STORAGE_KEY) ?? themes.system
+    const theme = Object.values(themes).includes(storageValue) ? storageValue : themes.system
     return { preference: theme }
 })

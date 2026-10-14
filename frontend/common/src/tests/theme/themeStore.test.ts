@@ -16,4 +16,10 @@ describe('theme store', () => {
         const store = useThemeStore()
         expect(store.preference).toBe(themes.system)
     })
+
+    it.each(['', 'noTheme', '{}'])('falls back to "system" when the saved value is "%s"', (invalid) => {
+        localStorage.setItem(THEME_STORAGE_KEY, invalid)
+        const store = useThemeStore()
+        expect(store.preference).toBe(themes.system)
+    })
 })
