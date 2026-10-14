@@ -19,11 +19,22 @@ function isTheme(value: string | null): value is Theme {
 }
 
 export const useThemeStore = defineStore(THEME_PINIA_KEY, () => {
-    const storageValue = localStorage.getItem(THEME_STORAGE_KEY)
+    let storageValue: string | null = themes.system
+    try {
+        storageValue = localStorage.getItem(THEME_STORAGE_KEY)
+    } catch (e) {
+        console.log(e)
+    }
+
     const preference = ref<Theme>(isTheme(storageValue) ? storageValue : themes.system)
 
     function setPreference(newTheme: Theme) {
-        localStorage.setItem(THEME_STORAGE_KEY, newTheme)
+        try {
+            localStorage.setItem(THEME_STORAGE_KEY, newTheme)
+        } catch (e) {
+            console.log(e)
+        }
+
         preference.value = newTheme
     }
 
