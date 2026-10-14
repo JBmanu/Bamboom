@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { Effect } from 'effect'
 import { ref } from 'vue'
 
 export const THEME_STORAGE_KEY = 'bamboom-theme'
@@ -19,23 +20,13 @@ function isTheme(value: string | null): value is Theme {
 }
 
 export const useThemeStore = defineStore(THEME_PINIA_KEY, () => {
-    let storageValue: string | null = themes.system
-    try {
-        storageValue = localStorage.getItem(THEME_STORAGE_KEY)
-    } catch (e) {
-        console.log(e)
-    }
+    const storageValue = Effect.runSync(Effect.try(() => localStorage.getItem(THEME_STORAGE_KEY)).pipe(Effect.orElseSucceed(() => themes.system)))
 
     const preference = ref<Theme>(isTheme(storageValue) ? storageValue : themes.system)
 
     function setPreference(newTheme: Theme) {
-        try {
-            localStorage.setItem(THEME_STORAGE_KEY, newTheme)
-        } catch (e) {
-            console.log(e)
-        }
-
         preference.value = newTheme
+        Effect.runSync(Effect.try(() => localStorage.setItem(THEME_STORAGE_KEY, newTheme)).pipe(Effect.orElseSucceed(() => undefined)))
     }
 
     return { preference, setPreference }

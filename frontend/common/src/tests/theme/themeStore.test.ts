@@ -52,8 +52,8 @@ describe('theme store', () => {
         })
 
         const store = useThemeStore()
-        const mockTheme = themes.dark
-        expect(() => store.setPreference(mockTheme)).not.toThrow()
-        expect(store.preference).toBe(mockTheme)
+        const chosen = themes.dark
+        expect(() => store.setPreference(chosen)).not.toThrow()
+        expect(store.preference).toBe(chosen)
     })
 })
