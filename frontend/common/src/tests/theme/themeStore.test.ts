@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { THEME_STORAGE_KEY, themes, useThemeStore } from '../../theme/themeStore'
+import { Theme, THEME_STORAGE_KEY, themes, useThemeStore } from '../../theme/themeStore'
 
 describe('theme store', () => {
     beforeEach(() => setActivePinia(createPinia()))
@@ -21,5 +21,17 @@ describe('theme store', () => {
         localStorage.setItem(THEME_STORAGE_KEY, invalid)
         const store = useThemeStore()
         expect(store.preference).toBe(themes.system)
+    })
+
+    it.each(['light', 'dark'] as Theme[])('adopts the preference "%s" chosen by the user', (chosen) => {
+        const store = useThemeStore()
+        store.setPreference(chosen)
+        expect(store.preference).toBe(chosen)
+    })
+
+    it.each(Object.values(themes))('saves the chosen preference "%s" for the next visit', (chosen) => {
+        const store = useThemeStore()
+        store.setPreference(chosen)
+        expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(chosen)
     })
 })
