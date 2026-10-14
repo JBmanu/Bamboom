@@ -1,15 +1,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme static {
-    --color-background: light-dark(#F0F8EB, #121A15);
-    --color-surface: light-dark(#FDFDFC, #1A241E);
-    --color-foreground: light-dark(#2B3A2F, #DDE8E0);
-    --color-foreground-muted: light-dark(#5E6F64, #94A399);
-    --color-border: light-dark(#EAF1E5, #2A372F);
-    --color-primary: light-dark(#7ED64A, #6FCF4A);
-    --color-on-primary: light-dark(#22381B, #10200C);
-    --color-link: light-dark(#2E7A1C, #6FCF4A);
-    --color-error: light-dark(#BE3A34, #F58B84);
+    --color-background: light-dark(#f0f8eb, #121a15);
+    --color-surface: light-dark(#fdfdfc, #1a241e);
+    --color-foreground: light-dark(#2b3a2f, #dde8e0);
+    --color-foreground-muted: light-dark(#5e6f64, #94a399);
+    --color-border: light-dark(#eaf1e5, #2a372f);
+    --color-primary: light-dark(#7ed64a, #6fcf4a);
+    --color-on-primary: light-dark(#22381b, #10200c);
+    --color-link: light-dark(#2e7a1c, #6fcf4a);
+    --color-error: light-dark(#be3a34, #f58b84);
 
     --color-border-strong: color-mix(in srgb, var(--color-border) 45%, var(--color-foreground));
     --color-focus-ring: var(--color-link);
@@ -20,5 +20,9 @@
     --color-primary-edge: color-mix(in srgb, var(--color-primary) 65%, var(--color-on-primary));
 }
 
-:root { color-scheme: light; }
-.dark { color-scheme: dark; }
+:root {
+    color-scheme: light;
+}
+.dark {
+    color-scheme: dark;
+}
