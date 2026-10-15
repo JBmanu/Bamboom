@@ -1,2 +1,5 @@
 export { default as AppButton } from './components/AppButton.vue'
-export { THEME_STORAGE_KEY, preferences, themes, useTheme } from './theme/useTheme'
+export { useTheme } from './theme/useTheme'
+export { preferences } from './theme/themeConstants'
+export { themes } from './theme/themeConstants'
+export { THEME_STORAGE_KEY } from './theme/themeConstants'

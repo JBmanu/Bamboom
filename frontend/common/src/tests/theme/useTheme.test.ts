@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import { THEME_STORAGE_KEY, preferences, themes, useTheme } from '../../theme/useTheme'
+import { useTheme } from '../../theme/useTheme'
 import { mockSystemTheme } from './support/systemTheme'
+import { preferences, THEME_STORAGE_KEY, themes } from '@bamboom/common'
 
 describe('useTheme', () => {
     beforeEach(() => {
