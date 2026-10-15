@@ -1,31 +1,42 @@
 import { defineStore } from 'pinia'
 import { Effect } from 'effect'
-import { ref } from 'vue'
+import { computed, ComputedRef, ref, Ref } from 'vue'
 
-export const THEME_STORAGE_KEY = 'bamboom-theme'
 const THEME_PINIA_KEY = 'pinia-theme'
+export const THEME_STORAGE_KEY = 'bamboom-theme'
 
-const THEMES = ['system', 'light', 'dark'] as const
-export type Theme = (typeof THEMES)[number]
-export const themes: Record<Theme, Theme> = Object.fromEntries(THEMES.map((theme) => [theme, theme])) as Record<Theme, Theme>
-export const themeValues: readonly Theme[] = Object.values(themes)
-export const SYSTEM: Theme = themes.system
-export const LIGHT: Theme = themes.light
-export const DARK: Theme = themes.dark
+export type ThemePreference = (typeof themes)[keyof typeof themes]
+export type ThemeResolved = Exclude<ThemePreference, 'system'>
+export const themes = { system: 'system', light: 'light', dark: 'dark' } as const
+export const themeValues: readonly ThemePreference[] = Object.values(themes)
 
-function isTheme(value: string | null): value is Theme {
-    return value !== null && themeValues.includes(value as Theme)
+function isTheme(value: string | null): value is ThemePreference {
+    return value !== null && (themeValues as readonly string[]).includes(value)
+}
+
+function isDarkSystem() {
+    return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 export const useThemeStore = defineStore(THEME_PINIA_KEY, () => {
-    const storageValue = Effect.runSync(Effect.try(() => localStorage.getItem(THEME_STORAGE_KEY)).pipe(Effect.orElseSucceed(() => themes.system)))
+    const storageValue: string | null = readSavedValue()
+    const preference: Ref<ThemePreference> = ref(isTheme(storageValue) ? (storageValue as ThemePreference) : themes.system)
+    const resolved: ComputedRef<ThemeResolved> = computed((): ThemeResolved =>
+        preference.value === themes.system ? (isDarkSystem() ? themes.dark : themes.light) : preference.value
+    )
 
-    const preference = ref<Theme>(isTheme(storageValue) ? storageValue : themes.system)
-
-    function setPreference(newTheme: Theme) {
-        Effect.runSync(Effect.try(() => localStorage.setItem(THEME_STORAGE_KEY, newTheme)).pipe(Effect.orElseSucceed(() => undefined)))
-        preference.value = newTheme
+    function readSavedValue(): string | null {
+        return Effect.runSync(Effect.try(() => localStorage.getItem(THEME_STORAGE_KEY)).pipe(Effect.orElseSucceed(() => themes.system)))
     }
 
-    return { preference, setPreference }
+    function saveValue(newTheme: ThemePreference): void {
+        Effect.runSync(Effect.try(() => localStorage.setItem(THEME_STORAGE_KEY, newTheme)).pipe(Effect.orElseSucceed(() => undefined)))
+    }
+
+    function setPreference(newTheme: ThemePreference) {
+        preference.value = newTheme
+        saveValue(newTheme)
+    }
+
+    return { preference, setPreference, resolved }
 })
