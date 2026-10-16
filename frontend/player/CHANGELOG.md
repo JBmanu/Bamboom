@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.4...player-frontend-v0.3.0) (2026-10-16)
+
+
+### Features
+
+* **player:** add light/dark theme with three-state switch ([#112](https://github.com/JBmanu/Bamboom/issues/112)) ([4f09aa5](https://github.com/JBmanu/Bamboom/commit/4f09aa524afe291877aa8143d4a1f8b2dabf0a00))
+
 ## [0.2.4](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.3...player-frontend-v0.2.4) (2026-10-13)
 
 
