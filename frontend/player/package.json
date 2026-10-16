@@ -1,6 +1,6 @@
 {
   "name": "player",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Bamboom player frontend (Vue 3 + Vite)",
   "type": "module",
   "scripts": {
