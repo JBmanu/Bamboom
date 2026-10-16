@@ -14,7 +14,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./theme.css": "./src/style/theme.css",
+    "./theme.css": "./src/theme/style/theme.css",
     "./vite": "./src/theme/themeInit.ts"
   },
   "peerDependencies": {
