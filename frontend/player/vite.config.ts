@@ -1,9 +1,10 @@
 import {coverageConfigDefaults, defineConfig} from 'vitest/config'
 import tailwindcss from '@tailwindcss/vite'
+import {themeInitPlugin} from '@bamboom/common/vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-    plugins: [vue(), tailwindcss()],
+    plugins: [vue(), tailwindcss(), themeInitPlugin()],
     server: {
         port: 5173,
         host: true,

@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite'
-import { THEME_STORAGE_KEY } from './themeConstants'
+import { THEME_STORAGE_KEY } from './themeConstants.ts'
 
 export function inlineScript(fn: (...args: never[]) => void, ...args: unknown[]): string {
     const serializedArgs = args.map((arg) => JSON.stringify(arg).replace(/</g, '\\u003c')).join(',')
