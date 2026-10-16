@@ -1,0 +1,4 @@
+@import '@bamboom/common/theme.css';
+@import 'tailwindcss';
+
+@source "../../common/src";
