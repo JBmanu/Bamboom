@@ -28,9 +28,9 @@ jobs:
       progress:        ${{ steps.filter.outputs.progress }}
       codeql-actions:  ${{ steps.filter.outputs.codeql-actions }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |

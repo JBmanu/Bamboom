@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: codecov/codecov-action@v5
+    - uses: codecov/codecov-action@v7
       with:
         token: ${{ inputs.token }}
         files: ${{ inputs.files }}
