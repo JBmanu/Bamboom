@@ -21,7 +21,7 @@ jobs:
     if: ${{ inputs.actions || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v4
         with:
           languages: actions
@@ -34,7 +34,7 @@ jobs:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v4
         with:
           languages: javascript-typescript
@@ -47,5 +47,5 @@ jobs:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/codeql-kotlin
