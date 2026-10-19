@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.3...api-gateway-v0.1.4) (2026-10-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency express to v5 ([#117](https://github.com/JBmanu/Bamboom/issues/117)) ([251aab4](https://github.com/JBmanu/Bamboom/commit/251aab47318641537904c6101e5c37dd5c2705b3))
+* **deps:** update dependency http-proxy-middleware to v4 ([#118](https://github.com/JBmanu/Bamboom/issues/118)) ([8594ab2](https://github.com/JBmanu/Bamboom/commit/8594ab2b954cc3205d98784dc1ceffd3f9faecb3))
+
 ## [0.1.3](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.2...api-gateway-v0.1.3) (2026-10-05)
 
 
