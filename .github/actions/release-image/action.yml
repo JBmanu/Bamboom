@@ -27,7 +27,7 @@ runs:
         VERSION: ${{ steps.version.outputs.value }}
       run: ./gradlew ":$PROJECT:dockerBuild" -PimageVersion="$VERSION"
 
-    - uses: docker/login-action@v3
+    - uses: docker/login-action@v4
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
