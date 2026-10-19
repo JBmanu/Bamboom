@@ -10,4 +10,4 @@ export { useTheme } from './theme/useTheme'
 export { default as ThemeToggle } from './theme/components/ThemeToggle.vue'
 
 // --- IMAGE ---
-export type { Image } from '../../../../common/src/images/imagePipeline'
+export type { Picture } from './images/picture'
