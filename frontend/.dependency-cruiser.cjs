@@ -19,9 +19,27 @@ module.exports = {
             from: {path: '^common/src/index\\.ts$'},
             to: {path: '^((node:)?(fs|path|url|os|child_process)|sharp|vite|vite-imagetools)$', reachable: true},
         },
+        {
+            name: 'common-must-not-depend-on-apps',
+            severity: 'error',
+            from: {path: '^common/src'},
+            to: {path: '^(player|admin)(/|$)'},
+        },
+        {
+            name: 'apps-must-be-independent',
+            severity: 'error',
+            from: {path: '^(player|admin)/src'},
+            to: {path: '^(player|admin)(/|$)', pathNot: '^$1(/|$)'},
+        },
+        {
+            name: 'apps-use-common-public-api-only',
+            severity: 'error',
+            from: {path: '^(player|admin)/src'},
+            to: {path: '^(common/src|@bamboom/common/)'},
+        },
     ],
     options: {
         doNotFollow: {path: 'node_modules'},
-        exclude: {path: '(^|/)(tests|coverage|dist|node_modules)/'},
+        exclude: {path: '(^|/)(coverage|dist|node_modules)/'},
     },
 }
