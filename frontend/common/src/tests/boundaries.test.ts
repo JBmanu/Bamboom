@@ -19,14 +19,14 @@ describe('frontend import boundaries', () => {
         ['common -> player (package name)', 'common', "import 'player'"],
         ['player -> admin', 'player', "import '../../admin/src/main'"],
         ['admin -> player', 'admin', "import '../../player/src/main'"],
-        ['player -> common internals', 'player', "import '../../common/src/components/AppButton.vue'"]
+        ['player -> common internals', 'player', "import '../../common/src/components/VButton.vue'"]
     ] as const)('forbids %s', async (_label, pkg, code) => {
         expect(await boundaryErrors(pkg, code)).toHaveLength(1)
     })
 
     it.each([
-        ['player -> @bamboom/common', 'player', "import { AppButton } from '@bamboom/common'"],
-        ['admin -> @bamboom/common', 'admin', "import { AppButton } from '@bamboom/common'"],
+        ['player -> @bamboom/common', 'player', "import { VButton } from '@bamboom/common'"],
+        ['admin -> @bamboom/common', 'admin', "import { VButton } from '@bamboom/common'"],
         ['player -> its own module', 'player', "import './main'"],
         ['admin -> its own module', 'admin', "import './main'"],
         ['common -> vue', 'common', "import { ref } from 'vue'"],

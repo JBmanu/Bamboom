@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useTheme } from '../../theme/useTheme'
-import { mockSystemTheme } from './support/systemTheme'
+import { mockSystemTheme } from './systemTheme.ts'
 import { themeInit, themeInitPlugin, inlineScript } from '../../theme/themeInit'
 import { nextTick } from 'vue'
 import type { HtmlTagDescriptor } from 'vite'

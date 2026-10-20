@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useId } from 'vue'
-import { type Preference, preferences } from '../themeConstants'
-import { useTheme } from '../useTheme'
+import { type Preference, preferences } from './themeConstants.ts'
+import { useTheme } from './useTheme.ts'
 
 const OPTIONS: { value: Preference; label: string }[] = [
     { value: preferences.auto, label: 'System' },

@@ -109,7 +109,7 @@ describe('?as=picture contract', () => {
     it('exposes sources per format plus a WebP fallback with intrinsic size', () => {
         const { sources, img } = hero.picture
 
-        expect(Object.keys(sources).sort()).toEqual(['avif', 'webp'])
+        expect(Object.keys(sources)).toEqual(['avif', 'webp'])
         expect(sources.avif).toMatch(/\.avif \d+w/)
         expect(img).toEqual({ src: expect.stringMatching(/\.webp$/), w: expect.any(Number), h: expect.any(Number) })
         expect(img.h).toBeGreaterThan(0)
