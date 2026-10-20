@@ -13,5 +13,6 @@ export { useTheme } from './theme/useTheme'
 export { default as ThemeToggle } from './theme/ThemeToggle.vue'
 
 // --- IMAGE ---
+export { RASTER_EXTENSIONS, isRasterFile } from './images/rasterFormats'
 export type { Picture } from './images/picture'
 export { default as VPicture } from './images/VPicture.vue'
