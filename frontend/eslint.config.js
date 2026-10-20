@@ -26,7 +26,6 @@ const restrict = (pkg, ...patterns) => ({
 })
 
 export default defineConfigWithVueTs(
-    // ConfigItemWithExtendsAndVueSupport | ConfigInput['flat/recommended']
     pluginVue.configs['flat/recommended'],
     vueTsConfigs.recommended,
     prettierConfig,

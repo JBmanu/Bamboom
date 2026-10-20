@@ -7,6 +7,9 @@
     "admin",
     "common"
   ],
+  "scripts": {
+    "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src"
+  },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.0.0",
@@ -14,18 +17,19 @@
     "@vitest/coverage-v8": "^5.0.4",
     "@vue/eslint-config-typescript": "^14.9.0",
     "@vue/test-utils": "^2.4.6",
+    "dependency-cruiser": "^17.4.3",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.11.1",
     "jsdom": "^30.0.0",
     "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",
     "vite": "^8.0.0",
+    "vite-imagetools": "^12.0.1",
     "vitest": "^5.0.4",
-    "vue-tsc": "^3.0.0",
-    "sharp": "^0.35.5",
-    "vite-imagetools": "^12.0.1"
+    "vue-tsc": "^3.0.0"
   }
 }
