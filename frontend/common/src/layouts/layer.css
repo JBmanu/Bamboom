@@ -1,0 +1,22 @@
+.v-layers {
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    isolation: isolate;
+}
+.v-layers__layer {
+    grid-area: 1 / 1;
+    min-width: 0;
+    min-height: 0;
+}
+.v-layers__base {
+    z-index: 0;
+    overflow: hidden;
+}
+.v-layers__content {
+    z-index: 1;
+    overflow: auto;
+}
+.v-layers__overlay {
+    z-index: 2;
+    pointer-events: none;
+}

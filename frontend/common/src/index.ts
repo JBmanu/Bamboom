@@ -1,6 +1,9 @@
 // COMPONENTS
 export { default as VButton } from './components/VButton.vue'
 
+// --- LAYOUTS ---
+export { default as VLayers } from './layouts/VLayers.vue'
+
 // --- THEME ----
 export type { Preference, Theme } from './theme/themeConstants'
 export { THEME_STORAGE_KEY, themes, preferences } from './theme/themeConstants'
