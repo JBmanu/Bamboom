@@ -14,15 +14,13 @@ const groupName = useId()
 </script>
 
 <template>
-    <fieldset class="inline-flex min-w-0 gap-1 rounded-lg border border-border bg-surface p-1">
-        <legend class="sr-only">Theme</legend>
-        <label v-for="option in OPTIONS" :key="option.value" class="cursor-pointer">
-            <input v-model="preference" type="radio" :name="groupName" :value="option.value" class="peer sr-only" />
-            <span
-                class="block min-h-11 min-w-11 rounded-md px-3 py-2 text-center text-sm font-medium text-foreground-muted select-none hover:bg-surface-muted peer-checked:bg-primary peer-checked:text-on-primary peer-checked:hover:bg-primary-hover peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring"
-            >
-                {{ option.label }}
-            </span>
+    <fieldset class="toggle">
+        <legend class="legend">Theme</legend>
+        <label v-for="option in OPTIONS" :key="option.value" class="option">
+            <input v-model="preference" type="radio" :name="groupName" :value="option.value" class="radio" />
+            <span class="label">{{ option.label }}</span>
         </label>
     </fieldset>
 </template>
+
+<style scoped src="./themeToggle.css" />
