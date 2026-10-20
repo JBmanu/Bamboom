@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { type IConfiguration, cruise } from 'dependency-cruiser'
 import { afterAll, describe, expect, it } from 'vitest'
+import { ACCEPTED, FLAGGED, type Graph, sourceOf } from './architectureCases.ts'
 
 const FRONTEND_ROOT = resolve(import.meta.dirname, '../../../..')
 const { forbidden, options } = createRequire(import.meta.url)('../../../../.dependency-cruiser.cjs') as IConfiguration
@@ -34,83 +35,34 @@ describe('the real frontend', () => {
     })
 })
 
+/** Without this, a typo in a fixture path would make every "accept" case pass without checking anything. */
+function assertFixtureIsResolvable(output: Awaited<ReturnType<typeof analyze>>) {
+    const unresolved = output.modules.flatMap((module) => module.dependencies.filter((dependency) => dependency.couldNotResolve && dependency.module.startsWith('.')))
+    if (unresolved.length > 0) throw new Error(`Fixture imports do not resolve: ${unresolved.map((d) => d.module).join(', ')}`)
+}
+
 describe('the rules', () => {
     const roots: string[] = []
     afterAll(() => roots.forEach((root) => rmSync(root, { recursive: true, force: true })))
 
-    /** Writes a throwaway project: the rules use paths relative to its root, like in the real one. */
-    async function rulesBrokenBy(files: Project) {
+    /** Writes the throwaway project and returns the rules it breaks: paths are relative to its root, like the real one. */
+    async function rulesBrokenBy(graph: Graph) {
         const root = realpathSync(mkdtempSync(join(tmpdir(), 'arch-')))
         roots.push(root)
-        for (const [path, content] of Object.entries(files)) {
-            mkdirSync(dirname(join(root, path)), { recursive: true })
-            writeFileSync(join(root, path), content)
+        for (const [file, imports] of Object.entries(graph)) {
+            mkdirSync(dirname(join(root, file)), { recursive: true })
+            writeFileSync(join(root, file), sourceOf(file, imports))
         }
-        return brokenRules(await analyze(root))
+        const output = await analyze(root)
+        assertFixtureIsResolvable(output)
+        return brokenRules(output)
     }
 
-    type Project = Record<string, string>
-    type Accepted = { name: string; files: Project }
-    type Flagged = Accepted & { broken: string[] }
-
-    const MODULE = 'export const value = 1'
-    const imports = (specifier: string) => `import '${specifier}'`
-
-    const ACCEPTED: Accepted[] = [
-        { name: 'a browser-safe barrel', files: { 'common/src/index.ts': imports('./safe.ts'), 'common/src/safe.ts': MODULE } },
-        { name: 'common using a third-party package', files: { 'common/src/index.ts': imports('vue') } },
-        { name: 'an app using its own modules', files: { 'player/src/main.ts': imports('./other.ts'), 'player/src/other.ts': MODULE } },
-        { name: 'an app using the common public API', files: { 'player/src/main.ts': imports('@bamboom/common') } }
-    ]
-
-    it.each(ACCEPTED)('accept $name', async ({ files }) => {
-        expect(await rulesBrokenBy(files)).toEqual([])
+    it.each(ACCEPTED)('accept $name', async ({ graph }) => {
+        expect(await rulesBrokenBy(graph)).toEqual([])
     })
 
-    const FLAGGED: Flagged[] = [
-        {
-            name: 'build tooling reached through a helper',
-            files: {
-                'common/src/index.ts': imports('./helper.ts'),
-                'common/src/helper.ts': imports('./images/imagePipeline.ts'),
-                'common/src/images/imagePipeline.ts': imports('node:fs')
-            },
-            broken: ['browser-entry-reaches-build-tooling', 'browser-entry-reaches-node-or-build-deps']
-        },
-        {
-            name: 'a circular dependency',
-            files: { 'common/src/a.ts': imports('./b.ts'), 'common/src/b.ts': imports('./a.ts') },
-            broken: ['no-circular']
-        },
-        {
-            name: 'common importing an app',
-            files: { 'common/src/index.ts': imports('../../player/src/main.ts'), 'player/src/main.ts': MODULE },
-            broken: ['common-must-not-depend-on-apps']
-        },
-        {
-            name: 'player importing admin',
-            files: { 'player/src/main.ts': imports('../../admin/src/main.ts'), 'admin/src/main.ts': MODULE },
-            broken: ['apps-must-be-independent']
-        },
-        {
-            // ESLint's no-restricted-imports does not look at import(): lazy routes would slip through.
-            name: 'player lazily importing admin',
-            files: { 'player/src/main.ts': "export const load = () => import('../../admin/src/main.ts')", 'admin/src/main.ts': MODULE },
-            broken: ['apps-must-be-independent']
-        },
-        {
-            name: 'an app reaching common internals',
-            files: { 'player/src/main.ts': imports('../../common/src/button.ts'), 'common/src/button.ts': MODULE },
-            broken: ['apps-use-common-public-api-only']
-        },
-        {
-            name: 'an app importing a common subpath',
-            files: { 'player/src/main.ts': imports('@bamboom/common/vite') },
-            broken: ['apps-use-common-public-api-only']
-        }
-    ]
-
-    it.each(FLAGGED)('flag $name', async ({ files, broken }) => {
-        expect(await rulesBrokenBy(files)).toEqual(broken.sort())
+    it.each(FLAGGED)('flag $name', async ({ graph, broken }) => {
+        expect(await rulesBrokenBy(graph)).toEqual([...broken].sort())
     })
 })
