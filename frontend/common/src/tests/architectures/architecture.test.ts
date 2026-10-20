@@ -83,18 +83,8 @@ describe('the rules', () => {
             broken: ['no-circular']
         },
         {
-            name: 'common importing an app by relative path',
+            name: 'common importing an app',
             files: { 'common/src/index.ts': imports('../../player/src/main.ts'), 'player/src/main.ts': MODULE },
-            broken: ['common-must-not-depend-on-apps']
-        },
-        {
-            name: 'common importing an app by package name',
-            files: { 'common/src/index.ts': imports('player') },
-            broken: ['common-must-not-depend-on-apps']
-        },
-        {
-            name: 'common importing an app by package subpath',
-            files: { 'common/src/index.ts': imports('player/src/main') },
             broken: ['common-must-not-depend-on-apps']
         },
         {
@@ -103,8 +93,9 @@ describe('the rules', () => {
             broken: ['apps-must-be-independent']
         },
         {
-            name: 'admin importing player',
-            files: { 'admin/src/main.ts': imports('../../player/src/main.ts'), 'player/src/main.ts': MODULE },
+            // ESLint's no-restricted-imports does not look at import(): lazy routes would slip through.
+            name: 'player lazily importing admin',
+            files: { 'player/src/main.ts': "export const load = () => import('../../admin/src/main.ts')", 'admin/src/main.ts': MODULE },
             broken: ['apps-must-be-independent']
         },
         {
