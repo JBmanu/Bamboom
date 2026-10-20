@@ -1,22 +1,19 @@
-.v-layers {
-    display: grid;
-    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-    isolation: isolate;
+@reference 'tailwindcss';
+
+.layers {
+    @apply grid grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] isolate;
 }
-.v-layers__layer {
-    grid-area: 1 / 1;
-    min-width: 0;
-    min-height: 0;
+
+.layer {
+    @apply col-start-1 row-start-1 min-h-0 min-w-0;
 }
-.v-layers__base {
-    z-index: 0;
-    overflow: hidden;
+.base {
+    @apply z-0 overflow-hidden;
 }
-.v-layers__content {
-    z-index: 1;
-    overflow: auto;
+.content {
+    @apply z-10 overflow-auto;
 }
-.v-layers__overlay {
-    z-index: 2;
-    pointer-events: none;
+
+.overlay {
+    @apply z-20 pointer-events-none;
 }
