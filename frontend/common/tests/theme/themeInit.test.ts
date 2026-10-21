@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useTheme } from '../../theme/useTheme'
+import { useTheme } from '../../src/theme/useTheme'
 import { mockSystemTheme } from './systemTheme.ts'
-import { themeInit, themeInitPlugin, inlineScript } from '../../theme/themeInit'
+import { themeInit, themeInitPlugin, inlineScript } from '../../src/theme/themeInit'
 import { nextTick } from 'vue'
 import type { HtmlTagDescriptor } from 'vite'
-import { THEME_STORAGE_KEY, themes } from '../../theme/themeConstants'
+import { THEME_STORAGE_KEY, themes } from '../../src/theme/themeConstants'
 
 const CASES = [
     [null, false, false],

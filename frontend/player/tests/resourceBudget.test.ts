@@ -6,7 +6,7 @@ import sharp from 'sharp'
 import { describe, expect, it } from 'vitest'
 import { isRasterFile } from '@bamboom/common'
 
-const RESOURCE_DIR = fileURLToPath(new URL('../../resource/', import.meta.url))
+const RESOURCE_DIR = fileURLToPath(new URL('../resource/', import.meta.url))
 const MAX_BYTES = 2 * 1024 * 1024
 const MAX_SIDE = 2560
 

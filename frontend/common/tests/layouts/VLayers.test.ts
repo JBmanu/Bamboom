@@ -1,8 +1,8 @@
 import { h } from 'vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import VLayers from '../../layouts/VLayers.vue'
-import VPicture from '../../images/VPicture.vue'
+import VLayers from '../../src/layouts/VLayers.vue'
+import VPicture from '../../src/images/VPicture.vue'
 
 // Reads the layer roles in DOM order, so tests assert on structure and not on CSS.
 const layersOf = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-layer]').map((layer) => (layer.element as HTMLElement).dataset.layer)

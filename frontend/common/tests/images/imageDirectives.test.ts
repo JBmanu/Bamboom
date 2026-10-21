@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createImageDirectives } from '../../images/imagePipelinePlugin.ts'
+import { createImageDirectives } from '../../src/images/imagePipelinePlugin.ts'
 
 const PLAYER_PATH = '/player/resource/'
 

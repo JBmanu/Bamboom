@@ -2,7 +2,7 @@
 import { resolve } from 'node:path'
 import { ESLint } from 'eslint'
 import { describe, expect, it } from 'vitest'
-import { RASTER_EXTENSIONS } from '../../images/rasterFormats.ts'
+import { RASTER_EXTENSIONS } from '../../src/images/rasterFormats.ts'
 
 const PACKAGES = ['common', 'player', 'admin'] as const
 type Pkg = (typeof PACKAGES)[number]

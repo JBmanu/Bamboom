@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import hero from '../../resource/image/element/bamboom-3.png?as=picture'
+import hero from '../resource/image/element/bamboom-3.png?as=picture'
 
 // Guards the wiring, not the library: if imagePipeline() leaves vite.config.ts, this import stops being a Picture.
 describe('player image pipeline', () => {

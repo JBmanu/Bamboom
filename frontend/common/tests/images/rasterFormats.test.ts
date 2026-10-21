@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isRasterFile, RASTER_EXTENSIONS } from '../../images/rasterFormats'
+import { isRasterFile, RASTER_EXTENSIONS } from '../../src/images/rasterFormats'
 
 const files = ['hero', 'dir/hero', 'a.b'] as const
 const unValidateFormat = ['.svg', 'png', '.png.txt', '.png?as=picture', '.md'] as const

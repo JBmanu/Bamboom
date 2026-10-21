@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import VPicture from '../../images/VPicture.vue'
-import type { Picture } from '../../images/picture'
+import VPicture from '../../src/images/VPicture.vue'
+import type { Picture } from '../../src/images/picture'
 
 const picture: Picture = {
     sources: {
