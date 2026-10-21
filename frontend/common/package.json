@@ -14,12 +14,13 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./theme.css": "./src/theme/style/theme.css",
-    "./vite": "./src/theme/themeInit.ts"
+    "./theme.css": "./src/theme/theme.css",
+    "./vite": "./src/vite/index.ts"
   },
   "peerDependencies": {
     "vue": "^3.5.13",
     "@vueuse/core": "^15.0.0",
-    "effect": "^4.0.4"
+    "effect": "^4.0.4",
+    "vite-imagetools": "^12.0.1"
   }
 }

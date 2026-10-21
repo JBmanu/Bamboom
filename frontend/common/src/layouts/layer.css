@@ -1,0 +1,19 @@
+@reference 'tailwindcss';
+
+.layers {
+    @apply grid grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] isolate;
+}
+
+.layer {
+    @apply col-start-1 row-start-1 min-h-0 min-w-0;
+}
+.base {
+    @apply z-0 overflow-hidden;
+}
+.content {
+    @apply z-10 overflow-auto;
+}
+
+.overlay {
+    @apply z-20 pointer-events-none;
+}

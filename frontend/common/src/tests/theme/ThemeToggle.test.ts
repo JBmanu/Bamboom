@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
-import ThemeToggle from '../../../theme/components/ThemeToggle.vue'
-import { preferences, THEME_STORAGE_KEY, themes } from '../../../theme/themeConstants'
-import { mockSystemTheme } from '../support/systemTheme'
+import ThemeToggle from '../../theme/ThemeToggle.vue'
+import { preferences, THEME_STORAGE_KEY, themes } from '../../theme/themeConstants.ts'
+import { mockSystemTheme } from './systemTheme.ts'
 import { defineComponent, h } from 'vue'
 
 const isDark = () => document.documentElement.classList.contains(themes.dark)

@@ -1,0 +1,27 @@
+@reference 'tailwindcss';
+@reference './theme.css';
+
+.toggle {
+    @apply inline-flex min-w-0 gap-1 rounded-lg border border-border bg-surface p-1;
+}
+
+.legend,
+.radio {
+    @apply sr-only;
+}
+
+.option {
+    @apply cursor-pointer;
+}
+
+.label {
+    @apply block min-h-11 min-w-11 rounded-md px-3 py-2 text-center text-sm font-medium text-foreground-muted select-none hover:bg-surface-muted;
+}
+
+.radio:checked + .label {
+    @apply bg-primary text-on-primary hover:bg-primary-hover;
+}
+
+.radio:focus-visible + .label {
+    @apply outline-2 outline-offset-2 outline-focus-ring;
+}

@@ -9,6 +9,7 @@ RUN npm ci --include-workspace-root -w ${APP} -w common
 COPY common/src common/src
 COPY ${APP}/tsconfig*.json ${APP}/vite.config.ts ${APP}/index.html ${APP}/
 COPY ${APP}/src ${APP}/src
+COPY ${APP}/resource ${APP}/resource
 RUN npm run build -w ${APP}
 
 FROM nginx:alpine AS runtime
