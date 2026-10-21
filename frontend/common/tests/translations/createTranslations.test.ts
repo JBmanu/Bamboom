@@ -223,17 +223,17 @@ describe('createTranslations', () => {
 
     it('gives components the language and its setter through useLanguage', async () => {
         const translations = await createTranslations(createFakeVocabularyFiles().loaders)
-        let control: ReturnType<typeof useLanguage> | undefined
+        let languageControl: ReturnType<typeof useLanguage> | undefined
         const Probe = defineComponent({
             setup() {
-                control = useLanguage()
+                languageControl = useLanguage()
                 return () => h('p')
             }
         })
         mount(Probe, { global: { plugins: [translations] } })
 
-        expect(control?.language.value).toBe(languages.en)
-        expect(control?.setLanguage).toBe(translations.setLanguage)
+        expect(languageControl?.language.value).toBe(languages.en)
+        expect(languageControl?.setLanguage).toBe(translations.setLanguage)
     })
 
     it('explains how to fix a component that asks for the language without the plugin', () => {
