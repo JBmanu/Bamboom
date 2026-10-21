@@ -3,12 +3,19 @@ import { createI18n } from 'vue-i18n'
 import { datetimeFormats, numberFormats } from '../../src/translations/formats.ts'
 import { type Language, languages } from '../../src/translations/languageConstants.ts'
 
-// A Thursday. The time zone is fixed in every call so the result does not depend on the machine.
+type DateFormat = keyof typeof datetimeFormats.en
+
+const translator = (language: Language) =>
+    createI18n({
+        legacy: false,
+        locale: language,
+        datetimeFormats,
+        numberFormats
+    }).global
+
 const date = new Date(Date.UTC(2026, 0, 15, 14, 30))
 
-const translator = (language: Language) => createI18n({ legacy: false, locale: language, datetimeFormats, numberFormats }).global
-
-const formatDate = (language: Language, key: 'short' | 'long' | 'time') => translator(language).d(date, { key, timeZone: 'UTC' })
+const formatDate = (language: Language, key: DateFormat) => translator(language).d(date, { key, timeZone: 'UTC' })
 
 describe('date formats', () => {
     it.each([
