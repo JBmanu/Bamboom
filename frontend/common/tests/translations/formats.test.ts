@@ -13,6 +13,7 @@ const translator = (language: Language) =>
         numberFormats
     }).global
 
+// A Thursday. The time zone is fixed in every call so the result does not depend on the machine.
 const date = new Date(Date.UTC(2026, 0, 15, 14, 30))
 
 const formatDate = (language: Language, key: DateFormat) => translator(language).d(date, { key, timeZone: 'UTC' })
@@ -42,6 +43,7 @@ describe('number formats', () => {
         expect(translator(language).n(1234567.891, 'decimal')).toBe(expected)
     })
 
+    // Italian groups thousands only from five digits (a CLDR rule), so 1234.5 is "1234,5", not a bug.
     it('does not group four-digit numbers in Italian, unlike English', () => {
         expect(translator(languages.it).n(1234.5, 'decimal')).toBe('1234,5')
         expect(translator(languages.en).n(1234.5, 'decimal')).toBe('1,234.5')
