@@ -7,7 +7,7 @@ import sharp, { type Metadata } from 'sharp'
 import { build, type Rolldown } from 'vite'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Picture } from '../../images/picture'
-import { imagePipeline } from '../../images/imagePipeline'
+import { imagePipelinePlugin } from '../../images/imagePipelinePlugin'
 
 vi.setConfig({ testTimeout: 60_000, hookTimeout: 60_000 })
 
@@ -33,7 +33,7 @@ async function bundle(entry: string, root = dir): Promise<Built> {
         root,
         logLevel: 'silent',
         configFile: false,
-        plugins: [imagePipeline(pathToFileURL(join(root, 'resource/')))],
+        plugins: [imagePipelinePlugin(pathToFileURL(join(root, 'resource/')))],
         build: {
             write: false,
             assetsInlineLimit: 0, // small files would be inlined as base64, hiding the ones we count

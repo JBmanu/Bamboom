@@ -15,7 +15,7 @@ export function createImageDirectives(resourceRoot: URL) {
     return (url: URL): URLSearchParams => (decodeURIComponent(url.pathname).startsWith(root) ? new URLSearchParams(DEFAULT_DIRECTIVES) : new URLSearchParams())
 }
 
-export function imagePipeline(resourceRoot: URL): Plugin {
+export function imagePipelinePlugin(resourceRoot: URL): Plugin {
     const realRoot = pathToFileURL(`${realpathSync(fileURLToPath(resourceRoot))}/`)
     return imagetools({ defaultDirectives: createImageDirectives(realRoot) })
 }

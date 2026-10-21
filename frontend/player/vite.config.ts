@@ -1,10 +1,10 @@
 import {coverageConfigDefaults, defineConfig} from 'vitest/config'
 import tailwindcss from '@tailwindcss/vite'
-import {imagePipeline, themeInitPlugin} from '@bamboom/common/vite'
+import {imagePipelinePlugin, themeInitPlugin} from '@bamboom/common/vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-    plugins: [vue(), tailwindcss(), themeInitPlugin(), imagePipeline(new URL('./resource/', import.meta.url))],
+    plugins: [vue(), tailwindcss(), themeInitPlugin(), imagePipelinePlugin(new URL('./resource/', import.meta.url))],
     server: {
         port: 5173,
         host: true,
