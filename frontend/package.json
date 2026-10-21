@@ -11,6 +11,7 @@
     "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src"
   },
   "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^11.2.7",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.0.0",
     "@vitejs/plugin-vue": "^6.0.10",
