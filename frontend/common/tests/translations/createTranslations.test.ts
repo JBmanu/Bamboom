@@ -1,0 +1,35 @@
+import { describe, expect, it } from 'vitest'
+import { resolveLanguage } from '../../src/translations/createTranslations.ts'
+import { languages } from '../../src/translations/languageConstants.ts'
+
+describe('resolveLanguage', () => {
+    it('prefers a supported stored language over the browser', () => {
+        expect(resolveLanguage(languages.it, ['en-US'])).toBe(languages.it)
+    })
+
+    it.each([null, undefined, '', 'fr'])('ignores the stored value %j and asks the browser', (stored) => {
+        expect(resolveLanguage(stored, ['it-IT'])).toBe(languages.it)
+    })
+
+    it('compares the stored value exactly, since the app wrote it', () => {
+        expect(resolveLanguage('IT', ['en-US'])).toBe(languages.en)
+    })
+
+    it.each([
+        ['it', languages.it],
+        ['it-IT', languages.it],
+        ['IT-it', languages.it],
+        ['en-GB', languages.en],
+        ['EN-us', languages.en]
+    ])('maps the browser language %s to %s', (tag, expected) => {
+        expect(resolveLanguage(null, [tag])).toBe(expected)
+    })
+
+    it('takes the first supported browser language, in order of preference', () => {
+        expect(resolveLanguage(null, ['fr-FR', 'it-IT', 'en-US'])).toBe(languages.it)
+    })
+
+    it.each([[[]], [['fr-FR', 'de']], [['ita']]])('falls back to English when nothing matches (%j)', (browser) => {
+        expect(resolveLanguage(null, browser)).toBe(languages.en)
+    })
+})
