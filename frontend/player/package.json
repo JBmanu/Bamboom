@@ -11,8 +11,8 @@
     "type-check": "vue-tsc --noEmit",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
-    "lint": "eslint . && prettier --check src/",
-    "format": "eslint . --fix && prettier --write src/"
+    "lint": "eslint . && prettier --check src/ tests/",
+    "format": "eslint . --fix && prettier --write src/ tests/"
   },
   "dependencies": {
     "@bamboom/common": "*",
@@ -20,6 +20,7 @@
     "effect": "^4.0.4",
     "pinia": "^4.0.3",
     "vue": "^3.5.13",
+    "vue-i18n": "^11.4.16",
     "vue-router": "^5.0.0"
   }
 }

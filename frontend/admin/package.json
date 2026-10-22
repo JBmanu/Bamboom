@@ -11,8 +11,8 @@
     "type-check": "vue-tsc --noEmit",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
-    "lint": "eslint . && prettier --check src/",
-    "format": "eslint . --fix && prettier --write src/"
+    "lint": "eslint . && prettier --check src/ tests/",
+    "format": "eslint . --fix && prettier --write src/ tests/"
   },
   "dependencies": {
     "@bamboom/common": "*",

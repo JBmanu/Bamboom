@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
 import './main.css'
+import { createPlayerApp } from './app/createPlayerApp'
 
-createApp(App).mount('#app')
+const app = await createPlayerApp()
+app.mount('#app')

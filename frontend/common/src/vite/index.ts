@@ -2,3 +2,4 @@
 
 export { themeInitPlugin } from '../theme/themeInit.ts'
 export { imagePipelinePlugin } from '../images/imagePipelinePlugin.ts'
+export { translationsPlugin } from '../translations/translationsPlugin.ts'
