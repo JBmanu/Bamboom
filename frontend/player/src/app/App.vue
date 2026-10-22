@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ThemeToggle } from '@bamboom/common'
+import { LanguageSwitcher, ThemeToggle } from '@bamboom/common'
 </script>
 
 <template>
@@ -7,5 +7,6 @@ import { ThemeToggle } from '@bamboom/common'
         <h1>Bamboom</h1>
         <p>web-app up and running</p>
         <ThemeToggle />
+        <LanguageSwitcher />
     </div>
 </template>
