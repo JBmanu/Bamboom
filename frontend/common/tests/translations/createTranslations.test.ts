@@ -147,7 +147,9 @@ describe('createTranslations', () => {
         it('names each vocabulary after its folder, in camelCase', async () => {
             const translations = await createTranslations(createFakeVocabularyFiles().loaders)
 
-            expect(renderTextFrom(translations, ({ t }) => `${t('playerIdentity.login.title')} / ${t('lobbyMatch.join.title')}`)).toBe('Sign in / Join')
+            expect(renderTextFrom(translations, ({ t }) => `${t('playerIdentity.login.title')} / ${t('lobbyMatch.join.title')}`)).toBe(
+                'Sign in / Join'
+            )
         })
 
         it('ignores files not named after a supported language', async () => {

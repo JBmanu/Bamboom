@@ -8,7 +8,8 @@
     "common"
   ],
   "scripts": {
-    "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src"
+    "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src",
+    "clean": "rm -rf node_modules/.tmp dist"
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^11.2.7",

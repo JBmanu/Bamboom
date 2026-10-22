@@ -19,7 +19,8 @@ async function analyze(baseDir: string) {
     return output
 }
 
-const brokenRules = (output: Awaited<ReturnType<typeof analyze>>) => [...new Set(output.summary.violations.map((violation) => violation.rule.name))].sort()
+const brokenRules = (output: Awaited<ReturnType<typeof analyze>>) =>
+    [...new Set(output.summary.violations.map((violation) => violation.rule.name))].sort()
 
 describe('the real frontend', () => {
     it('respects every architecture rule', async () => {
@@ -37,7 +38,9 @@ describe('the real frontend', () => {
 
 /** Without this, a typo in a fixture path would make every "accept" case pass without checking anything. */
 function assertFixtureIsResolvable(output: Awaited<ReturnType<typeof analyze>>) {
-    const unresolved = output.modules.flatMap((module) => module.dependencies.filter((dependency) => dependency.couldNotResolve && dependency.module.startsWith('.')))
+    const unresolved = output.modules.flatMap((module) =>
+        module.dependencies.filter((dependency) => dependency.couldNotResolve && dependency.module.startsWith('.'))
+    )
     if (unresolved.length > 0) throw new Error(`Fixture imports do not resolve: ${unresolved.map((d) => d.module).join(', ')}`)
 }
 

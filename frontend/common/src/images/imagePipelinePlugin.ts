@@ -12,7 +12,8 @@ const DEFAULT_DIRECTIVES = {
 export function createImageDirectives(resourceRoot: URL) {
     const root = decodeURIComponent(resourceRoot.pathname)
 
-    return (url: URL): URLSearchParams => (decodeURIComponent(url.pathname).startsWith(root) ? new URLSearchParams(DEFAULT_DIRECTIVES) : new URLSearchParams())
+    return (url: URL): URLSearchParams =>
+        decodeURIComponent(url.pathname).startsWith(root) ? new URLSearchParams(DEFAULT_DIRECTIVES) : new URLSearchParams()
 }
 
 export function imagePipelinePlugin(resourceRoot: URL): Plugin {

@@ -1,6 +1,6 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createPlayerApp } from '../../src/app/createPlayerApp'
+import { createPlayerApp } from '../../src/app/createPlayerApp.ts'
 
 describe('createPlayerApp', () => {
     beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))

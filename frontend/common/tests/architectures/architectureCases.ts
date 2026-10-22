@@ -40,7 +40,9 @@ export function sourceOf(file: string, imports: Import[]) {
     if (imports.length === 0) return 'export const value = 1'
     return imports
         .map((dependency) =>
-            typeof dependency === 'string' ? `import '${specifierFrom(file, dependency)}'` : `export const load = () => import('${specifierFrom(file, dependency.lazy)}')`
+            typeof dependency === 'string'
+                ? `import '${specifierFrom(file, dependency)}'`
+                : `export const load = () => import('${specifierFrom(file, dependency.lazy)}')`
         )
         .join('\n')
 }

@@ -7,6 +7,9 @@ import italian from '../../src/translations/vocabulary/it.ts'
 
 type Messages = { [key: string]: string | Messages }
 
+// Each language is named in its own language, so a visitor can find theirs whatever language the page is in.
+const LANGUAGE_NAMES: Record<Language, string> = { en: 'English', it: 'Italiano' }
+
 // Record<Language, …> turns a missing file into a compile error as soon as a language is added.
 const messagesByLanguage: Record<Language, Messages> = { en: english, it: italian }
 
@@ -20,9 +23,6 @@ function keyPathsOf(messages: Messages, parentPath = ''): string[] {
 function textsOf(messages: Messages): string[] {
     return Object.values(messages).flatMap((value) => (typeof value === 'string' ? [value] : textsOf(value)))
 }
-
-/** Each language is named in its own language, so a visitor can find theirs whatever language the page is in. */
-const LANGUAGE_NAMES: Record<Language, string> = { en: 'English', it: 'Italiano' }
 
 describe('the shared vocabulary', () => {
     it.each(SUPPORTED_LANGUAGES)('has the same keys in %s as in English', (language) => {

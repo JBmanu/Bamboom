@@ -11,7 +11,8 @@ const picture: Picture = {
     img: { src: '/hero-745.webp', w: 745, h: 1278 }
 }
 
-const render = (props: Record<string, unknown> = {}, attrs: Record<string, unknown> = {}) => mount(VPicture, { props: { picture, alt: 'A hero', ...props }, attrs })
+const render = (props: Record<string, unknown> = {}, attrs: Record<string, unknown> = {}) =>
+    mount(VPicture, { props: { picture, alt: 'A hero', ...props }, attrs })
 
 describe('VPicture', () => {
     it('renders one <source> per format, AVIF before WebP', () => {
