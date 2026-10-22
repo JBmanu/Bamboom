@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.3.0...player-frontend-v0.4.0) (2026-10-21)
+
+
+### Features
+
+* **frontend:** add AVIF/WebP image pipeline, VPicture and VLayers ([#121](https://github.com/JBmanu/Bamboom/issues/121)) ([eabfdb9](https://github.com/JBmanu/Bamboom/commit/eabfdb96e36285a8bf422b980dabd26b15de3091))
+
 ## [0.3.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.2.4...player-frontend-v0.3.0) (2026-10-16)
 
 
