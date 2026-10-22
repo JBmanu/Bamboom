@@ -1,4 +1,4 @@
-import type { Language } from './languageConstants'
+import type { Language } from '../languageConstants.ts'
 
 // Intl localises the output, so every language shares the same option sets.
 const sharedDateTimeFormats = {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createI18n } from 'vue-i18n'
-import { datetimeFormats, numberFormats } from '../../src/translations/formats.ts'
+import { datetimeFormats, numberFormats } from '../../src/translations/elements/formats.ts'
 import { type Language, languages } from '../../src/translations/languageConstants.ts'
 
 type DateFormat = keyof typeof datetimeFormats.en

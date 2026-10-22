@@ -1,10 +1,14 @@
 import { useStorage } from '@vueuse/core'
 import { type App, readonly, ref } from 'vue'
 import { createI18n } from 'vue-i18n'
-import { datetimeFormats, numberFormats } from './formats'
+import { datetimeFormats, numberFormats } from '../../../../../common/src/translations/elements/formats'
 import { FALLBACK_LANGUAGE, isSupportedLanguage, LANGUAGE_STORAGE_KEY, type Language } from './languageConstants'
 import { LANGUAGE_CONTROL } from './useLanguage'
-import { groupVocabularyFilesByLanguage, type VocabularyFile, type VocabularyLoaders } from './vocabularies'
+import {
+    groupVocabularyFilesByLanguage,
+    type VocabularyFile,
+    type VocabularyLoaders
+} from '../../../../../common/src/translations/elements/vocabularies'
 
 /** "it-IT" and "IT-it" both mean Italian: only the part before the first dash picks the language. */
 const baseLanguageOf = (tag: string) => tag.toLowerCase().split('-')[0]
