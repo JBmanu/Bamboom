@@ -1,32 +1,20 @@
-import { mount, type VueWrapper } from '@vue/test-utils'
+import { enableAutoUnmount, type VueWrapper } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createTranslations } from '../../../src/translations/createTranslations.ts'
-import { LANGUAGE_STORAGE_KEY, languages } from '../../../src/translations/language/languageConstants.ts'
+import { LANGUAGE_STORAGE_KEY, languages } from '../../../src/translations/language/languageConstants'
 import LanguageSwitcher from '../../../src/translations/language/LanguageSwitcher.vue'
-import type { VocabularyLoaders } from '../../../src/translations/vocabularies.ts'
-import { defineComponent, h } from 'vue'
+import type { VocabularyLoaders } from '../../../src/translations/vocabularies'
+import { mountTwiceWithTranslations, mountWithTranslations } from '../../utils/mountWithTranslations'
+
+enableAutoUnmount(afterEach)
 
 const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())
 const legendOf = (wrapper: VueWrapper) => wrapper.get('fieldset legend').text()
 const radio = (wrapper: VueWrapper, language: string) => wrapper.get<HTMLInputElement>(`input[value="${language}"]`)
-
-let mounted: VueWrapper[] = []
-
-const mountSwitcher = async (moduleLoaders: VocabularyLoaders = {}) => {
-    const translations = await createTranslations(moduleLoaders)
-    const wrapper = mount(LanguageSwitcher, { attachTo: document.body, global: { plugins: [translations] } })
-    mounted.push(wrapper)
-    return { wrapper, translations }
-}
+const mountSwitcher = (moduleLoaders?: VocabularyLoaders) => mountWithTranslations(LanguageSwitcher, moduleLoaders)
 
 beforeEach(() => {
     localStorage.clear()
     document.documentElement.removeAttribute('lang')
-})
-
-afterEach(() => {
-    mounted.forEach((wrapper) => wrapper.unmount())
-    mounted = []
 })
 
 describe('LanguageSwitcher', () => {
@@ -65,12 +53,8 @@ describe('LanguageSwitcher', () => {
     })
 
     it('keeps two switchers in sync', async () => {
-        const translations = await createTranslations()
-        const Host = defineComponent({ render: () => h('div', [h(LanguageSwitcher), h(LanguageSwitcher)]) })
-        const wrapper = mount(Host, { attachTo: document.body, global: { plugins: [translations] } })
-        mounted.push(wrapper)
+        const { wrapper } = await mountTwiceWithTranslations(LanguageSwitcher)
         const [firstItalian, secondItalian] = wrapper.findAll<HTMLInputElement>(`input[value="${languages.it}"]`)
-
         await firstItalian.setValue()
 
         await vi.waitFor(() => expect(secondItalian.element.checked).toBe(true))
@@ -83,6 +67,7 @@ describe('LanguageSwitcher', () => {
         await radio(wrapper, languages.it).setValue()
 
         await vi.waitFor(() => expect(consoleError).toHaveBeenCalled())
+        expect(consoleError).toHaveBeenCalledWith(expect.stringContaining(languages.it), expect.any(Error))
         expect(radio(wrapper, languages.en).element.checked).toBe(true)
         expect(legendOf(wrapper)).toBe('Language')
         consoleError.mockRestore()

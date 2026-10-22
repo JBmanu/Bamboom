@@ -1,34 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { mount, type VueWrapper } from '@vue/test-utils'
+import { enableAutoUnmount, type VueWrapper } from '@vue/test-utils'
 import ThemeToggle from '../../src/theme/ThemeToggle.vue'
 import { mockSystemTheme } from './systemTheme.ts'
-import { defineComponent, h, nextTick } from 'vue'
-import { createTranslations } from '../../src/translations/createTranslations.ts'
+import { nextTick } from 'vue'
 import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
 import { preferences, THEME_STORAGE_KEY, themes } from '../../src/theme/themeConstants.ts'
+import { mountTwiceWithTranslations, mountWithTranslations } from '../utils/mountWithTranslations'
+
+enableAutoUnmount(afterEach)
 
 const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())
 const isDark = () => document.documentElement.classList.contains(themes.dark)
 const radio = (wrapper: VueWrapper, value: string) => wrapper.get<HTMLInputElement>(`input[value="${value}"]`)
-
-let mounted: VueWrapper[] = []
-
-const mountToggle = async () => {
-    const translations = await createTranslations()
-    const wrapper = mount(ThemeToggle, { attachTo: document.body, global: { plugins: [translations] } })
-    mounted.push(wrapper)
-    return { wrapper, translations }
-}
+const mountToggle = () => mountWithTranslations(ThemeToggle)
 
 beforeEach(() => {
     localStorage.clear()
     document.documentElement.className = ''
     mockSystemTheme(false)
-})
-
-afterEach(() => {
-    mounted.forEach((wrapper) => wrapper.unmount())
-    mounted = []
 })
 
 describe('ThemeToggle', () => {
@@ -92,10 +81,7 @@ describe('ThemeToggle', () => {
     })
 
     it('gives every toggle its own radio group', async () => {
-        const translations = await createTranslations()
-        const Host = defineComponent({ render: () => h('div', [h(ThemeToggle), h(ThemeToggle)]) })
-        const wrapper = mount(Host, { attachTo: document.body, global: { plugins: [translations] } })
-        mounted.push(wrapper)
+        const { wrapper } = await mountTwiceWithTranslations(ThemeToggle)
         const [first, second] = wrapper.findAll('input[value="dark"]')
 
         expect(first.attributes('name')).not.toBe(second.attributes('name'))
