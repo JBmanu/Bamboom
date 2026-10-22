@@ -1,4 +1,8 @@
-// COMPONENTS
+// --- TRANSLATIONS ---
+export { LANGUAGE_STORAGE_KEY, languages } from './translations/languageConstants'
+export { createTranslations } from './translations/createTranslations'
+
+// --- COMPONENTS ---
 export { default as VButton } from './components/VButton.vue'
 
 // --- LAYOUTS ---
