@@ -1,4 +1,4 @@
-import { isSupportedLanguage, type Language } from '../languageConstants.ts'
+import { isSupportedLanguage, type Language } from './language/languageConstants.ts'
 
 /** What `import.meta.glob('./<module>/vocabulary/*.ts')` returns: a lazy loader per file. */
 export type VocabularyLoaders = Record<string, () => Promise<unknown>>

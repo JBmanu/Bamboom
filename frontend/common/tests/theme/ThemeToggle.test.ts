@@ -4,7 +4,7 @@ import ThemeToggle from '../../src/theme/ThemeToggle.vue'
 import { mockSystemTheme } from './systemTheme.ts'
 import { defineComponent, h, nextTick } from 'vue'
 import { createTranslations } from '../../src/translations/createTranslations.ts'
-import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/languageConstants.ts'
+import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
 import { preferences, THEME_STORAGE_KEY, themes } from '../../src/theme/themeConstants.ts'
 
 const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())

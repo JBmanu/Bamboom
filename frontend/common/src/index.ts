@@ -1,5 +1,5 @@
 // --- TRANSLATIONS ---
-export { LANGUAGE_STORAGE_KEY, languages } from './translations/languageConstants'
+export { LANGUAGE_STORAGE_KEY, languages } from './translations/language/languageConstants'
 export { createTranslations } from './translations/createTranslations'
 
 // --- COMPONENTS ---

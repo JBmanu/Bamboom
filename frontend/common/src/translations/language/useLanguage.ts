@@ -1,5 +1,5 @@
 import { inject, type InjectionKey, type Ref } from 'vue'
-import type { Language } from './languageConstants'
+import type { Language } from './languageConstants.ts'
 
 /** What components get from {@link useLanguage}. `language` is read-only: change it only through `setLanguage`. */
 export interface LanguageControl {

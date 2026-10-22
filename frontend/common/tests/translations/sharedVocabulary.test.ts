@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from 'vue'
 import { createTranslations } from '../../src/translations/createTranslations.ts'
-import { type Language, LANGUAGE_STORAGE_KEY, languages, SUPPORTED_LANGUAGES } from '../../src/translations/languageConstants.ts'
+import { type Language, LANGUAGE_STORAGE_KEY, languages, SUPPORTED_LANGUAGES } from '../../src/translations/language/languageConstants.ts'
 import english from '../../src/translations/vocabulary/en.ts'
 import italian from '../../src/translations/vocabulary/it.ts'
 

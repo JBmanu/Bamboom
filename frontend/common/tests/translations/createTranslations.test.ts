@@ -3,9 +3,51 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h } from 'vue'
 import { type Composer, useI18n } from 'vue-i18n'
 import { chooseStartingLanguage, createTranslations } from '../../src/translations/createTranslations.ts'
-import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/languageConstants.ts'
-import { useLanguage } from '../../src/translations/useLanguage.ts'
+import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
+import { useLanguage } from '../../src/translations/language/useLanguage.ts'
 import { browserTags } from './browserTags.ts'
+
+type TranslationsPlugin = Awaited<ReturnType<typeof createTranslations>>
+
+const IDENTITY_FOLDER = './player-identity/vocabulary'
+const LOBBY_FOLDER = './lobby-match/vocabulary'
+
+/** A vocabulary file as `import.meta.glob` hands it over: a loader that resolves to the module. */
+const fakeVocabularyFile = (messages: object) => vi.fn(async () => ({ default: messages }))
+
+const fakeBrowserLanguages = (...tags: string[]) => vi.spyOn(navigator, 'languages', 'get').mockReturnValue(tags)
+
+/** Renders what `read` returns inside a component that has the plugin, as a real screen would. */
+const renderTextFrom = (plugin: TranslationsPlugin, read: (i18n: Composer) => string) => mountProbe(() => useI18n(), plugin, read).wrapper.text()
+
+function createFakeVocabularyFiles() {
+    const files = {
+        identityEn: fakeVocabularyFile({ login: { title: 'Sign in' }, onlyEnglish: 'Only in English' }),
+        identityIt: fakeVocabularyFile({ login: { title: 'Accedi' } }),
+        lobbyEn: fakeVocabularyFile({ join: { title: 'Join' } }),
+        lobbyIt: fakeVocabularyFile({ join: { title: 'Entra' } })
+    }
+    const loaders = {
+        [`${IDENTITY_FOLDER}/en.ts`]: files.identityEn,
+        [`${IDENTITY_FOLDER}/it.ts`]: files.identityIt,
+        [`${LOBBY_FOLDER}/en.ts`]: files.lobbyEn,
+        [`${LOBBY_FOLDER}/it.ts`]: files.lobbyIt
+    }
+    return { files, loaders }
+}
+
+/** Mounts a tiny component that calls `useInSetup` while it sets up, like any real component would. */
+function mountProbe<Result>(useInSetup: () => Result, plugin?: TranslationsPlugin, textOf: (result: Result) => string = () => '') {
+    let result!: Result
+    const Probe = defineComponent({
+        setup() {
+            result = useInSetup()
+            return () => h('p', textOf(result))
+        }
+    })
+    const wrapper = mount(Probe, { global: { plugins: plugin ? [plugin] : [] } })
+    return { result, wrapper }
+}
 
 describe('chooseStartingLanguage', () => {
     it('prefers a supported stored language over the browser', () => {
@@ -39,41 +81,6 @@ describe('chooseStartingLanguage', () => {
         expect(chooseStartingLanguage(null, browser)).toBe(languages.en)
     })
 })
-
-/** A vocabulary file as `import.meta.glob` hands it over: a loader that resolves to the module. */
-const fakeVocabularyFile = (messages: object) => vi.fn(async () => ({ default: messages }))
-
-const IDENTITY_FOLDER = './player-identity/vocabulary'
-const LOBBY_FOLDER = './lobby-match/vocabulary'
-
-function createFakeVocabularyFiles() {
-    const files = {
-        identityEn: fakeVocabularyFile({ login: { title: 'Sign in' }, onlyEnglish: 'Only in English' }),
-        identityIt: fakeVocabularyFile({ login: { title: 'Accedi' } }),
-        lobbyEn: fakeVocabularyFile({ join: { title: 'Join' } }),
-        lobbyIt: fakeVocabularyFile({ join: { title: 'Entra' } })
-    }
-    const loaders = {
-        [`${IDENTITY_FOLDER}/en.ts`]: files.identityEn,
-        [`${IDENTITY_FOLDER}/it.ts`]: files.identityIt,
-        [`${LOBBY_FOLDER}/en.ts`]: files.lobbyEn,
-        [`${LOBBY_FOLDER}/it.ts`]: files.lobbyIt
-    }
-    return { files, loaders }
-}
-
-const fakeBrowserLanguages = (...tags: string[]) => vi.spyOn(navigator, 'languages', 'get').mockReturnValue(tags)
-
-/** Renders what `read` returns inside a component that has the plugin, as a real screen would. */
-function renderTextFrom(plugin: Awaited<ReturnType<typeof createTranslations>>, read: (i18n: Composer) => string) {
-    const Probe = defineComponent({
-        setup() {
-            const i18n = useI18n()
-            return () => h('p', read(i18n))
-        }
-    })
-    return mount(Probe, { global: { plugins: [plugin] } }).text()
-}
 
 describe('createTranslations', () => {
     beforeEach(() => {
@@ -225,23 +232,15 @@ describe('createTranslations', () => {
 
     it('gives components the language and its setter through useLanguage', async () => {
         const translations = await createTranslations(createFakeVocabularyFiles().loaders)
-        let languageControl: ReturnType<typeof useLanguage> | undefined
-        const Probe = defineComponent({
-            setup() {
-                languageControl = useLanguage()
-                return () => h('p')
-            }
-        })
-        mount(Probe, { global: { plugins: [translations] } })
 
-        expect(languageControl?.language.value).toBe(languages.en)
-        expect(languageControl?.setLanguage).toBe(translations.setLanguage)
+        const { result: languageControl } = mountProbe(useLanguage, translations)
+
+        expect(languageControl.language.value).toBe(languages.en)
+        expect(languageControl.setLanguage).toBe(translations.setLanguage)
     })
 
     it('explains how to fix a component that asks for the language without the plugin', () => {
-        const Probe = defineComponent({ setup: () => (useLanguage(), () => h('p')) })
-
-        expect(() => mount(Probe)).toThrow(/createTranslations/)
+        expect(() => mountProbe(useLanguage)).toThrow(/createTranslations/)
     })
 
     it('keeps the current language when loading fails and lets the user try again', async () => {
