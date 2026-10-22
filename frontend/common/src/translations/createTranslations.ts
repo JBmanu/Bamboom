@@ -34,9 +34,18 @@ function oncePerKey<Key>(action: (key: Key) => Promise<void>) {
 async function loadMessagesByNamespace(filesByNamespace: Map<string, VocabularyFile> = new Map()) {
     const messagesByNamespace: Record<string, unknown> = {}
     for (const [namespace, file] of filesByNamespace) {
-        messagesByNamespace[namespace] = ((await file.loadFile()) as { default: unknown }).default
+        messagesByNamespace[namespace] = readMessagesFrom(file, await file.loadFile())
     }
     return messagesByNamespace
+}
+
+/** A vocabulary file must be `export default { … }`: anything else would silently leave its screens without text. */
+function readMessagesFrom(file: VocabularyFile, loadedModule: unknown) {
+    const messages = (loadedModule as { default?: unknown }).default
+    if (typeof messages !== 'object' || messages === null) {
+        throw new Error(`"${file.path}" must export an object by default: export default { … }`)
+    }
+    return messages
 }
 
 /**

@@ -124,6 +124,16 @@ describe('createTranslations', () => {
 
             expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBeNull()
         })
+
+        it.each([
+            ['has no default export', {}],
+            ['exports a text instead of an object', { default: 'hello' }],
+            ['exports nothing as default', { default: null }]
+        ])('names the vocabulary file that %s', async (_problem, wrongModule) => {
+            const wrongFile = `${IDENTITY_FOLDER}/en.ts`
+
+            await expect(createTranslations({ [wrongFile]: async () => wrongModule })).rejects.toThrow(wrongFile)
+        })
     })
 
     describe('loading', () => {
