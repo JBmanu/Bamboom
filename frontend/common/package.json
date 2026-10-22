@@ -23,6 +23,7 @@
     "vue-i18n": "^11.4.16",
     "effect": "^4.0.4",
     "vite-imagetools": "^12.0.1",
+    "@iconify-json/ph": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^11.2.7"
   }
 }
