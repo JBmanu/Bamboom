@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/JBmanu/Bamboom/compare/admin-frontend-v0.2.0...admin-frontend-v0.3.0) (2026-10-22)
+
+
+### Features
+
+* **frontend:** add AVIF/WebP image pipeline, VPicture and VLayers ([#121](https://github.com/JBmanu/Bamboom/issues/121)) ([eabfdb9](https://github.com/JBmanu/Bamboom/commit/eabfdb96e36285a8bf422b980dabd26b15de3091))
+
 ## [0.2.0](https://github.com/JBmanu/Bamboom/compare/admin-frontend-v0.1.1...admin-frontend-v0.2.0) (2026-10-19)
 
 
