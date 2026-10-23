@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.4.0...player-frontend-v0.5.0) (2026-10-23)
+
+
+### Features
+
+* **frontend:** add Italian and English translations ([#124](https://github.com/JBmanu/Bamboom/issues/124)) ([911886e](https://github.com/JBmanu/Bamboom/commit/911886ee9f4aff3c5d6cdd7ff5b45bdb57fd6227))
+
 ## [0.4.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.3.0...player-frontend-v0.4.0) (2026-10-21)
 
 
