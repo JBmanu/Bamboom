@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { VButton } from '../src'
+import VButton from '../../src/components/VButton.vue'
 
 describe('VButton', () => {
     it('defaults to type="button" so it never submits a form by accident', () => {

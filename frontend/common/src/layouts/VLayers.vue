@@ -14,4 +14,4 @@ defineSlots<{
     </div>
 </template>
 
-<style scoped src="VLayer.css" />
+<style scoped src="./VLayer.css" />
