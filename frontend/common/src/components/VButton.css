@@ -1,0 +1,19 @@
+@reference 'tailwindcss';
+@reference '../theme/theme.css';
+
+.button {
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-base font-medium select-none;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring;
+}
+
+.icon {
+    @apply inline-flex text-xl;
+}
+
+.button[data-variant='primary'] {
+    @apply bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-edge;
+}
+
+.button[data-variant='ghost'] {
+    @apply bg-transparent text-link hover:bg-surface-muted active:bg-border;
+}
