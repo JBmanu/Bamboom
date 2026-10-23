@@ -11,5 +11,6 @@ export default {
     language: {
         label: 'Lingua',
         names: { en: 'English', it: 'Italiano' }
-    }
+    },
+    spinner: { loading: 'Caricamento…' }
 } satisfies typeof en

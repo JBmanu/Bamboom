@@ -8,8 +8,11 @@ import { mountTwiceWithTranslations, mountWithTranslations } from '../../utils/m
 enableAutoUnmount(afterEach)
 
 const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())
+
 const legendOf = (wrapper: VueWrapper) => wrapper.get('fieldset legend').text()
+
 const radio = (wrapper: VueWrapper, language: string) => wrapper.get<HTMLInputElement>(`input[value="${language}"]`)
+
 const mountSwitcher = (moduleLoaders?: VocabularyLoaders) => mountWithTranslations(LanguageSwitcher, moduleLoaders)
 
 beforeEach(() => {

@@ -9,5 +9,6 @@ export default {
     language: {
         label: 'Language',
         names: { en: 'English', it: 'Italiano' }
-    }
+    },
+    spinner: { loading: 'Loading…' }
 }
