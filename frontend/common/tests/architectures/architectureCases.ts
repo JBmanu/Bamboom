@@ -75,5 +75,10 @@ export const FLAGGED: Flagged[] = [
         broken: [RULE.APPS_INDEPENDENT]
     },
     { name: 'an app reaching common internals', graph: { [PLAYER]: [COMMON_BUTTON], [COMMON_BUTTON]: [] }, broken: [RULE.COMMON_PRIVATE] },
-    { name: 'an app importing a common subpath', graph: { [PLAYER]: ['@bamboom/common/vite'] }, broken: [RULE.COMMON_PRIVATE] }
+    { name: 'an app importing a common subpath', graph: { [PLAYER]: ['@bamboom/common/vite'] }, broken: [RULE.COMMON_PRIVATE] },
+    {
+        name: 'the icons plugin reached through a helper',
+        graph: { [BARREL]: [HELPER], [HELPER]: ['unplugin-icons/vite'] },
+        broken: [RULE.NODE_DEPS]
+    }
 ]
