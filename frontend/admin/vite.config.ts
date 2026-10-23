@@ -1,8 +1,9 @@
-import {coverageConfigDefaults, defineConfig} from 'vitest/config'
+import { coverageConfigDefaults, defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
+import { iconsPlugin } from "@bamboom/common/vite";
 
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [vue(), iconsPlugin()],
     server: {
         port: 5174,
         host: true,
