@@ -99,7 +99,7 @@ describe('VButton', () => {
 
     it('ignores clicks while loading', async () => {
         const handleClick = vi.fn()
-        const { wrapper } = await mountButton({ props: { loading: true, onclick: handleClick } })
+        const { wrapper } = await mountButton({ props: { loading: true, onClick: handleClick } })
         await wrapper.trigger('click')
         expect(handleClick).not.toHaveBeenCalled()
     })
