@@ -6,7 +6,7 @@ import { enableAutoUnmount } from '@vue/test-utils'
 
 enableAutoUnmount(afterEach)
 
-const mountSpinner = (props = {}) => mountWithTranslations(VSpinner, {}, props)
+const mountSpinner = (options = {}) => mountWithTranslations(VSpinner, {}, options)
 
 describe('VSpinner', () => {
     beforeEach(() => {
@@ -29,12 +29,12 @@ describe('VSpinner', () => {
 
     it('shows a custom label instead of the default one', async () => {
         const customLabel = 'custom text'
-        const { wrapper } = await mountSpinner({ label: customLabel })
+        const { wrapper } = await mountSpinner({ props: { label: customLabel } })
         expect(wrapper.text()).toBe(customLabel)
     })
 
     it('hides itself from assistive technology when it is only decorative', async () => {
-        const { wrapper } = await mountSpinner({ decorative: true })
+        const { wrapper } = await mountSpinner({ props: { decorative: true } })
         expect(wrapper.attributes('role')).toBeUndefined()
         expect(wrapper.attributes('aria-hidden')).toBe('true')
         expect(wrapper.text()).toBe('')
