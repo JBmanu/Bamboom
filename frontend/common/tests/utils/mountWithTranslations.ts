@@ -4,9 +4,9 @@ import { createTranslations } from '../../src/translations/createTranslations.ts
 import type { VocabularyLoaders } from '../../src/translations/vocabularies.ts'
 
 /** Mounts `component` the way an app does: with the real translations plugin installed and attached to the document. */
-export async function mountWithTranslations(component: Component, moduleLoaders: VocabularyLoaders = {}) {
+export async function mountWithTranslations(component: Component, moduleLoaders: VocabularyLoaders = {}, props: Record<string, unknown> = {}) {
     const translations = await createTranslations(moduleLoaders)
-    const wrapper = mount(component, { attachTo: document.body, global: { plugins: [translations] } })
+    const wrapper = mount(component, { props, attachTo: document.body, global: { plugins: [translations] } })
     return { wrapper, translations }
 }
 
