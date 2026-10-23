@@ -1,6 +1,8 @@
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
+import EnvelopeIcon from '~icons/ph/envelope'
+import VIcon from '../../src/icons/VIcon.vue'
 import VTextField from '../../src/components/VTextField.vue'
 
 enableAutoUnmount(afterEach)
@@ -58,5 +60,53 @@ describe('VTextField', () => {
             .map((input) => input.attributes('id'))
 
         expect(new Set(ids).size).toBe(2)
+    })
+
+    it('is not invalid by default', () => {
+        const wrapper = mountField()
+
+        expect(wrapper.attributes('data-state')).toBeUndefined()
+        expect(wrapper.get('input').attributes('aria-invalid')).toBeUndefined()
+        expect(wrapper.find('p').exists()).toBe(false)
+    })
+
+    it('shows the error and links it to the input', () => {
+        const wrapper = mountField({ error: 'Enter a valid email' })
+        const message = wrapper.get('p')
+        const input = wrapper.get('input')
+
+        expect(message.text()).toBe('Enter a valid email')
+        expect(input.attributes('aria-invalid')).toBe('true')
+        expect(input.attributes('aria-describedby')).toBe(message.attributes('id'))
+        expect(wrapper.attributes('data-state')).toBe('invalid')
+    })
+
+    it('shows a check at the end when the value is valid', () => {
+        const wrapper = mountField({ valid: true })
+
+        expect(wrapper.attributes('data-state')).toBe('valid')
+        expect(wrapper.findAllComponents(VIcon)).toHaveLength(1)
+    })
+
+    it('shows no check when nothing says the value is valid', () => {
+        expect(mountField().findAllComponents(VIcon)).toHaveLength(0)
+    })
+
+    it('prefers the error over the check', () => {
+        const wrapper = mountField({ valid: true, error: 'Too short' })
+
+        expect(wrapper.attributes('data-state')).toBe('invalid')
+        expect(wrapper.findAllComponents(VIcon)).toHaveLength(0)
+    })
+
+    it('shows the icon at the start when it is given one', () => {
+        expect(mountField({ icon: EnvelopeIcon }).findComponent(VIcon).exists()).toBe(true)
+    })
+
+    it('passes disabled and readonly to the input', () => {
+        const wrapper = mountField({}, { disabled: true, readonly: true })
+
+        expect(wrapper.get('input').attributes('disabled')).toBeDefined()
+        expect(wrapper.get('input').attributes('readonly')).toBeDefined()
     })
 })
