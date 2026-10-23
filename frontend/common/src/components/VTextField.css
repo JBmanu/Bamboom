@@ -1,0 +1,65 @@
+@reference 'tailwindcss';
+@reference '../theme/theme.css';
+
+.field {
+    @apply flex flex-col gap-1;
+}
+
+/* The visible box: border, background and focus ring live here, so the icons sit inside it. */
+.control {
+    @apply flex min-h-14 items-center gap-3 rounded-lg border border-border-strong bg-surface px-3 text-foreground;
+    @apply focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring;
+}
+
+.input-area {
+    @apply relative min-w-0 flex-1;
+}
+
+/* The top padding leaves room for the label once it floats above the value. */
+.input {
+    @apply w-full bg-transparent pt-5 pb-1 text-base outline-none;
+}
+
+/* Resting: the label sits where the value will be, like a placeholder. */
+.label {
+    @apply pointer-events-none absolute top-1/2 left-0 origin-top-left -translate-y-1/2 text-base text-foreground-muted transition-all motion-reduce:transition-none;
+}
+
+/* Floating: focused, or holding a value. With placeholder=" " the placeholder is shown only while the field is empty. */
+.input:focus ~ .label,
+.input:not(:placeholder-shown) ~ .label {
+    @apply top-1 translate-y-0 scale-75;
+}
+
+/* Autofilled values do not always clear :placeholder-shown, so they get their own rule. */
+.input:-webkit-autofill ~ .label {
+    @apply top-1 translate-y-0 scale-75;
+}
+
+.field[data-state='invalid'] .control {
+    @apply border-error bg-error-soft;
+}
+
+.field[data-state='invalid'] .label {
+    @apply text-error;
+}
+
+.control:has(.input:disabled) {
+    @apply cursor-not-allowed opacity-50;
+}
+
+.control:has(.input:read-only:not(:disabled)) {
+    @apply bg-surface-muted;
+}
+
+.start-icon {
+    @apply text-xl text-foreground-muted;
+}
+
+.end-icon {
+    @apply text-xl text-link;
+}
+
+.error {
+    @apply text-sm text-error;
+}
