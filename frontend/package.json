@@ -19,7 +19,7 @@
     "@vitest/coverage-v8": "^5.0.4",
     "@vue/eslint-config-typescript": "^14.9.0",
     "@vue/test-utils": "^2.4.6",
-    "dependency-cruiser": "^17.4.3",
+    "dependency-cruiser": "^18.0.0",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.11.1",
