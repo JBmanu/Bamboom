@@ -16,6 +16,11 @@ const props = defineProps<{
     error?: string
 }>()
 
+defineSlots<{
+    /** Room for an action at the end of the field, such as the show/hide toggle of a password. */
+    end?(): unknown
+}>()
+
 const model = defineModel<string>({ default: '' })
 const attrs = useAttrs()
 const id = useId()
@@ -46,6 +51,7 @@ const inputAttributes = computed(() => Object.fromEntries(Object.entries(attrs).
                 <label :for="id" class="label">{{ label }}</label>
             </div>
             <VIcon v-if="state === 'valid'" :icon="ValidIcon" class="end-icon" />
+            <slot name="end" />
         </div>
         <p v-if="error" :id="errorId" class="error">{{ error }}</p>
     </div>

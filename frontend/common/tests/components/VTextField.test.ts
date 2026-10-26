@@ -7,8 +7,7 @@ import VTextField from '../../src/components/VTextField.vue'
 
 enableAutoUnmount(afterEach)
 
-const mountField = (props: Record<string, unknown> = {}, attrs: Record<string, unknown> = {}) =>
-    mount(VTextField, { props: { label: 'Email', ...props }, attrs })
+const mountField = (props = {}, attrs = {}, slots = {}) => mount(VTextField, { props: { label: 'Email', ...props }, attrs, slots })
 
 describe('VTextField', () => {
     it('labels the input with the label prop', () => {
@@ -108,5 +107,14 @@ describe('VTextField', () => {
 
         expect(wrapper.get('input').attributes('disabled')).toBeDefined()
         expect(wrapper.get('input').attributes('readonly')).toBeDefined()
+    })
+
+    it('shows what the caller puts at the end, after the input', () => {
+        const endAction = 'data-action="end"'
+        const wrapper = mountField({}, {}, { end: `<button ${endAction} />` })
+        const html = wrapper.html()
+
+        expect(html).toContain(endAction)
+        expect(html.indexOf('<input')).toBeLessThan(html.indexOf(endAction))
     })
 })
