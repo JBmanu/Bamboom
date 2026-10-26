@@ -3,7 +3,11 @@ import { type Component, defineComponent, h } from 'vue'
 import { createTranslations } from '../../src/translations/createTranslations.ts'
 import type { VocabularyLoaders } from '../../src/translations/vocabularies.ts'
 
-type MountOptions = { props?: Record<string, unknown>; slots?: Record<string, string> }
+type MountOptions = { props?: Record<string, unknown>; attrs?: Record<string, unknown>; slots?: Record<string, string> }
+
+export function mountWith(component: Component, { props = {}, attrs = {}, slots = {} }: MountOptions = {}) {
+    return mount(component, { props, attrs, slots })
+}
 
 /** Mounts `component` the way an app does: with the real translations plugin installed and attached to the document. */
 export async function mountWithTranslations(

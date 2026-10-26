@@ -10,5 +10,6 @@ export default {
         label: 'Language',
         names: { en: 'English', it: 'Italiano' }
     },
-    spinner: { loading: 'Loading…' }
+    spinner: { loading: 'Loading…' },
+    password: { show: 'Show password' }
 }
