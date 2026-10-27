@@ -8,6 +8,12 @@ export { default as LanguageSwitcher } from './translations/language/LanguageSwi
 
 // --- COMPONENTS ---
 export { default as VButton } from './components/VButton.vue'
+export { default as VBanner } from './components/VBanner.vue'
+export { default as VPasswordField } from './components/VPasswordField.vue'
+export { default as VSpinner } from './components/VSpinner.vue'
+export { default as VStrengthMeter } from './components/VStrengthMeter.vue'
+export { default as VTextField } from './components/VTextField.vue'
+export { default as VIcon } from './icons/VIcon.vue'
 
 // --- LAYOUTS ---
 export { default as VLayers } from './layouts/VLayers.vue'

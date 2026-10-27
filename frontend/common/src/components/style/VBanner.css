@@ -1,5 +1,5 @@
 @reference 'tailwindcss';
-@reference '../theme/theme.css';
+@reference '../../theme/theme.css';
 
 .banner {
     @apply flex items-start gap-3 rounded-lg border px-4 py-3 text-sm;

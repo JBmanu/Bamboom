@@ -16,4 +16,4 @@ const SEGMENT_COUNT = 4
     </div>
 </template>
 
-<style scoped src="./VStrengthMeter.css" />
+<style scoped src="./style/VStrengthMeter.css" />

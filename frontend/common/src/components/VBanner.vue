@@ -39,4 +39,4 @@ const icon = computed(() => VARIANTS[props.variant].icon)
     </div>
 </template>
 
-<style scoped src="./VBanner.css" />
+<style scoped src="./style/VBanner.css" />

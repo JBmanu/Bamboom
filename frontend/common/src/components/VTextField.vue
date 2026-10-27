@@ -57,4 +57,4 @@ const inputAttributes = computed(() => Object.fromEntries(Object.entries(attrs).
     </div>
 </template>
 
-<style scoped src="./VTextField.css" />
+<style scoped src="./style/VTextField.css" />

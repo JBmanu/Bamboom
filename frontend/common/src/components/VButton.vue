@@ -43,4 +43,4 @@ function blockClickWhileLoading(event: MouseEvent) {
     </button>
 </template>
 
-<style scoped src="./VButton.css" />
+<style scoped src="./style/VButton.css" />

@@ -20,4 +20,4 @@ const { t } = useI18n()
     </span>
 </template>
 
-<style scoped src="./VSpinner.css" />
+<style scoped src="./style/VSpinner.css" />
