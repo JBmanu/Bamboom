@@ -27,6 +27,7 @@ describe('VIcon', () => {
     })
 
     it('lets the caller size and color it through classes', () => {
-        expect(render({}, { class: 'size-6 text-error' }).classes()).toEqual(expect.arrayContaining(['size-6', 'text-error']))
+        const icon = render({}, { class: 'size-6 text-error' })
+        expect(icon.classes()).toEqual(expect.arrayContaining(['size-6', 'text-error']))
     })
 })
