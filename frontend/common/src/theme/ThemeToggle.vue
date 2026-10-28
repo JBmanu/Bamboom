@@ -26,4 +26,4 @@ const groupName = useId()
     </fieldset>
 </template>
 
-<style scoped src="./themeToggle.css" />
+<style scoped src="./ThemeToggle.css" />

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.5.0...player-frontend-v0.6.0) (2026-10-28)
+
+
+### Features
+
+* **player:** add UI kit components and dev gallery ([#131](https://github.com/JBmanu/Bamboom/issues/131)) ([03d75b7](https://github.com/JBmanu/Bamboom/commit/03d75b75f23cf5d051e687df35cfd4c50b8372ba))
+
 ## [0.5.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.4.0...player-frontend-v0.5.0) (2026-10-23)
 
 

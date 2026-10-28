@@ -1,0 +1,13 @@
+@reference 'tailwindcss';
+
+.spinner {
+    @apply inline-flex items-center justify-center;
+}
+
+.icon {
+    @apply animate-spin motion-reduce:animate-pulse;
+}
+
+.announcement {
+    @apply sr-only;
+}

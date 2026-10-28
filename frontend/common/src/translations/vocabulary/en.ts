@@ -9,5 +9,7 @@ export default {
     language: {
         label: 'Language',
         names: { en: 'English', it: 'Italiano' }
-    }
+    },
+    spinner: { loading: 'Loading…' },
+    password: { show: 'Show password' }
 }
