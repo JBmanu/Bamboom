@@ -17,6 +17,7 @@ const PIPELINE = 'common/src/images/imagePipeline.ts'
 const COMMON_BUTTON = 'common/src/button.ts'
 const PLAYER = 'player/src/main.ts'
 const PLAYER_OTHER = 'player/src/other.ts'
+const PLAYER_DEV = 'player/src/dev/main.ts'
 const ADMIN = 'admin/src/main.ts'
 
 /** A fixture project: each file lists what it imports (a project file, a package name, or a lazy import of one). */
@@ -33,7 +34,7 @@ const isProjectFile = (target: string) => /^(common|player|admin)\/src\/.+\.ts$/
 function specifierFrom(file: string, target: string) {
     if (!isProjectFile(target)) return target
     const path = posix.relative(posix.dirname(file), target)
-    return path.startsWith('.') ? path : `./${ path }`
+    return path.startsWith('.') ? path : `./${path}`
 }
 
 /** The TypeScript source of one fixture file, written from the list of things it imports. */
@@ -42,19 +43,18 @@ export function sourceOf(file: string, imports: Import[]) {
     return imports
         .map((dependency) =>
             typeof dependency === 'string'
-                ? `import '${ specifierFrom(file, dependency) }'`
-                : `export const load = () => import('${ specifierFrom(file, dependency.lazy) }')`
+                ? `import '${specifierFrom(file, dependency)}'`
+                : `export const load = () => import('${specifierFrom(file, dependency.lazy)}')`
         )
         .join('\n')
 }
-
-const PLAYER_DEV = 'player/src/dev/main.ts'
 
 export const ACCEPTED: Accepted[] = [
     { name: 'a browser-safe barrel', graph: { [BARREL]: [SAFE], [SAFE]: [] } },
     { name: 'common using a third-party package', graph: { [BARREL]: ['vue'] } },
     { name: 'an app using its own modules', graph: { [PLAYER]: [PLAYER_OTHER], [PLAYER_OTHER]: [] } },
-    { name: 'an app using the common public API', graph: { [PLAYER]: ['@bamboom/common'] } }
+    { name: 'an app using the common public API', graph: { [PLAYER]: ['@bamboom/common'] } },
+    { name: 'the dev gallery importing the player', graph: { [PLAYER_DEV]: [PLAYER_OTHER], [PLAYER_OTHER]: [] } }
 ]
 
 export const FLAGGED: Flagged[] = [
@@ -93,9 +93,8 @@ export const FLAGGED: Flagged[] = [
         broken: [RULE.NODE_DEPS]
     },
     {
-        name: 'he player importing the dev gallery',
+        name: 'the player importing the dev gallery',
         graph: { [PLAYER]: [PLAYER_DEV], [PLAYER_DEV]: [] },
         broken: [RULE.PRODUCTION_ON_DEV]
     }
-
 ]
