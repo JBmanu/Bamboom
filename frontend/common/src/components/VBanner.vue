@@ -33,8 +33,8 @@ const icon = computed(() => VARIANTS[props.variant].icon)
 
 <template>
     <div class="banner" :data-variant="variant" :role="role">
-        <VSpinner v-if="variant === 'loading'" decorative class="icon" />
-        <VIcon v-else-if="icon" :icon="icon" class="icon" />
+        <VIcon v-if="icon" :icon="icon" class="icon" />
+        <VSpinner v-else decorative class="icon" />
         <slot />
     </div>
 </template>
