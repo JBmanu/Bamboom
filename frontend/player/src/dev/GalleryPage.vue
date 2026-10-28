@@ -6,6 +6,8 @@ import FieldsSection from './sections/FieldsSection.vue'
 import SpinnersSection from './sections/SpinnersSection.vue'
 import IconsSection from './sections/IconsSection.vue'
 import TypographySection from './sections/TypographySection.vue'
+import LayersSection from './sections/LayersSection.vue'
+import PicturesSection from './sections/PicturesSection.vue'
 </script>
 
 <template>
@@ -18,10 +20,12 @@ import TypographySection from './sections/TypographySection.vue'
             </div>
         </header>
         <TypographySection />
+        <PicturesSection />
         <SpinnersSection />
         <ButtonsSection />
         <BannersSection />
         <FieldsSection />
         <IconsSection />
+        <LayersSection />
     </main>
 </template>

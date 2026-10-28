@@ -1,4 +1,4 @@
-import { createTranslations, VBanner, VButton, VIcon, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
+import { createTranslations, VBanner, VButton, VIcon, VLayers, VPicture, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import GalleryPage from '../../src/dev/GalleryPage.vue'
@@ -60,5 +60,22 @@ describe('GalleryPage', () => {
 
         expect(icons.some((icon) => icon.props('label'))).toBe(true)
         expect(icons.some((icon) => !icon.props('label'))).toBe(true)
+    })
+
+    it('shows layers with and without a base and an overlay', async () => {
+        const layers = (await mountGallery()).findAllComponents(VLayers)
+
+        expect(layers.some((layer) => layer.find('[data-layer="base"]').exists())).toBe(true)
+        expect(layers.some((layer) => layer.find('[data-layer="overlay"]').exists())).toBe(true)
+        expect(layers.some((layer) => !layer.find('[data-layer="base"]').exists() && !layer.find('[data-layer="overlay"]').exists())).toBe(true)
+    })
+
+    it('shows a lazy picture and a priority picture', async () => {
+        const pictures = (await mountGallery()).findAllComponents(VPicture)
+
+        expect(pictures.length).toBeGreaterThan(0)
+        expect(pictures.every((picture) => picture.props('alt').length > 0)).toBe(true)
+        expect(pictures.some((picture) => picture.props('priority'))).toBe(true)
+        expect(pictures.some((picture) => !picture.props('priority'))).toBe(true)
     })
 })

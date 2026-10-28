@@ -4,7 +4,7 @@ import GalleryCase from '../GalleryCase.vue'
 </script>
 
 <template>
-    <GallerySection title="typography">
+    <GallerySection title="Typography">
         <GalleryCase label="title">
             <p class="text-3xl font-bold">BAMBOOM</p>
         </GalleryCase>
