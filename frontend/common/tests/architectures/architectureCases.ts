@@ -6,7 +6,8 @@ const RULE = {
     NODE_DEPS: 'browser-entry-reaches-node-or-build-deps',
     COMMON_ON_APPS: 'common-must-not-depend-on-apps',
     APPS_INDEPENDENT: 'apps-must-be-independent',
-    COMMON_PRIVATE: 'apps-use-common-public-api-only'
+    COMMON_PRIVATE: 'apps-use-common-public-api-only',
+    PRODUCTION_ON_DEV: 'production-code-must-not-import-dev'
 } as const
 
 const BARREL = 'common/src/index.ts'
@@ -32,7 +33,7 @@ const isProjectFile = (target: string) => /^(common|player|admin)\/src\/.+\.ts$/
 function specifierFrom(file: string, target: string) {
     if (!isProjectFile(target)) return target
     const path = posix.relative(posix.dirname(file), target)
-    return path.startsWith('.') ? path : `./${path}`
+    return path.startsWith('.') ? path : `./${ path }`
 }
 
 /** The TypeScript source of one fixture file, written from the list of things it imports. */
@@ -41,11 +42,13 @@ export function sourceOf(file: string, imports: Import[]) {
     return imports
         .map((dependency) =>
             typeof dependency === 'string'
-                ? `import '${specifierFrom(file, dependency)}'`
-                : `export const load = () => import('${specifierFrom(file, dependency.lazy)}')`
+                ? `import '${ specifierFrom(file, dependency) }'`
+                : `export const load = () => import('${ specifierFrom(file, dependency.lazy) }')`
         )
         .join('\n')
 }
+
+const PLAYER_DEV = 'player/src/dev/main.ts'
 
 export const ACCEPTED: Accepted[] = [
     { name: 'a browser-safe barrel', graph: { [BARREL]: [SAFE], [SAFE]: [] } },
@@ -74,11 +77,25 @@ export const FLAGGED: Flagged[] = [
         graph: { [PLAYER]: [lazy(ADMIN)], [ADMIN]: [] },
         broken: [RULE.APPS_INDEPENDENT]
     },
-    { name: 'an app reaching common internals', graph: { [PLAYER]: [COMMON_BUTTON], [COMMON_BUTTON]: [] }, broken: [RULE.COMMON_PRIVATE] },
-    { name: 'an app importing a common subpath', graph: { [PLAYER]: ['@bamboom/common/vite'] }, broken: [RULE.COMMON_PRIVATE] },
+    {
+        name: 'an app reaching common internals',
+        graph: { [PLAYER]: [COMMON_BUTTON], [COMMON_BUTTON]: [] },
+        broken: [RULE.COMMON_PRIVATE]
+    },
+    {
+        name: 'an app importing a common subpath',
+        graph: { [PLAYER]: ['@bamboom/common/vite'] },
+        broken: [RULE.COMMON_PRIVATE]
+    },
     {
         name: 'the icons plugin reached through a helper',
         graph: { [BARREL]: [HELPER], [HELPER]: ['unplugin-icons/vite'] },
         broken: [RULE.NODE_DEPS]
+    },
+    {
+        name: 'he player importing the dev gallery',
+        graph: { [PLAYER]: [PLAYER_DEV], [PLAYER_DEV]: [] },
+        broken: [RULE.PRODUCTION_ON_DEV]
     }
+
 ]
