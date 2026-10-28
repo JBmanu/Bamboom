@@ -1,8 +1,9 @@
-import {coverageConfigDefaults, defineConfig} from 'vitest/config'
+import { coverageConfigDefaults, defineConfig } from 'vitest/config'
+import { iconsPlugin } from './src/icons/iconsPlugin.ts'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [vue(), iconsPlugin()],
     test: {
         environment: 'jsdom',
         globals: true,

@@ -1,12 +1,13 @@
 import { coverageConfigDefaults, defineConfig } from 'vitest/config'
 import tailwindcss from '@tailwindcss/vite'
-import { imagePipelinePlugin, themeInitPlugin, translationsPlugin } from '@bamboom/common/vite'
+import { iconsPlugin, imagePipelinePlugin, themeInitPlugin, translationsPlugin } from '@bamboom/common/vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
     plugins: [
         vue(),
         tailwindcss(),
+        iconsPlugin(),
         themeInitPlugin(),
         imagePipelinePlugin(new URL('./resource/', import.meta.url)),
         translationsPlugin(new URL('./src/', import.meta.url))
@@ -30,7 +31,7 @@ export default defineConfig({
             reportsDirectory: './coverage',
             include: ['src/**/*.{ts,vue}'],
             exclude: [...coverageConfigDefaults.exclude,
-                'src/main.ts', 'src/**/index.ts', 'src/**/*.d.ts', 'src/**/*.css'],
+                'src/main.ts', 'src/**/index.ts', 'src/**/*.d.ts', 'src/**/*.css', 'src/dev/**'],
             thresholds: {lines: 80, functions: 80, statements: 80, branches: 70},
         }
     }

@@ -11,5 +11,7 @@ export default {
     language: {
         label: 'Lingua',
         names: { en: 'English', it: 'Italiano' }
-    }
+    },
+    spinner: { loading: 'Caricamento…' },
+    password: { show: 'Mostra password' }
 } satisfies typeof en

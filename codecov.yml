@@ -1,0 +1,10 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto      # compared with the base commit
+        threshold: 2%     # a drop of up to 2 points is tolerated
+    patch:
+      default:
+        target: auto
+        threshold: 5%

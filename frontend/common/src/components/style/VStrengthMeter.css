@@ -1,0 +1,29 @@
+@reference 'tailwindcss';
+@reference '../../theme/theme.css';
+
+.meter {
+    @apply flex flex-col gap-1;
+}
+
+/* grid-cols-4 must match SEGMENT_COUNT in the component. */
+.segments {
+    @apply grid grid-cols-4 gap-1;
+}
+
+.segment {
+    @apply h-1.5 rounded-full bg-border-strong transition-colors motion-reduce:transition-none;
+}
+
+/* Weak levels are red, strong ones green: the theme has no amber token yet. */
+.segment[data-filled='true'] {
+    @apply bg-error;
+}
+
+.meter[data-level='3'] .segment[data-filled='true'],
+.meter[data-level='4'] .segment[data-filled='true'] {
+    @apply bg-primary;
+}
+
+.label {
+    @apply text-sm text-foreground-muted;
+}

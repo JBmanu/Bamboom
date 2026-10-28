@@ -1,0 +1,26 @@
+@reference 'tailwindcss';
+@reference '../../theme/theme.css';
+
+.icon {
+    @apply inline-flex text-xl;
+}
+
+.button {
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-base font-medium select-none;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring;
+}
+
+.button:disabled {
+    @apply cursor-not-allowed opacity-50;
+}
+
+.button[aria-busy='true'] {
+    @apply cursor-progress;
+}
+
+.button[data-variant='primary'] {
+    @apply bg-primary text-on-primary enabled:hover:bg-primary-hover enabled:active:bg-primary-edge;
+}
+.button[data-variant='ghost'] {
+    @apply bg-transparent text-link enabled:hover:bg-surface-muted enabled:active:bg-border;
+}
