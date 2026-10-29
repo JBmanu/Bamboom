@@ -1,4 +1,4 @@
-import { createTranslations, VBanner, VButton, VIcon, VLayers, VPicture, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
+import { createTranslations, VBanner, VButton, VIcon, VLayer, VPicture, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import GalleryPage from '../../src/dev/GalleryPage.vue'
@@ -63,7 +63,7 @@ describe('GalleryPage', () => {
     })
 
     it('shows layers with and without a base and an overlay', async () => {
-        const layers = (await mountGallery()).findAllComponents(VLayers)
+        const layers = (await mountGallery()).findAllComponents(VLayer)
 
         expect(layers.some((layer) => layer.find('[data-layer="base"]').exists())).toBe(true)
         expect(layers.some((layer) => layer.find('[data-layer="overlay"]').exists())).toBe(true)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type Component, computed, type InputHTMLAttributes, type StyleValue, useAttrs, useId } from 'vue'
 import ValidIcon from '~icons/ph/check-circle'
-import VIcon from '../icons/VIcon.vue'
+import VIcon from './VIcon.vue'
 
 defineOptions({ inheritAttrs: false })
 

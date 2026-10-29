@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SpinnerIcon from '~icons/ph/circle-notch'
-import VIcon from '../icons/VIcon.vue'
+import VIcon from './VIcon.vue'
 import { useI18n } from 'vue-i18n'
 
 defineProps<{

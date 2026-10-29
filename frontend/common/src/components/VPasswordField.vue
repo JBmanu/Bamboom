@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import EyeIcon from '~icons/ph/eye'
 import EyeSlashIcon from '~icons/ph/eye-slash'
 import VButton from './VButton.vue'
-import VIcon from '../icons/VIcon.vue'
+import VIcon from './VIcon.vue'
 import VTextField from './VTextField.vue'
 import { ref } from 'vue'
 

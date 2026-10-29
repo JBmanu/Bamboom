@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Picture } from './picture'
+import type { Picture } from '../images/picture.ts'
 
 defineOptions({ inheritAttrs: false })
 
