@@ -1,6 +1,6 @@
-export const EVENT_OPEN = 'open';
-export const EVENT_CLOSE = 'open';
-export const EVENT_CANCEL = 'cancel';
+export const EVENT_OPEN = 'open'
+export const EVENT_CLOSE = 'open'
+export const EVENT_CANCEL = 'cancel'
 
 /**
  * jsdom ships an empty HTMLDialogElement. This adds the parts of the HTML spec our tests rely on.
