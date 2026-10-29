@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.3...deck-workshop-v0.2.4) (2026-10-29)
+
+
+### Bug Fixes
+
+* **services:** patch body-parser and drop npm from the Node runtime images ([#135](https://github.com/JBmanu/Bamboom/issues/135)) ([b7de885](https://github.com/JBmanu/Bamboom/commit/b7de885abc5957b1e63934344e3860cf77916212))
+
 ## [0.2.3](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.2...deck-workshop-v0.2.3) (2026-10-06)
 
 
