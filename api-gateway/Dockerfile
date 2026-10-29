@@ -2,6 +2,7 @@
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
+# Use npm install, not npm ci: ci fails on node:24-alpine (known npm bug)
 RUN npm install
 COPY tsconfig.json ./
 COPY src/ ./src/
@@ -11,10 +12,11 @@ RUN npm run build
 FROM node:24-alpine AS production-dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm --omit=dev
+RUN npm install --omit=dev
 
 # -- STAGE 3: runtime --
 FROM node:24-alpine AS runtime
+# npm is only a build tool and bundles its own undici, which keeps showing up in scans
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
     && addgroup -S appgroup && adduser -S appuser -G appgroup
 
