@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { enableAutoUnmount, type VueWrapper } from '@vue/test-utils'
 import ThemeToggle from '../../src/components/ThemeToggle.vue'
-import { mockSystemTheme } from '../theme/systemTheme.ts'
+import { mockSystemTheme } from '../utils/systemTheme.ts'
 import { nextTick } from 'vue'
 import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
 import { preferences, THEME_STORAGE_KEY, themes } from '../../src/theme/themeConstants.ts'
