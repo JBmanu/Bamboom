@@ -5,6 +5,6 @@
   "micro-services/player-identity": "0.2.2",
   "micro-services/deck-workshop": "0.2.3",
   "micro-services/lobby-match": "0.2.2",
-  "micro-services/card-forge": "0.2.3",
+  "micro-services/card-forge": "0.2.4",
   "micro-services/progress": "0.3.1"
 }
