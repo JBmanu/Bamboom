@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.4...api-gateway-v0.1.5) (2026-10-29)
+
+
+### Bug Fixes
+
+* **services:** patch body-parser and drop npm from the Node runtime images ([#135](https://github.com/JBmanu/Bamboom/issues/135)) ([b7de885](https://github.com/JBmanu/Bamboom/commit/b7de885abc5957b1e63934344e3860cf77916212))
+
 ## [0.1.4](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.3...api-gateway-v0.1.4) (2026-10-19)
 
 
