@@ -1,6 +1,6 @@
 {
   "name": "lobby-match",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Lobby and match bounded context",
   "main": "dist/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "format": "biome check --write src/"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "jest": "^30.0.0",
