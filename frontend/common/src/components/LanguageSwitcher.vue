@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, useId, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type Language, SUPPORTED_LANGUAGES } from './languageConstants'
-import { useLanguage } from './useLanguage'
+import { type Language, SUPPORTED_LANGUAGES } from '../translations/language/languageConstants.ts'
+import { useLanguage } from '../translations/language/useLanguage.ts'
 
 const LEGEND_KEY = 'common.language.label'
 const nameKeyOf = (languageToName: Language) => `common.language.names.${languageToName}`
@@ -36,4 +36,4 @@ async function chooseLanguage(chosenLanguage: Language) {
     </fieldset>
 </template>
 
-<style src="./LanguageSwitcher.css" />
+<style src="./style/LanguageSwitcher.css" />

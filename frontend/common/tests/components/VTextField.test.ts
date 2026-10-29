@@ -2,7 +2,7 @@ import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import EnvelopeIcon from '~icons/ph/envelope'
-import VIcon from '../../src/icons/VIcon.vue'
+import VIcon from '../../src/components/VIcon.vue'
 import VTextField from '../../src/components/VTextField.vue'
 
 enableAutoUnmount(afterEach)

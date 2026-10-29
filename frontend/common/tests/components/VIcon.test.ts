@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import EyeIcon from '~icons/ph/eye'
-import VIcon from '../../src/icons/VIcon.vue'
+import VIcon from '../../src/components/VIcon.vue'
 
 const render = (props: { label?: string } = {}, attrs: Record<string, unknown> = {}) => mount(VIcon, { props: { icon: EyeIcon, ...props }, attrs })
 

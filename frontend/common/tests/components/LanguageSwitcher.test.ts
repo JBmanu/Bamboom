@@ -1,9 +1,9 @@
 import { enableAutoUnmount, type VueWrapper } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LANGUAGE_STORAGE_KEY, languages } from '../../../src/translations/language/languageConstants'
-import LanguageSwitcher from '../../../src/translations/language/LanguageSwitcher.vue'
-import type { VocabularyLoaders } from '../../../src/translations/vocabularies'
-import { mountTwiceWithTranslations, mountWithTranslations } from '../../utils/mountWithTranslations'
+import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
+import LanguageSwitcher from '../../src/components/LanguageSwitcher.vue'
+import type { VocabularyLoaders } from '../../src/translations/vocabularies.ts'
+import { mountTwiceWithTranslations, mountWithTranslations } from '../utils/mountWithTranslations.ts'
 
 enableAutoUnmount(afterEach)
 

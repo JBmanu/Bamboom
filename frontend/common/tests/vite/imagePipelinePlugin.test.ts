@@ -6,8 +6,8 @@ import { pathToFileURL } from 'node:url'
 import sharp, { type Metadata } from 'sharp'
 import { build, type Rolldown } from 'vite'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import type { Picture } from '../../src/images/picture'
-import { imagePipelinePlugin } from '../../src/images/imagePipelinePlugin'
+import type { Picture } from '../../src/images/picture.ts'
+import { imagePipelinePlugin } from '../../src/vite/imagePipelinePlugin.ts'
 
 vi.setConfig({ testTimeout: 60_000, hookTimeout: 60_000 })
 

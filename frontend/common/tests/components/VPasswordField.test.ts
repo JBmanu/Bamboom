@@ -3,7 +3,7 @@ import { enableAutoUnmount } from '@vue/test-utils'
 import VPasswordField from '../../src/components/VPasswordField.vue'
 import { mountWithTranslations } from '../utils/mountWithTranslations.ts'
 import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants'
-import VIcon from '../../src/icons/VIcon.vue'
+import VIcon from '../../src/components/VIcon.vue'
 
 enableAutoUnmount(afterEach)
 

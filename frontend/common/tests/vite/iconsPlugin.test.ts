@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import EyeIcon from '~icons/ph/eye'
-import { iconsPlugin } from '../../src/icons/iconsPlugin.ts'
+import { iconsPlugin } from '../../src/vite/iconsPlugin.ts'
 
 describe('iconsPlugin', () => {
     it('turns an Iconify import into a component that renders an svg', () => {

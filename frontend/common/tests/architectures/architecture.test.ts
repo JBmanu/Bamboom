@@ -30,7 +30,7 @@ describe('the real frontend', () => {
     // A tool that silently misses files would pass everything: prove it reads TypeScript and Vue.
     it('is really read, TypeScript and Vue files included', async () => {
         const { modules } = await analyze(FRONTEND_ROOT)
-        const picture = modules.find((module) => module.source === 'common/src/images/VPicture.vue')
+        const picture = modules.find((module) => module.source === 'common/src/components/VPicture.vue')
 
         expect(picture?.dependencies.map((dependency) => dependency.resolved)).toContain('common/src/images/picture.ts')
     })

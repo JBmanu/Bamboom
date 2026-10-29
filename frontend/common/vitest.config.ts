@@ -1,5 +1,5 @@
 import { coverageConfigDefaults, defineConfig } from 'vitest/config'
-import { iconsPlugin } from './src/icons/iconsPlugin.ts'
+import { iconsPlugin } from './src/vite/iconsPlugin.ts'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({

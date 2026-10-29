@@ -3,7 +3,7 @@ import { type Component, computed } from 'vue'
 import CheckCircleIcon from '~icons/ph/check-circle'
 import InfoIcon from '~icons/ph/info'
 import WarningCircleIcon from '~icons/ph/warning-circle'
-import VIcon from '../icons/VIcon.vue'
+import VIcon from './VIcon.vue'
 import VSpinner from './VSpinner.vue'
 
 type Variant = 'info' | 'success' | 'error' | 'loading'

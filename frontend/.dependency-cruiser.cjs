@@ -11,7 +11,7 @@ module.exports = {
             name: 'browser-entry-reaches-build-tooling',
             severity: 'error',
             from: {path: '^common/src/index\\.ts$'},
-            to: {path: '^common/src/(images/imagePipeline|vite/)', reachable: true},
+            to: {path: '^common/src/vite/', reachable: true},
         },
         {
             name: 'browser-entry-reaches-node-or-build-deps',

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useId } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type Preference, preferences } from './themeConstants.ts'
-import { useTheme } from './useTheme.ts'
+import { type Preference, preferences } from '../theme/themeConstants.ts'
+import { useTheme } from '../theme/useTheme.ts'
 
 // The label key is written out, not built from the value: the stored "auto" is shown as "system".
 const OPTIONS: { value: Preference; labelKey: string }[] = [
@@ -26,4 +26,4 @@ const groupName = useId()
     </fieldset>
 </template>
 
-<style scoped src="./ThemeToggle.css" />
+<style scoped src="./style/ThemeToggle.css" />
