@@ -12,7 +12,7 @@ RUN npm run build
 FROM node:24-alpine AS production-dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev && mkdir -p node_modules
 
 # -- STAGE 3: runtime --
 FROM node:24-alpine AS runtime
