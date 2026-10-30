@@ -7,6 +7,7 @@ export type { Language } from './translations/language/languageConstants'
 
 // --- COMPONENTS ---
 export { default as VIcon } from './components/VIcon.vue'
+export { default as VModal } from './components/VModal.vue'
 export { default as VLayer } from './components/VLayer.vue'
 export { default as VBanner } from './components/VBanner.vue'
 export { default as VButton } from './components/VButton.vue'
