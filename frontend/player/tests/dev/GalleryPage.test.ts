@@ -1,4 +1,4 @@
-import { createTranslations, VBanner, VButton, VIcon, VLayer, VPicture, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
+import { createTranslations, VBanner, VButton, VIcon, VLayer, VModal, VPicture, VSpinner, VStrengthMeter, VTextField } from '@bamboom/common'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import GalleryPage from '../../src/dev/GalleryPage.vue'
@@ -77,5 +77,14 @@ describe('GalleryPage', () => {
         expect(pictures.every((picture) => picture.props('alt').length > 0)).toBe(true)
         expect(pictures.some((picture) => picture.props('priority'))).toBe(true)
         expect(pictures.some((picture) => !picture.props('priority'))).toBe(true)
+    })
+
+    it('shows modals in every state', async () => {
+        const LONG_CONTENT_MINIMUM_LENGTH = 500
+        const modals = (await mountGallery()).findAllComponents(VModal)
+
+        expect(modals.some((modal) => modal.find('footer').exists())).toBe(true)
+        expect(modals.some((modal) => modal.findComponent(VTextField).exists())).toBe(true)
+        expect(modals.some((modal) => modal.text().length > LONG_CONTENT_MINIMUM_LENGTH)).toBe(true)
     })
 })
