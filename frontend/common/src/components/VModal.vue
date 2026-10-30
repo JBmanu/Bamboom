@@ -51,10 +51,10 @@ watch(() => props.open, matchDialogToOpenProp)
 </script>
 
 <template>
-    <dialog ref="dialogElement" :aria-labelledby="titleId" @close="reportClosingByPerson" @click.self="closeDialog">
-        <div>
-            <header>
-                <h2 :id="titleId">{{ title }}</h2>
+    <dialog ref="dialogElement" class="modal" :aria-labelledby="titleId" @close="reportClosingByPerson" @click.self="closeDialog">
+        <div class="content">
+            <header class="header">
+                <h2 :id="titleId" class="title">{{ title }}</h2>
                 <VButton variant="ghost" :aria-label="t('common.modal.close')" @click="closeDialog">
                     <template #start>
                         <VIcon :icon="XIcon" />
@@ -62,7 +62,7 @@ watch(() => props.open, matchDialogToOpenProp)
                 </VButton>
             </header>
             <slot />
-            <footer v-if="$slots.actions">
+            <footer v-if="$slots.actions" class="actions">
                 <slot name="actions" />
             </footer>
         </div>
