@@ -1,6 +1,6 @@
-export const OPEN_ATTR = 'open'
-export const CLOSE_EVENT = 'close'
-export const CANCEL_EVENT = 'cancel'
+const OPEN_ATTRIBUTE = 'open'
+const CLOSE_EVENT = 'close'
+const CANCEL_EVENT = 'cancel'
 
 /**
  * jsdom ships an empty HTMLDialogElement. This adds the parts of the HTML spec our tests rely on.
@@ -11,13 +11,13 @@ export function installDialogStub(): void {
 
     // Stricter than the spec on purpose: a second call throws, so our own guard gets tested.
     dialogPrototype.showModal = function showModal(this: HTMLDialogElement) {
-        if (this.hasAttribute(OPEN_ATTR)) throw new DOMException('The dialog is already open.', 'InvalidStateError')
-        this.setAttribute(OPEN_ATTR, '')
+        if (this.hasAttribute(OPEN_ATTRIBUTE)) throw new DOMException('The dialog is already open.', 'InvalidStateError')
+        this.setAttribute(OPEN_ATTRIBUTE, '')
     }
 
     dialogPrototype.close = function close(this: HTMLDialogElement) {
-        if (!this.hasAttribute(OPEN_ATTR)) return
-        this.removeAttribute(OPEN_ATTR)
+        if (!this.hasAttribute(OPEN_ATTRIBUTE)) return
+        this.removeAttribute(OPEN_ATTRIBUTE)
         this.dispatchEvent(new Event(CLOSE_EVENT))
     }
 }
