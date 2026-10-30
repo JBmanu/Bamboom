@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import XIcon from '~icons/ph/x'
+import { onMounted, ref, useId, watch } from 'vue'
+import VButton from './VButton.vue'
+import VIcon from './VIcon.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
+    title: string
     open: boolean
 }>()
 
+// `close` must be declared: otherwise the parent's @close would also land on the <dialog> as a native
+// listener and run a second time.
 const emit = defineEmits<{
     'update:open': [open: boolean]
     close: []
 }>()
 
-defineSlots<{ default(): unknown }>()
+defineSlots<{
+    default(): unknown
+    actions(): unknown
+}>()
 
+const titleId = useId()
+const { t } = useI18n()
 const dialogElement = ref<HTMLDialogElement>()
 
 // One comparison covers both directions and keeps showModal() from throwing on a dialog that is already open.
@@ -30,7 +42,7 @@ function reportClosingByPerson() {
 }
 
 // A click on the backdrop has the dialog itself as target; a click on the content does not.
-function closeFromBackdrop() {
+function closeDialog() {
     dialogElement.value?.close()
 }
 
@@ -39,9 +51,20 @@ watch(() => props.open, matchDialogToOpenProp)
 </script>
 
 <template>
-    <dialog ref="dialogElement" @close="reportClosingByPerson" @click.self="closeFromBackdrop">
+    <dialog ref="dialogElement" :aria-labelledby="titleId" @close="reportClosingByPerson" @click.self="closeDialog">
         <div>
+            <header>
+                <h2 :id="titleId">{{ title }}</h2>
+                <VButton variant="ghost" :aria-label="t('common.modal.close')" @click="closeDialog">
+                    <template #start>
+                        <VIcon :icon="XIcon" />
+                    </template>
+                </VButton>
+            </header>
             <slot />
+            <footer v-if="$slots.actions">
+                <slot name="actions" />
+            </footer>
         </div>
     </dialog>
 </template>

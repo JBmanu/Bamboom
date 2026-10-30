@@ -1,20 +1,23 @@
 import { enableAutoUnmount } from '@vue/test-utils'
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import VModal from '../../src/components/VModal.vue'
 import { installDialogStub, pressEscape } from '../utils/installDialogStub.ts'
-import { mountWithTranslations } from '../utils/mountWithTranslations.ts'
+import { mountTwiceWithTranslations, mountWithTranslations } from '../utils/mountWithTranslations.ts'
+import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
 
 enableAutoUnmount(afterEach)
+
 beforeAll(installDialogStub)
+beforeEach(() => localStorage.clear())
 afterEach(() => vi.restoreAllMocks())
 
-async function mountModal(open = false, extraProps: Record<string, unknown> = {}) {
+async function mountModal(open = false, props = {}, slots = {}) {
     const { wrapper } = await mountWithTranslations(
         VModal,
         {},
         {
-            props: { open, ...extraProps },
-            slots: { default: 'Content' }
+            props: { open, title: 'Title', ...props },
+            slots: { default: 'Content', ...slots }
         }
     )
     return { wrapper, dialog: wrapper.element as HTMLDialogElement }
@@ -28,7 +31,7 @@ describe('VModal', () => {
 
     it('shows its content', async () => {
         const { wrapper } = await mountModal()
-        expect(wrapper.text()).toBe('Content')
+        expect(wrapper.text()).toContain('Content')
     })
 
     it('opens as a modal when `open` becomes true', async () => {
@@ -74,6 +77,63 @@ describe('VModal', () => {
 
         expect(wrapper.emitted('close')).toBeUndefined()
         expect(wrapper.emitted('update:open')).toBeUndefined()
+    })
+
+    it('names the dialog after its title', async () => {
+        const { wrapper } = await mountModal(true)
+        const title = wrapper.get('h2')
+
+        expect(title.text()).toBe('Title')
+        expect(title.attributes('id')).toBeTruthy()
+        expect(title.attributes('id')).toBe(wrapper.attributes('aria-labelledby'))
+    })
+
+    it('gives each modal its own title id', async () => {
+        const { wrapper } = await mountTwiceWithTranslations(VModal, { title: 'Title', open: false })
+        const [firstId, secondId] = wrapper.findAll('h2').map((title) => title.attributes('id'))
+
+        expect(firstId).not.toBe(secondId)
+    })
+
+    it.each([
+        [languages.en, 'Close'],
+        [languages.it, 'Chiudi']
+    ])('offers a close button named in the current language', async (language, text) => {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, language)
+        const { wrapper } = await mountModal(true)
+        const button = wrapper.get('button')
+
+        expect(button.attributes('aria-label')).toBe(text)
+    })
+
+    it('hides the close icon from assistive technology', async () => {
+        const { wrapper } = await mountModal(true)
+        const svg = wrapper.get('svg')
+
+        expect(svg.attributes('aria-hidden')).toBe('true')
+    })
+
+    it('closes and reports once when the close button is pressed', async () => {
+        const onClose = vi.fn()
+        const { wrapper } = await mountModal(true, { onClose })
+        await wrapper.get('button').trigger('click')
+
+        expect(onClose).toHaveBeenCalledTimes(1)
+        expect(wrapper.emitted('update:open')).toEqual([[false]])
+        expect(wrapper.emitted('close')).toHaveLength(1)
+    })
+
+    it('shows the actions in a footer', async () => {
+        const footerText = 'footerText'
+        const { wrapper } = await mountModal(true, {}, { actions: footerText })
+        const footer = wrapper.get('footer')
+
+        expect(footer.text()).toBe(footerText)
+    })
+
+    it('has no footer without actions', async () => {
+        const { wrapper } = await mountModal(true)
+        expect(wrapper.find('footer').exists()).toBe(false)
     })
 
     describe('when the person closes it', () => {
