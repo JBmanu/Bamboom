@@ -6,19 +6,25 @@ import VIcon from './VIcon.vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
+    /** Visible heading; also the accessible name of the dialog. */
     title: string
+    /** Whether the dialog is open. Bind it with `v-model:open`: the modal asks to close through `update:open`. */
     open: boolean
 }>()
 
 // `close` must be declared: otherwise the parent's @close would also land on the <dialog> as a native
 // listener and run a second time.
 const emit = defineEmits<{
+    /** The person closed the modal (Escape, backdrop or close button). Not sent when the parent sets `open` to false. */
     'update:open': [open: boolean]
+    /** Same moment as `update:open`: use it for what must follow a closing, such as a redirect. */
     close: []
 }>()
 
 defineSlots<{
+    /** The body of the modal. */
     default(): unknown
+    /** Buttons for the footer. Without them the footer is not rendered. */
     actions(): unknown
 }>()
 
@@ -41,7 +47,7 @@ function reportClosingByPerson() {
     emit('close')
 }
 
-// A click on the backdrop has the dialog itself as target; a click on the content does not.
+// Closing from the inside always goes through the dialog: its `close` event then reaches reportClosingByPerson.
 function closeDialog() {
     dialogElement.value?.close()
 }
