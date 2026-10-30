@@ -11,5 +11,6 @@ export default {
         names: { en: 'English', it: 'Italiano' }
     },
     spinner: { loading: 'Loading…' },
-    password: { show: 'Show password' }
+    password: { show: 'Show password' },
+    modal: { close: 'Close' }
 }

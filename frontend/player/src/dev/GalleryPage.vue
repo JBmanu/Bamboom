@@ -8,6 +8,7 @@ import IconsSection from './sections/IconsSection.vue'
 import TypographySection from './sections/TypographySection.vue'
 import LayersSection from './sections/LayersSection.vue'
 import PicturesSection from './sections/PicturesSection.vue'
+import ModalsSection from './sections/ModalsSection.vue'
 </script>
 
 <template>
@@ -27,5 +28,6 @@ import PicturesSection from './sections/PicturesSection.vue'
         <FieldsSection />
         <IconsSection />
         <LayersSection />
+        <ModalsSection />
     </main>
 </template>

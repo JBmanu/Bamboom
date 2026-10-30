@@ -4,6 +4,7 @@ import * as common from '../../src'
 describe('the public API', () => {
     it.each([
         'VIcon',
+        'VModal',
         'VLayer',
         'VBanner',
         'VButton',

@@ -21,7 +21,7 @@ export async function mountWithTranslations(
 }
 
 /** Mounts two copies of `component` in the same app, to check what they share. */
-export function mountTwiceWithTranslations(component: Component) {
-    const Pair = defineComponent({ render: () => h('div', [h(component), h(component)]) })
+export function mountTwiceWithTranslations(component: Component, props: Record<string, unknown> = {}) {
+    const Pair = defineComponent({ render: () => h('div', [h(component, props), h(component, props)]) })
     return mountWithTranslations(Pair)
 }

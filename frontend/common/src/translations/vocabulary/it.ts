@@ -13,5 +13,6 @@ export default {
         names: { en: 'English', it: 'Italiano' }
     },
     spinner: { loading: 'Caricamento…' },
-    password: { show: 'Mostra password' }
+    password: { show: 'Mostra password' },
+    modal: { close: 'Chiudi' }
 } satisfies typeof en
