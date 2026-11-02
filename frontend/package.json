@@ -8,6 +8,8 @@
     "common"
   ],
   "scripts": {
+    "lint": "npm run lint -w admin && npm run lint -w player && npm run lint -w common",
+    "format": "npm run format -w admin && npm run format -w player && npm run format -w common",
     "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src",
     "clean": "rm -rf node_modules/.tmp dist"
   },

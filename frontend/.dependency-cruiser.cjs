@@ -46,6 +46,15 @@ module.exports = {
             from: {path: '^player/src', pathNot: '^player/src/dev/'},
             to: {path: '^player/src/dev/'},
         },
+        {
+            name: 'modules-use-each-other-through-index-only',
+            severity: 'error',
+            from: {path: '^(player|admin)/src/([^/]+)/'},
+            to: {
+                path: '^$1/src/[^/]+/',
+                pathNot: ['^$1/src/$2/', '^$1/src/[^/]+/index\\.ts$', '^$1/src/(shared|dev)/'],
+            },
+        },
     ],
     options: {
         doNotFollow: {path: 'node_modules'},
