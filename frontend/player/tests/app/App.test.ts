@@ -2,6 +2,7 @@ import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPlayerApp } from '../../src/app/createPlayerApp'
 import { createMemoryHistory } from 'vue-router'
+import { LOGIN_PATH } from '../../src/player-identity/routePaths.ts'
 
 type PlayerApp = Awaited<ReturnType<typeof createPlayerApp>>
 
@@ -58,5 +59,17 @@ describe('App', () => {
         const container = await mountPlayer('/nowhere')
 
         expect(container.textContent).toContain(ENGLISH_LANGUAGE_LABEL)
+    })
+
+    it('shows the login inside the layout of the access pages', async () => {
+        const container = await mountPlayer(LOGIN_PATH)
+
+        expect(container.querySelector('[data-layer="content"] img[alt="Bamboom"]')).not.toBeNull()
+    })
+
+    it('keeps the access layout away from the not-found page', async () => {
+        const container = await mountPlayer('/nowhere')
+
+        expect(container.querySelector('img[alt="Bamboom"]')).toBeNull()
     })
 })
