@@ -1,8 +1,5 @@
-export const LOGIN_PATH = '/login'
-
-export const accessLevels = { anyone: 'anyone', signedInOnly: 'signedInOnly', signedOutOnly: 'signedOutOnly' } as const
-
-export type RouteAccess = (typeof accessLevels)[keyof typeof accessLevels]
+import { accessLevels, RouteAccess } from './routeAccess'
+import { LOGIN_PATH } from '../routePaths.ts'
 
 type RedirectDecisionInput = {
     access: RouteAccess | undefined

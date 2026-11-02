@@ -1,13 +1,11 @@
-import { describe, expect, it, expectTypeOf } from 'vitest'
-import { chooseRedirect, type RouteAccess, accessLevels, LOGIN_PATH } from '../../../src/player-identity/guards/chooseRedirect'
+import { describe, expect, it } from 'vitest'
+import { chooseRedirect } from '../../../src/player-identity/guards/chooseRedirect'
+import { accessLevels, type RouteAccess } from '../../../src/player-identity/guards/routeAccess'
+import { LOGIN_PATH } from '../../../src/player-identity/routePaths.ts'
 
 const homePath = '/'
 
 describe('chooseRedirect', () => {
-    it('accepts only the three known access levels', () => {
-        expectTypeOf<RouteAccess>().toEqualTypeOf<'anyone' | 'signedInOnly' | 'signedOutOnly'>()
-    })
-
     it.each<[RouteAccess | undefined, boolean, string | undefined]>([
         [accessLevels.signedInOnly, false, LOGIN_PATH],
         [accessLevels.signedInOnly, true, undefined],
