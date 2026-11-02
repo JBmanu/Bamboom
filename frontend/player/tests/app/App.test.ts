@@ -1,6 +1,7 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPlayerApp } from '../../src/app/createPlayerApp'
+import { createMemoryHistory } from 'vue-router'
 
 type PlayerApp = Awaited<ReturnType<typeof createPlayerApp>>
 
@@ -10,10 +11,12 @@ const ITALIAN_LANGUAGE_LABEL = 'Lingua'
 
 const mountedApps: PlayerApp[] = []
 
-async function mountPlayer() {
+async function mountPlayer(startPath = '/') {
+    const history = createMemoryHistory()
+    history.replace(startPath) // where the person "opened" the app
     const container = document.createElement('div')
     document.body.append(container)
-    const app = await createPlayerApp()
+    const app = await createPlayerApp({ history })
     app.mount(container)
     mountedApps.push(app)
     return container
@@ -49,5 +52,11 @@ describe('App', () => {
         await vi.waitFor(() => expect(container.textContent).toContain(ITALIAN_LANGUAGE_LABEL))
 
         expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe(languages.it)
+    })
+
+    it('keeps the toolbar on every page, such as the not-found page', async () => {
+        const container = await mountPlayer('/nowhere')
+
+        expect(container.textContent).toContain(ENGLISH_LANGUAGE_LABEL)
     })
 })

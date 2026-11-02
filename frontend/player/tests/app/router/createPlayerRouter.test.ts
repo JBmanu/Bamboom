@@ -1,9 +1,9 @@
 import { createMemoryHistory } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 import { createPlayerRouter } from '../../../src/app/router/createPlayerRouter'
+import { LOGIN_PATH } from '../../../src/player-identity/routePaths.ts'
 
 const NOT_FOUND_PATH = 'notFound'
-const LOGIN_PATH = '/login'
 const PRIVATE_PATH = '/'
 
 function createRouterFor(session: { isSignedIn: boolean }) {
