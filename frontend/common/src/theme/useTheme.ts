@@ -1,5 +1,5 @@
 import { type BasicColorSchema, useColorMode, useStorage } from '@vueuse/core'
-import { Preference, preferences, PREFERENCES, THEME_STORAGE_KEY, themes } from './themeConstants'
+import { Preference, preferences, PREFERENCES, THEME_STORAGE_KEY, themes, type Theme } from './themeConstants'
 
 function isPreference(value: string): value is Preference {
     return (PREFERENCES as readonly string[]).includes(value)
@@ -13,6 +13,6 @@ export function useTheme() {
         }
     })
 
-    const { store, state } = useColorMode({ storageRef, modes: themes })
+    const { store, state } = useColorMode<Theme>({ storageRef, modes: themes })
     return { preference: store, resolved: state }
 }

@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
-import { useTheme } from '../../src'
+import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
+import type { Preference, Theme } from '../../src/theme/themeConstants.ts'
+import { preferences, THEME_STORAGE_KEY, themes, useTheme } from '../../src'
 import { mockSystemTheme } from '../utils/systemTheme.ts'
-import { preferences, THEME_STORAGE_KEY, themes } from '../../src'
 
 describe('useTheme', () => {
     beforeEach(() => {
@@ -62,5 +62,12 @@ describe('useTheme', () => {
 
         expect(preference.value).toBe(preferences.auto)
         expect(resolved.value).toBe(themes.light)
+    })
+
+    it('types the preference and the resolved theme with the known values', () => {
+        const { preference, resolved } = useTheme()
+
+        expectTypeOf(preference.value).toEqualTypeOf<Preference>()
+        expectTypeOf(resolved.value).toEqualTypeOf<Theme>()
     })
 })

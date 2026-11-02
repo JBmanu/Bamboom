@@ -104,4 +104,21 @@ describe('ThemeToggle', () => {
 
         expect(labelsOf(wrapper)).toEqual(['Sistema', 'Chiaro', 'Scuro'])
     })
+
+    it('shows an icon for each option and no visible text', async () => {
+        const { wrapper } = await mountToggle()
+        const faces = wrapper.findAll('label [aria-hidden="true"]').filter((face) => face.element.parentElement?.tagName === 'LABEL')
+
+        expect(faces).toHaveLength(3)
+        faces.forEach((face) => {
+            expect(face.find('svg').exists()).toBe(true)
+            expect(face.text()).toBe('')
+        })
+    })
+
+    it('names every option as tooltip too', async () => {
+        const { wrapper } = await mountToggle()
+
+        expect(wrapper.findAll('label').map((label) => label.attributes('title'))).toEqual(['System', 'Light', 'Dark'])
+    })
 })
