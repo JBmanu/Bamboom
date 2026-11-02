@@ -1,5 +1,5 @@
 # frontend/Dockerfile  (build: docker build --build-arg APP=player -f Dockerfile frontend)
-FROM node:24-alpine AS builder
+FROM node:26-alpine AS builder
 ARG APP
 WORKDIR /app
 COPY package.json package-lock.json tsconfig.base.json ./
