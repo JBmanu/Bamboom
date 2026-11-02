@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { useId } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import MonitorIcon from '~icons/ph/monitor'
+import MoonIcon from '~icons/ph/moon'
+import SunIcon from '~icons/ph/sun'
 import { type Preference, preferences } from '../theme/themeConstants.ts'
 import { useTheme } from '../theme/useTheme.ts'
+import VIcon from './VIcon.vue'
+import VSegmentedControl from './VSegmentedControl.vue'
 
-// The label key is written out, not built from the value: the stored "auto" is shown as "system".
-const OPTIONS: { value: Preference; labelKey: string }[] = [
-    { value: preferences.auto, labelKey: 'common.theme.system' },
-    { value: preferences.light, labelKey: 'common.theme.light' },
-    { value: preferences.dark, labelKey: 'common.theme.dark' }
-]
+// The name key is written out, not built from the value: the stored "auto" is shown as "system".
+const OPTIONS = [
+    { value: preferences.auto, nameKey: 'common.theme.system', icon: MonitorIcon },
+    { value: preferences.light, nameKey: 'common.theme.light', icon: SunIcon },
+    { value: preferences.dark, nameKey: 'common.theme.dark', icon: MoonIcon }
+] as const
 
 const { t } = useI18n()
 const { preference } = useTheme()
-const groupName = useId()
+const options = computed(() => OPTIONS.map(({ value, nameKey }) => ({ value, name: t(nameKey) })))
+const iconOf = (value: Preference) => OPTIONS.find((option) => option.value === value)!.icon
 </script>
 
 <template>
-    <fieldset class="toggle">
-        <legend class="legend">{{ t('common.theme.label') }}</legend>
-        <label v-for="option in OPTIONS" :key="option.value" class="option">
-            <input v-model="preference" type="radio" :name="groupName" :value="option.value" class="radio" />
-            <span class="label">{{ t(option.labelKey) }}</span>
-        </label>
-    </fieldset>
+    <VSegmentedControl v-model="preference" :legend="t('common.theme.label')" :options="options">
+        <template #option="{ option }"><VIcon :icon="iconOf(option.value)" class="size-5" /></template>
+    </VSegmentedControl>
 </template>
-
-<style scoped src="./style/ThemeToggle.css" />

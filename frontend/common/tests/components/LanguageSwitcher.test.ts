@@ -7,6 +7,10 @@ import { mountTwiceWithTranslations, mountWithTranslations } from '../utils/moun
 
 enableAutoUnmount(afterEach)
 
+const namesOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.attributes('title'))
+
+const facesOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.get('[aria-hidden="true"]'))
+
 const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())
 
 const legendOf = (wrapper: VueWrapper) => wrapper.get('fieldset legend').text()
@@ -74,5 +78,24 @@ describe('LanguageSwitcher', () => {
         expect(radio(wrapper, languages.en).element.checked).toBe(true)
         expect(legendOf(wrapper)).toBe('Language')
         consoleError.mockRestore()
+    })
+
+    it('offers every supported language with a flag and its short code, in a group labelled Language', async () => {
+        const { wrapper } = await mountSwitcher()
+
+        expect(legendOf(wrapper)).toBe('Language')
+        expect(wrapper.findAll('input[type="radio"]')).toHaveLength(2)
+        expect(facesOf(wrapper).map((face) => face.text())).toEqual(['EN', 'IT'])
+        facesOf(wrapper).forEach((face) => expect(face.find('svg').exists()).toBe(true))
+    })
+
+    it('names every language in its own language, whatever the current one is', async () => {
+        const { wrapper } = await mountSwitcher()
+        expect(namesOf(wrapper)).toEqual(['English', 'Italiano'])
+
+        await radio(wrapper, languages.it).setValue()
+        await vi.waitFor(() => expect(legendOf(wrapper)).toBe('Lingua'))
+
+        expect(namesOf(wrapper)).toEqual(['English', 'Italiano'])
     })
 })
