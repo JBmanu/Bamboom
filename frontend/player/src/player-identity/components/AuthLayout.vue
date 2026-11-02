@@ -13,7 +13,7 @@ defineSlots<{
 <template>
     <VLayer class="auth-layout h-full">
         <template #base>
-            <div class="hidden h-full items-end justify-start pb-(--bamboo-bottom) lg:flex">
+            <div class="hidden h-full items-end justify-start pb-(--bamboo-bottom) pl-(--bamboo-left) lg:flex">
                 <VPicture :picture="bambooExplosion" alt="" sizes="20vw" class="h-(--bamboo-height) w-auto" />
             </div>
         </template>
@@ -29,7 +29,7 @@ defineSlots<{
         </div>
 
         <template #overlay>
-            <div class="hidden h-full items-end justify-end pb-(--panda-bottom) lg:flex">
+            <div class="hidden h-full items-end justify-end pb-(--panda-bottom) pr-(--panda-right) lg:flex">
                 <VPicture :picture="pandaSitting" alt="" sizes="20vw" class="h-(--panda-height) w-auto" />
             </div>
         </template>
@@ -37,29 +37,22 @@ defineSlots<{
 </template>
 
 <style scoped>
-/* Every size of the layout is decided here: tuning the picture means changing these lines. */
+/* Every size of the layout is decided here. */
 .auth-layout {
     --card-width: 32rem;
-    --logo-height: 24dvh;
-    /* The logo is about twice as wide as tall (1526x765); it never gets wider than the card area or the screen. */
-    --logo-width: min(calc(100vw - 2rem), 36rem, calc(var(--logo-height) * 2));
+    /* Logo width. Its height is half of it (1526x765), so the last term also decides how much height it takes from the card. */
+    --logo-width: min(calc(100vw - 2rem), 36rem, 48dvh);
 
-    /* Width / height of each side image: the height caps below are computed from them. */
-    --bamboo-ratio: calc(745 / 1278);
-    --panda-ratio: calc(1097 / 1354);
-
-    /* What you tune: distance from the screen edge and from the bottom, and the height wanted. */
-    --bamboo-left: 0rem;
+    /* Distance of each side image from the screen edge and from the bottom. */
+    --bamboo-left: 3rem;
     --bamboo-bottom: 12dvh;
-    --panda-right: 0rem;
+    --panda-right: 3rem;
     --panda-bottom: 20dvh;
 
-    /* Free width between the screen edge and the card, minus the distance the image already keeps from the edge. */
-    --bamboo-space: calc((100vw - var(--card-width)) / 2 - var(--bamboo-left));
-    --panda-space: calc((100vw - var(--card-width)) / 2 - var(--panda-right));
-
-    /* The first number is the wanted height; the second is the cap that keeps the image off the card. */
-    --bamboo-height: min(42dvh, calc(var(--bamboo-space) / var(--bamboo-ratio)));
-    --panda-height: min(32dvh, calc(var(--panda-space) / var(--panda-ratio)));
+    /* Height of each side image: the first number is the wanted height. The second is a cap, the free width beside the card
+       times height/width of the picture, so on a narrow window the image cannot reach the form. */
+    --side-space: calc((100vw - var(--card-width)) / 2);
+    --bamboo-height: min(42dvh, calc(var(--side-space) * 1278 / 745));
+    --panda-height: min(32dvh, calc(var(--side-space) * 1354 / 1097));
 }
 </style>
