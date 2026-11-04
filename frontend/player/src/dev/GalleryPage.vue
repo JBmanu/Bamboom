@@ -12,13 +12,13 @@ import ModalsSection from './sections/ModalsSection.vue'
 </script>
 
 <template>
+    <div class="fixed top-2 right-2 z-30 flex items-center gap-2">
+        <LanguageSwitcher />
+        <ThemeToggle />
+    </div>
     <main class="mx-auto flex min-h-screen max-w-5xl flex-col bg-background p-4 text-foreground sm:p-8">
         <header class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="text-2xl font-bold">UI kit gallery</h1>
-            <div class="flex flex-wrap gap-4">
-                <ThemeToggle />
-                <LanguageSwitcher />
-            </div>
         </header>
         <TypographySection />
         <PicturesSection />

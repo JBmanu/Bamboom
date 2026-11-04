@@ -2,7 +2,7 @@
 import { VLayer, VPicture } from '@bamboom/common'
 import bambooExplosion from '../../../resource/image/layout/bamboo/bamboo-explosion-1.png?as=picture'
 import pandaSitting from '../../../resource/image/layout/panda/panda-sitting-1.png?as=picture'
-import logo from '../../../resource/image/layout/logo/logo-1.png?as=picture'
+import logo from '../../../resource/image/layout/logo/logo-2.png?as=picture'
 
 defineSlots<{
     default(): unknown

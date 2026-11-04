@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { LanguageSwitcher, ThemeToggle } from '@bamboom/common'
 import { RouterView } from 'vue-router'
 import AuthLayout from '../components/AuthLayout.vue'
 </script>
@@ -7,9 +6,5 @@ import AuthLayout from '../components/AuthLayout.vue'
 <template>
     <AuthLayout>
         <RouterView />
-        <template #footer>
-            <ThemeToggle />
-            <LanguageSwitcher />
-        </template>
     </AuthLayout>
 </template>
