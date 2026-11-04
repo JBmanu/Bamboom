@@ -30,7 +30,7 @@ describe('ThemeToggle', () => {
     it('shows an icon and no visible text', async () => {
         const { wrapper } = await mountToggle()
 
-        expect(wrapper.get('button svg').exists()).toBe(true)
+        expect(wrapper.find('button svg').exists()).toBe(true)
         expect(wrapper.get('button').element.textContent?.trim()).toBe('System') // only the status for screen readers
     })
 
