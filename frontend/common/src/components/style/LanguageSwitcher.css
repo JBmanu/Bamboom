@@ -1,0 +1,23 @@
+@reference 'tailwindcss';
+@reference '../../theme/theme.css';
+
+/* Made for the top right corner, where the controls of the page sit. A popover lives in the top layer, so it ignores its parents. */
+.panel {
+    @apply m-0 rounded-lg border border-border bg-surface p-1 text-foreground shadow-lg;
+    inset: auto;
+    top: 3.5rem;
+    right: 0.5rem;
+}
+
+.list {
+    @apply flex flex-col gap-1;
+}
+
+.choice {
+    @apply flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-md px-3 text-left text-base hover:bg-surface-muted;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring;
+}
+
+.choice[aria-current='true'] {
+    @apply font-semibold;
+}

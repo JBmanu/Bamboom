@@ -1,23 +1,19 @@
 import { enableAutoUnmount, type VueWrapper } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LANGUAGE_STORAGE_KEY, languages } from '../../src/translations/language/languageConstants.ts'
 import LanguageSwitcher from '../../src/components/LanguageSwitcher.vue'
 import type { VocabularyLoaders } from '../../src/translations/vocabularies.ts'
+import { installPopoverStub } from '../utils/installPopoverStub.ts'
 import { mountTwiceWithTranslations, mountWithTranslations } from '../utils/mountWithTranslations.ts'
 
 enableAutoUnmount(afterEach)
 
-const namesOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.attributes('title'))
-
-const facesOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.get('[aria-hidden="true"]'))
-
-const labelsOf = (wrapper: VueWrapper) => wrapper.findAll('label').map((label) => label.text())
-
-const legendOf = (wrapper: VueWrapper) => wrapper.get('fieldset legend').text()
-
-const radio = (wrapper: VueWrapper, language: string) => wrapper.get<HTMLInputElement>(`input[value="${language}"]`)
-
+const trigger = (wrapper: VueWrapper) => wrapper.get('button[aria-controls]')
+const choices = (wrapper: VueWrapper) => wrapper.findAll('[popover] button')
+const choice = (wrapper: VueWrapper, language: string) => wrapper.get(`[popover] button[lang="${language}"]`)
 const mountSwitcher = (moduleLoaders?: VocabularyLoaders) => mountWithTranslations(LanguageSwitcher, moduleLoaders)
+
+beforeAll(installPopoverStub)
 
 beforeEach(() => {
     localStorage.clear()
@@ -25,77 +21,72 @@ beforeEach(() => {
 })
 
 describe('LanguageSwitcher', () => {
-    it('offers every supported language by its own name, in a group labelled Language', async () => {
+    it('shows the flag and short code of the current language on the button, named after it', async () => {
         const { wrapper } = await mountSwitcher()
 
-        expect(legendOf(wrapper)).toBe('Language')
-        expect(wrapper.findAll('input[type="radio"]')).toHaveLength(2)
-        expect(labelsOf(wrapper)).toEqual(['English', 'Italiano'])
+        expect(trigger(wrapper).text()).toBe('EN')
+        expect(trigger(wrapper).findAll('svg')).toHaveLength(2) // the flag and the arrow
+        expect(trigger(wrapper).attributes('aria-label')).toBe('Language: English')
     })
 
-    it('selects English when nothing is stored', async () => {
+    it('starts closed and opens when the button is pressed', async () => {
         const { wrapper } = await mountSwitcher()
+        expect(trigger(wrapper).attributes('aria-expanded')).toBe('false')
 
-        expect(radio(wrapper, languages.en).element.checked).toBe(true)
-        expect(radio(wrapper, languages.it).element.checked).toBe(false)
+        await trigger(wrapper).trigger('click')
+
+        expect(trigger(wrapper).attributes('aria-expanded')).toBe('true')
     })
 
-    it('selects the stored language and speaks it', async () => {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, languages.it)
-
+    it('lists every language by its own name, marking the current one', async () => {
         const { wrapper } = await mountSwitcher()
 
-        expect(radio(wrapper, languages.it).element.checked).toBe(true)
-        expect(legendOf(wrapper)).toBe('Lingua')
+        expect(choices(wrapper).map((button) => button.text())).toEqual(['English', 'Italiano'])
+        expect(choices(wrapper).map((button) => button.attributes('lang'))).toEqual(['en', 'it'])
+        expect(choices(wrapper).map((button) => button.attributes('aria-current'))).toEqual(['true', undefined])
     })
 
-    it('switches, stores and announces the language chosen', async () => {
+    it('switches, stores and announces the language chosen, then closes', async () => {
         const { wrapper } = await mountSwitcher()
+        await trigger(wrapper).trigger('click')
 
-        await radio(wrapper, languages.it).setValue()
+        await choice(wrapper, languages.it).trigger('click')
 
-        await vi.waitFor(() => expect(legendOf(wrapper)).toBe('Lingua'))
+        await vi.waitFor(() => expect(trigger(wrapper).attributes('aria-label')).toBe('Lingua: Italiano'))
+        expect(trigger(wrapper).attributes('aria-expanded')).toBe('false')
+        expect(trigger(wrapper).text()).toBe('IT')
         expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe(languages.it)
         expect(document.documentElement.lang).toBe(languages.it)
     })
 
-    it('keeps two switchers in sync', async () => {
-        const { wrapper } = await mountTwiceWithTranslations(LanguageSwitcher)
-        const [firstItalian, secondItalian] = wrapper.findAll<HTMLInputElement>(`input[value="${languages.it}"]`)
-        await firstItalian.setValue()
+    it('starts in the stored language and speaks it, panel included', async () => {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, languages.it)
 
-        await vi.waitFor(() => expect(secondItalian.element.checked).toBe(true))
+        const { wrapper } = await mountSwitcher()
+
+        expect(trigger(wrapper).attributes('aria-label')).toBe('Lingua: Italiano')
+        expect(wrapper.get('[popover]').attributes('aria-label')).toBe('Lingua')
+    })
+
+    it('keeps two switchers in sync, each with its own panel', async () => {
+        const { wrapper } = await mountTwiceWithTranslations(LanguageSwitcher)
+        const [firstTrigger, secondTrigger] = wrapper.findAll('button[aria-controls]')
+        expect(firstTrigger.attributes('aria-controls')).not.toBe(secondTrigger.attributes('aria-controls'))
+
+        await firstTrigger.trigger('click')
+        await wrapper.findAll(`[popover] button[lang="${languages.it}"]`)[0].trigger('click')
+
+        await vi.waitFor(() => expect(secondTrigger.attributes('aria-label')).toBe('Lingua: Italiano'))
     })
 
     it('stays on the current language when the chosen one cannot be loaded', async () => {
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
         const { wrapper } = await mountSwitcher({ 'lobby-match/vocabulary/it.ts': () => Promise.reject(new Error('offline')) })
 
-        await radio(wrapper, languages.it).setValue()
+        await choice(wrapper, languages.it).trigger('click')
 
-        await vi.waitFor(() => expect(consoleError).toHaveBeenCalled())
-        expect(consoleError).toHaveBeenCalledWith(expect.stringContaining(languages.it), expect.any(Error))
-        expect(radio(wrapper, languages.en).element.checked).toBe(true)
-        expect(legendOf(wrapper)).toBe('Language')
+        await vi.waitFor(() => expect(consoleError).toHaveBeenCalledWith(expect.stringContaining(languages.it), expect.any(Error)))
+        expect(trigger(wrapper).attributes('aria-label')).toBe('Language: English')
         consoleError.mockRestore()
-    })
-
-    it('offers every supported language with a flag and its short code, in a group labelled Language', async () => {
-        const { wrapper } = await mountSwitcher()
-
-        expect(legendOf(wrapper)).toBe('Language')
-        expect(wrapper.findAll('input[type="radio"]')).toHaveLength(2)
-        expect(facesOf(wrapper).map((face) => face.text())).toEqual(['EN', 'IT'])
-        facesOf(wrapper).forEach((face) => expect(face.find('svg').exists()).toBe(true))
-    })
-
-    it('names every language in its own language, whatever the current one is', async () => {
-        const { wrapper } = await mountSwitcher()
-        expect(namesOf(wrapper)).toEqual(['English', 'Italiano'])
-
-        await radio(wrapper, languages.it).setValue()
-        await vi.waitFor(() => expect(legendOf(wrapper)).toBe('Lingua'))
-
-        expect(namesOf(wrapper)).toEqual(['English', 'Italiano'])
     })
 })

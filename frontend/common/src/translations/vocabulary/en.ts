@@ -10,6 +10,7 @@ export default {
     },
     language: {
         label: 'Language',
+        current: 'Language: {name}',
         names: { en: 'English', it: 'Italiano' }
     },
     spinner: { loading: 'Loading…' },

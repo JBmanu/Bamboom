@@ -11,6 +11,7 @@ export default {
     },
     language: {
         label: 'Lingua',
+        current: 'Lingua: {name}',
         names: { en: 'English', it: 'Italiano' }
     },
     spinner: { loading: 'Caricamento…' },
