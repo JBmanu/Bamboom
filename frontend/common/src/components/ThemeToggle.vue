@@ -6,24 +6,38 @@ import MoonIcon from '~icons/ph/moon'
 import SunIcon from '~icons/ph/sun'
 import { type Preference, preferences } from '../theme/themeConstants.ts'
 import { useTheme } from '../theme/useTheme.ts'
+import VButton from './VButton.vue'
 import VIcon from './VIcon.vue'
-import VSegmentedControl from './VSegmentedControl.vue'
 
-// The name key is written out, not built from the value: the stored "auto" is shown as "system".
-const OPTIONS = [
-    { value: preferences.auto, nameKey: 'common.theme.system', icon: MonitorIcon },
-    { value: preferences.light, nameKey: 'common.theme.light', icon: SunIcon },
-    { value: preferences.dark, nameKey: 'common.theme.dark', icon: MoonIcon }
-] as const
+// The name keys are written out: the stored "auto" is shown as "system".
+const looks: Record<Preference, { nameKey: string; icon: typeof SunIcon }> = {
+    [preferences.light]: { nameKey: 'common.theme.light', icon: SunIcon },
+    [preferences.dark]: { nameKey: 'common.theme.dark', icon: MoonIcon },
+    [preferences.auto]: { nameKey: 'common.theme.system', icon: MonitorIcon }
+}
+
+// What a click does: light, then dark, then back to following the system.
+const following: Record<Preference, Preference> = {
+    [preferences.light]: preferences.dark,
+    [preferences.dark]: preferences.auto,
+    [preferences.auto]: preferences.light
+}
 
 const { t } = useI18n()
 const { preference } = useTheme()
-const options = computed(() => OPTIONS.map(({ value, nameKey }) => ({ value, name: t(nameKey) })))
-const iconOf = (value: Preference) => OPTIONS.find((option) => option.value === value)!.icon
+
+const currentName = computed(() => t(looks[preference.value].nameKey))
+const label = computed(() => t('common.theme.switch', { current: currentName.value, next: t(looks[following[preference.value]].nameKey) }))
+
+function switchToFollowing() {
+    preference.value = following[preference.value]
+}
 </script>
 
 <template>
-    <VSegmentedControl v-model="preference" :legend="t('common.theme.label')" :options="options">
-        <template #option="{ option }"><VIcon :icon="iconOf(option.value)" class="size-5" /></template>
-    </VSegmentedControl>
+    <VButton variant="ghost" :aria-label="label" :title="label" @click="switchToFollowing">
+        <VIcon :icon="looks[preference].icon" class="size-5" />
+        <!-- A button that only changes its icon says nothing to someone who cannot see it. -->
+        <span role="status" class="sr-only">{{ currentName }}</span>
+    </VButton>
 </template>

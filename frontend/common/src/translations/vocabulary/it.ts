@@ -6,7 +6,8 @@ export default {
         label: 'Tema',
         system: 'Sistema',
         light: 'Chiaro',
-        dark: 'Scuro'
+        dark: 'Scuro',
+        switch: 'Tema: {current}. Passa a {next}'
     },
     language: {
         label: 'Lingua',

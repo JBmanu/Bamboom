@@ -17,12 +17,16 @@ function mountControl({ modelValue = 'first', optionSlot, copies = 1 }: MountCon
     const props = { legend: 'Pick one', options, modelValue }
     const slots = optionSlot ? { option: optionSlot } : {}
     const Page = defineComponent({
-        render: () => h('div', Array.from({ length: copies }, () => h(VSegmentedControl as Component, props, slots)))
+        render: () =>
+            h(
+                'div',
+                Array.from({ length: copies }, () => h(VSegmentedControl as Component, props, slots))
+            )
     })
     return mount(Page)
 }
 
-const radio = (wrapper: VueWrapper, value: string) => wrapper.get<HTMLInputElement>(`input[value="${ value }"]`)
+const radio = (wrapper: VueWrapper, value: string) => wrapper.get<HTMLInputElement>(`input[value="${value}"]`)
 const nameOf = (label: DOMWrapper<Element>) => label.element.lastElementChild?.textContent
 
 describe('VSegmentedControl', () => {
