@@ -122,3 +122,55 @@ describe('VButton', () => {
         expect(wrapper.attributes('aria-label')).toBe(ariaLabelValue)
     })
 })
+
+describe('VButton as a link', () => {
+    const mountLink = (props: Record<string, unknown> = {}, slots: Record<string, string> = {}) =>
+        mountButton({ props: { href: '#start', ...props }, slots })
+
+    it('is an anchor to the given address, not a button', async () => {
+        const { wrapper } = await mountLink()
+
+        expect(wrapper.element.tagName).toBe('A')
+        expect(wrapper.attributes('href')).toBe('#start')
+    })
+
+    it('has no type, disabled or busy state, whatever it is asked', async () => {
+        const { wrapper } = await mountLink({ disabled: true, loading: true })
+
+        expect(wrapper.attributes('type')).toBeUndefined()
+        expect(wrapper.attributes('disabled')).toBeUndefined()
+        expect(wrapper.attributes('aria-busy')).toBeUndefined()
+    })
+
+    it('keeps the variant', async () => {
+        const { wrapper: primary } = await mountLink()
+        const { wrapper: ghost } = await mountLink({ variant: 'ghost' })
+
+        expect(primary.attributes('data-variant')).toBe('primary')
+        expect(ghost.attributes('data-variant')).toBe('ghost')
+    })
+
+    it('shows its label and the icons before and after it', async () => {
+        const { wrapper } = await mountLink({}, { default: 'Back', start: '<i data-test="before" />', end: '<i data-test="after" />' })
+
+        expect(wrapper.text()).toContain('Back')
+        expect(wrapper.find('[data-test="before"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="after"]').exists()).toBe(true)
+    })
+
+    it('passes its own attributes to the anchor', async () => {
+        const { wrapper } = await mountLink({ target: '_blank', rel: 'noopener' })
+
+        expect(wrapper.attributes('target')).toBe('_blank')
+        expect(wrapper.attributes('rel')).toBe('noopener')
+    })
+
+    it('lets the caller listen to clicks, even when loading is set', async () => {
+        const onClick = vi.fn((event: Event) => event.preventDefault())
+        const { wrapper } = await mountLink({ onClick, loading: true })
+
+        await wrapper.trigger('click')
+
+        expect(onClick).toHaveBeenCalledOnce()
+    })
+})

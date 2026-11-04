@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import { createPlayerApp } from '../../src/app/createPlayerApp'
 import { createMemoryHistory } from 'vue-router'
 import { LOGIN_PATH } from '../../src/player-identity/routePaths.ts'
-import { installPopoverStub } from "../utils/installPopoverStub.ts";
+import { installPopoverStub } from '../utils/installPopoverStub.ts'
 
 type PlayerApp = Awaited<ReturnType<typeof createPlayerApp>>
 
@@ -14,7 +14,7 @@ const ITALIAN_BUTTON_LABEL = 'Lingua: Italiano'
 const mountedApps: PlayerApp[] = []
 
 const languageButtonOf = (container: HTMLElement) => container.querySelector<HTMLButtonElement>('button[aria-controls]')!
-const choiceFor = (container: HTMLElement, language: string) => container.querySelector<HTMLButtonElement>(`[popover] button[lang="${ language }"]`)!
+const choiceFor = (container: HTMLElement, language: string) => container.querySelector<HTMLButtonElement>(`[popover] button[lang="${language}"]`)!
 
 async function mountPlayer(startPath = '/') {
     const history = createMemoryHistory()
@@ -26,8 +26,6 @@ async function mountPlayer(startPath = '/') {
     mountedApps.push(app)
     return container
 }
-
-const radioFor = (container: HTMLElement, language: string) => container.querySelector<HTMLInputElement>(`input[type="radio"][value="${ language }"]`)!
 
 beforeAll(installPopoverStub)
 beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))

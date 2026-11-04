@@ -25,5 +25,7 @@ import GallerySection from '../GallerySection.vue'
                 <template #end><VIcon :icon="ArrowRightIcon" /></template>
             </VButton>
         </GalleryCase>
+        <GalleryCase label="link, primary"><VButton href="#">Back to home</VButton></GalleryCase>
+        <GalleryCase label="link, ghost"><VButton variant="ghost" href="#">Back to login</VButton></GalleryCase>
     </GallerySection>
 </template>
