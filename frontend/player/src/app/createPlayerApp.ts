@@ -13,7 +13,8 @@ type PlayerAppOptions = {
 /** Builds the player app with its plugins installed, so `main.ts` only has to mount it. */
 export async function createPlayerApp({ history = createWebHistory() }: PlayerAppOptions = {}) {
     // One folder per module: src/<module>/vocabulary/<language>.ts. The folder's name becomes the namespace.
-    const translations = await createTranslations(import.meta.glob('../*/vocabulary/*.ts'))
+    // The pattern starts from the root of the app: a relative one drops the folder name of the file it is written in.
+    const translations = await createTranslations(import.meta.glob('/src/*/vocabulary/*.ts'))
     const pinia = createPinia()
     const session = useSessionStore(pinia)
     // Nothing to restore yet: from the next feature the session comes from the server.
