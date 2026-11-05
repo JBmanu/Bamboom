@@ -52,7 +52,7 @@ function readMessagesFrom(file: VocabularyFile, loadedModule: unknown) {
  * Picks the starting language, loads its vocabulary files (and English as fallback) and returns a Vue plugin.
  * Await it before mounting the app, or the first screen would show raw keys.
  *
- * @param moduleLoaders - the app's `import.meta.glob('./<module>/vocabulary/*.ts')`; `common`'s own files are added for you.
+ * @param moduleLoaders - the app's `import.meta.glob('/src/../vocabulary/*.ts')`; `common`'s own files are added for you.
  * @throws if two folders would get the same namespace in the same language.
  */
 export async function createTranslations(moduleLoaders: VocabularyLoaders = {}) {

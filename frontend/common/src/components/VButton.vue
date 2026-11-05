@@ -12,7 +12,8 @@ const props = withDefaults(
         href?: string
     }>(),
     {
-        variant: 'primary'
+        variant: 'primary',
+        href: undefined
     }
 )
 
