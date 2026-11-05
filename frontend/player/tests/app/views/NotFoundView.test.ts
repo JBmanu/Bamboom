@@ -27,10 +27,18 @@ describe('NotFoundView', () => {
     it('takes the way back through the router, without reloading the page', async () => {
         const { container, app } = await mountPlayer(UNKNOWN_ADDRESS)
         const click = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 })
-
         wayBackOf(container).dispatchEvent(click)
 
         expect(click.defaultPrevented).toBe(true) // the router took over from the browser
         await vi.waitFor(() => expect(app.config.globalProperties.$router.currentRoute.value.path).toBe('/login')) // signed out: the home is not for them
+    })
+
+    it('moves the focus to the main area when the way back is taken', async () => {
+        const { container } = await mountPlayer(UNKNOWN_ADDRESS)
+        const main = container.querySelector('main')!
+        wayBackOf(container).click()
+        await vi.waitFor(() => expect(document.activeElement).toBe(main))
+
+        expect(main.getAttribute('tabindex')).toBe('-1')
     })
 })

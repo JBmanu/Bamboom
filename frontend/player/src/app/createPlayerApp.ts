@@ -4,7 +4,8 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import { useSessionStore } from '../player-identity'
 import { createPlayerRouter } from './router/createPlayerRouter.ts'
-import { createWebHistory, RouterHistory } from 'vue-router'
+import { createWebHistory, type RouterHistory } from 'vue-router'
+import { installFocusAfterNavigation } from './router/installFocusAfterNavigation.ts'
 
 type PlayerAppOptions = {
     history?: RouterHistory
@@ -17,8 +18,8 @@ export async function createPlayerApp({ history = createWebHistory() }: PlayerAp
     const translations = await createTranslations(import.meta.glob('/src/*/vocabulary/*.ts'))
     const pinia = createPinia()
     const session = useSessionStore(pinia)
-    // Nothing to restore yet: from the next feature the session comes from the server.
     const router = createPlayerRouter({ history, session, whenSessionRestored: () => Promise.resolve() })
+    installFocusAfterNavigation(router) // before the router starts, so the first navigation is the one it skips
 
     const app = createApp(App).use(pinia).use(translations).use(router)
     await router.isReady() // the first page is decided before anything is drawn: no flash of the wrong page

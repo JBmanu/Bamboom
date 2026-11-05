@@ -9,7 +9,7 @@ import { RouterView } from 'vue-router'
         <ThemeToggle />
     </div>
     <!-- Under lg the strip on top is kept free: the controls would sit over the logo. -->
-    <main class="h-dvh overflow-hidden bg-background pt-14 text-foreground lg:pt-0">
+    <main tabindex="-1" class="h-dvh overflow-hidden bg-background pt-14 text-foreground focus:outline-none lg:pt-0">
         <RouterView />
     </main>
 </template>
