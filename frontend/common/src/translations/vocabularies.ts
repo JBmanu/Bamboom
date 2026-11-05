@@ -6,6 +6,7 @@ export type VocabularyLoaders = Record<string, () => Promise<unknown>>
 export type VocabularyFile = { path: string; loadFile: () => Promise<unknown> }
 
 const COMMON_NAMESPACE = 'common'
+const NAMELESS_FOLDERS = new Set(['.', '..'])
 const COMMON_VOCABULARY_PATH = /^\.\/vocabulary\/([^/.]+)\.[jt]s$/ // ./vocabulary/<language>.ts, next to this file
 const MODULE_VOCABULARY_PATH = /([^/]+)\/vocabulary\/([^/.]+)\.[jt]s$/ // <module>/vocabulary/<language>.ts
 const kebabToCamelCase = (kebab: string) => kebab.replace(/-(\w)/g, (_, letter: string) => letter.toUpperCase())
@@ -27,9 +28,16 @@ export function groupVocabularyFilesByLanguage(moduleLoaders: VocabularyLoaders)
     for (const [path, loadFile] of Object.entries(commonVocabularyLoaders)) {
         addFile(COMMON_NAMESPACE, COMMON_VOCABULARY_PATH.exec(path)?.[1], { path, loadFile })
     }
+
     for (const [path, loadFile] of Object.entries(moduleLoaders)) {
         const [, folder, language] = MODULE_VOCABULARY_PATH.exec(path) ?? []
-        if (folder) addFile(kebabToCamelCase(folder), language, { path, loadFile })
+        if (!folder) continue
+        if (NAMELESS_FOLDERS.has(folder)) {
+            throw new Error(
+                `"${path}" does not say which folder it comes from. Write the glob from the root of the app: import.meta.glob('/src/*/vocabulary/*.ts')`
+            )
+        }
+        addFile(kebabToCamelCase(folder), language, { path, loadFile })
     }
     return filesByLanguage
 }

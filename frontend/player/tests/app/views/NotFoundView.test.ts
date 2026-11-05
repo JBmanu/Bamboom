@@ -1,6 +1,6 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mountPlayer } from '../../utils/mountPlayer.ts'
+import { mountPlayer } from '../../utils/mountPlayer'
 
 const UNKNOWN_ADDRESS = '/nowhere'
 const wayBackOf = (container: HTMLElement) => container.querySelector<HTMLAnchorElement>('main a')!

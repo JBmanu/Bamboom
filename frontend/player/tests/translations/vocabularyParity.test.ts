@@ -35,7 +35,7 @@ describe.each([...vocabulariesByFolder])('vocabulary of %s', (_folder, vocabular
 
     it('has no empty message', () => {
         const empty = Object.values(vocabularies)
-            .flatMap(messagesOf)
+            .flatMap((vocabulary) => messagesOf(vocabulary))
             .filter(([, text]) => text.trim() === '')
 
         expect(empty).toEqual([])

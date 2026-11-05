@@ -193,6 +193,12 @@ describe('createTranslations', () => {
             expect((error as Error).message).toContain(first)
             expect((error as Error).message).toContain(second)
         })
+
+        it('refuses a path that lost the name of its folder, saying how to write the glob', async () => {
+            const loaders = { './vocabulary/en.ts': fakeVocabularyFile({ hello: 'Hello' }) }
+
+            await expect(createTranslations(loaders)).rejects.toThrow(/root of the app/)
+        })
     })
 
     describe('changing language', () => {
