@@ -19,12 +19,13 @@ export default {
     validation: {
         required: 'This field is required.',
         emailInvalid: 'Enter a valid email address.',
-        usernameTooShort: 'Username must be at least 3 characters.',
-        usernameTooLong: 'Username must be at most 20 characters.',
+        usernameTooShort: 'Username must be at least {minimum} characters.',
+        usernameTooLong: 'Username must be at most {maximum} characters.',
         usernameCharacters: 'Use only letters, numbers and underscores.',
-        passwordTooShort: 'Password must be at least 8 characters.',
-        passwordTooLong: 'Password must be at most 128 characters.',
+        passwordTooShort: 'Password must be at least {minimum} characters.',
+        passwordTooLong: 'Password must be at most {maximum} characters.',
         passwordConfirmationMismatch: 'The passwords do not match.',
-        codeFormat: 'Enter the 6-digit code.'
+        codeLength: 'Enter the {length}-digit code.',
+        codeDigitsOnly: 'The code only has digits.'
     }
 }

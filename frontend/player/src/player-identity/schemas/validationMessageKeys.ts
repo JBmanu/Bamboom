@@ -8,5 +8,6 @@ export const validationMessageKeys = {
     passwordTooShort: 'playerIdentity.validation.passwordTooShort',
     passwordTooLong: 'playerIdentity.validation.passwordTooLong',
     passwordConfirmationMismatch: 'playerIdentity.validation.passwordConfirmationMismatch',
-    codeFormat: 'playerIdentity.validation.codeFormat'
+    codeLength: 'playerIdentity.validation.codeLength',
+    codeDigitsOnly: 'playerIdentity.validation.codeDigitsOnly'
 } as const

@@ -21,12 +21,13 @@ export default {
     validation: {
         required: 'Questo campo è obbligatorio.',
         emailInvalid: 'Inserisci un indirizzo email valido.',
-        usernameTooShort: 'Lo username deve avere almeno 3 caratteri.',
-        usernameTooLong: 'Lo username può avere al massimo 20 caratteri.',
+        usernameTooShort: 'Lo username deve avere almeno {minimum} caratteri.',
+        usernameTooLong: 'Lo username può avere al massimo {maximum} caratteri.',
         usernameCharacters: 'Usa solo lettere, numeri e trattini bassi.',
-        passwordTooShort: 'La password deve avere almeno 8 caratteri.',
-        passwordTooLong: 'La password può avere al massimo 128 caratteri.',
+        passwordTooShort: 'La password deve avere almeno {minimum} caratteri.',
+        passwordTooLong: 'La password può avere al massimo {maximum} caratteri.',
         passwordConfirmationMismatch: 'Le password non coincidono.',
-        codeFormat: 'Inserisci il codice di 6 cifre.'
+        codeLength: 'Inserisci il codice di {length} cifre.',
+        codeDigitsOnly: 'Il codice contiene solo cifre.'
     }
 } satisfies typeof en
