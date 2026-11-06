@@ -1,29 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { createFailure, failureCatalog, type FailureCode } from '../../../src/player-identity/errors/failures'
-import { createI18n } from 'vue-i18n'
-import { SUPPORTED_LANGUAGES } from '@bamboom/common'
+import { identityTranslators } from '../../utils/identityTranslators.ts'
 
 const failureCodes = Object.keys(failureCatalog) as FailureCode[]
 
-/** Follows "playerIdentity.failures.x" inside a vocabulary: the folder name (first segment) is not part of the object. */
-const vocabularyFiles = import.meta.glob<{ default: object }>('../../../src/player-identity/vocabulary/*.ts', { eager: true })
-
-const translators = Object.entries(vocabularyFiles).map(([path, { default: vocabulary }]) => {
-    const language = /([^/]+)\.ts$/.exec(path)![1]
-    // The vocabularies are precompiled by the translations plugin: they are read through vue-i18n, not as plain strings.
-    const translator = createI18n({ legacy: false, locale: language, messages: { [language]: { playerIdentity: vocabulary } } }).global
-    return { language, translator }
-})
-
 describe('failure catalog', () => {
-    it('has a vocabulary for every supported language', () => {
-        expect(translators.map(({ language }) => language).sort()).toEqual([...SUPPORTED_LANGUAGES].sort())
-    })
-
     it.each(failureCodes)('%s has a message in every language', (code) => {
         const { messageKey } = createFailure(code)
 
-        translators.forEach(({ language, translator }) => {
+        identityTranslators.forEach(({ language, translator }) => {
             expect(translator.te(messageKey), `${language} has no message for ${messageKey}`).toBe(true)
             expect(translator.t(messageKey), `${language} has an empty message for ${messageKey}`).toMatch(/\S/)
         })

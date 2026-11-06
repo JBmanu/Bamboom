@@ -15,5 +15,16 @@ export default {
         serverFailure: 'Something went wrong on our side. Try again later.',
         unexpectedResponse: 'We could not understand the server response. Try again later.',
         sessionExpired: 'Your session has expired. Sign in again.'
+    },
+    validation: {
+        required: 'This field is required.',
+        emailInvalid: 'Enter a valid email address.',
+        usernameTooShort: 'Username must be at least 3 characters.',
+        usernameTooLong: 'Username must be at most 20 characters.',
+        usernameCharacters: 'Use only letters, numbers and underscores.',
+        passwordTooShort: 'Password must be at least 8 characters.',
+        passwordTooLong: 'Password must be at most 128 characters.',
+        passwordConfirmationMismatch: 'The passwords do not match.',
+        codeFormat: 'Enter the 6-digit code.'
     }
 }
