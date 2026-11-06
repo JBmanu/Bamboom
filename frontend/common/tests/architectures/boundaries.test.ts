@@ -16,6 +16,13 @@ async function violations(pkg: Pkg, specifier: string, folder = '') {
     return result.messages.filter((m) => m.ruleId === 'no-restricted-imports')
 }
 
+/** Lints `code` as if written in `<pkg>/src/<folder>`; keeps only the `no-restricted-syntax` findings. */
+async function forbiddenSyntax(pkg: Pkg, code: string, folder = '') {
+    const filePath = posix.join(pkg, 'src', folder, 'syntax-probe.ts')
+    const [result] = await eslint.lintText(code, { filePath })
+    return result.messages.filter((m) => m.ruleId === 'no-restricted-syntax')
+}
+
 describe('frontend import boundaries', () => {
     it.each([
         ['common -> player (relative)', 'common', '../../player/src/main'],
@@ -68,5 +75,26 @@ describe('module boundaries inside the player', () => {
         ['a module -> its own files', './routes', 'player-identity']
     ] as const)('allows %s', async (_label, specifier, folder) => {
         expect(await violations('player', specifier, folder)).toHaveLength(0)
+    })
+})
+
+describe('no thrown errors in player-identity', () => {
+    it.each([
+        ['a throw', "throw new Error('boom')", 'player-identity'],
+        ['a throw inside a function', "function stop() { throw new Error('boom') }", 'player-identity'],
+        ['a throw in a nested folder', "throw new Error('boom')", 'player-identity/api'],
+        ['Promise.reject', "Promise.reject(new Error('boom'))", 'player-identity']
+    ] as const)('forbids %s', async (_label, code, folder) => {
+        expect(await forbiddenSyntax('player', code, folder)).toHaveLength(1)
+    })
+
+    it.each([
+        ['a throw in the app shell', 'player', "throw new Error('boom')", 'app'],
+        ['a throw in common', 'common', "throw new Error('boom')", ''],
+        ['a throw in admin', 'admin', "throw new Error('boom')", ''],
+        ['try and catch inside the module', 'player', 'try { run() } catch { /* ignored */ }', 'player-identity'],
+        ['Promise.resolve inside the module', 'player', 'Promise.resolve(1)', 'player-identity']
+    ] as const)('allows %s', async (_label, pkg, code, folder) => {
+        expect(await forbiddenSyntax(pkg, code, folder)).toHaveLength(0)
     })
 })
