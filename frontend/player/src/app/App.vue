@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { LanguageSwitcher, ThemeToggle } from '@bamboom/common'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-    <div class="min-h-screen bg-background p-6 text-foreground">
-        <h1>Bamboom</h1>
-        <p>web-app up and running</p>
-        <ThemeToggle />
+    <div class="fixed top-2 right-2 z-30 flex items-center gap-2">
         <LanguageSwitcher />
+        <ThemeToggle />
     </div>
+    <!-- Under lg the strip on top is kept free: the controls would sit over the logo. -->
+    <main tabindex="-1" class="h-dvh overflow-hidden bg-background pt-14 text-foreground focus:outline-none lg:pt-0">
+        <RouterView />
+    </main>
 </template>

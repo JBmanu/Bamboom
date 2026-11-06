@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import bamboom from '../../../resource/image/element/bamboom-3.png?as=picture'
+import bamboom from '../../../resource/image/layout/bamboo/bamboo-explosion-1.png?as=picture'
 import { VPicture } from '@bamboom/common'
 import GallerySection from '../GallerySection.vue'
 import GalleryCase from '../GalleryCase.vue'

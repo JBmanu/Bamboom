@@ -4,6 +4,12 @@ import prettierConfig from 'eslint-config-prettier'
 import {RASTER_EXTENSIONS} from './common/src/images/rasterFormats.ts'
 
 const APPS = ['player', 'admin']
+const MODULES = {player: ['player-identity'], admin: []}
+
+const privateFilesOf = (module) => ({
+    group: [`**/${module}/*`],
+    message: `Import from the "${module}" module through its index only: its internals are private.`,
+})
 
 const RASTER_NEEDS_QUERY = {
     group: RASTER_EXTENSIONS.map((ext) => `**/*.${ext}`),
@@ -37,6 +43,7 @@ export default defineConfigWithVueTs(
             app,
             {group: others, message: `Apps are independent: ${app} must not import from ${others.join(', ')}.`},
             COMMON_INTERNALS,
+            ...MODULES[app].map(privateFilesOf),
         )
     }),
 )

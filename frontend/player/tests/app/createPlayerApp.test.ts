@@ -1,6 +1,8 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createPlayerApp } from '../../src/app/createPlayerApp.ts'
+import { LOGIN_PATH } from '../../src/player-identity/routePaths.ts'
+import { createMemoryHistory } from 'vue-router'
 
 describe('createPlayerApp', () => {
     beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
@@ -18,12 +20,9 @@ describe('createPlayerApp', () => {
         expect(app.config.globalProperties.$t('common.theme.label')).toBe('Tema')
     })
 
-    it('mounts and shows the title', async () => {
-        const container = document.createElement('div')
-        const app = await createPlayerApp()
-        app.mount(container)
+    it('has already sent a signed-out visitor to the login when it is ready', async () => {
+        const app = await createPlayerApp({ history: createMemoryHistory() })
 
-        expect(container.textContent).toContain('Bamboom')
-        app.unmount()
+        expect(app.config.globalProperties.$router.currentRoute.value.path).toBe(LOGIN_PATH)
     })
 })

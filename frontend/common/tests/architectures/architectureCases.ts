@@ -7,7 +7,8 @@ const RULE = {
     COMMON_ON_APPS: 'common-must-not-depend-on-apps',
     APPS_INDEPENDENT: 'apps-must-be-independent',
     COMMON_PRIVATE: 'apps-use-common-public-api-only',
-    PRODUCTION_ON_DEV: 'production-code-must-not-import-dev'
+    PRODUCTION_ON_DEV: 'production-code-must-not-import-dev',
+    MODULES_VIA_INDEX: 'modules-use-each-other-through-index-only'
 } as const
 
 const BARREL = 'common/src/index.ts'
@@ -19,6 +20,13 @@ const PLAYER = 'player/src/main.ts'
 const PLAYER_OTHER = 'player/src/other.ts'
 const PLAYER_DEV = 'player/src/dev/main.ts'
 const ADMIN = 'admin/src/main.ts'
+
+// with the other fixture files
+const APP_ROUTER = 'player/src/app/router.ts'
+const IDENTITY_INDEX = 'player/src/player-identity/index.ts'
+const IDENTITY_ROUTES = 'player/src/player-identity/routes.ts'
+const IDENTITY_NESTED_INDEX = 'player/src/player-identity/views/index.ts'
+const SHARED_ERRORS = 'player/src/shared/errors.ts'
 
 /** A fixture project: each file lists what it imports (a project file, a package name, or a lazy import of one). */
 type Import = string | { lazy: string }
@@ -54,7 +62,12 @@ export const ACCEPTED: Accepted[] = [
     { name: 'common using a third-party package', graph: { [BARREL]: ['vue'] } },
     { name: 'an app using its own modules', graph: { [PLAYER]: [PLAYER_OTHER], [PLAYER_OTHER]: [] } },
     { name: 'an app using the common public API', graph: { [PLAYER]: ['@bamboom/common'] } },
-    { name: 'the dev gallery importing the player', graph: { [PLAYER_DEV]: [PLAYER_OTHER], [PLAYER_OTHER]: [] } }
+    { name: 'the dev gallery importing the player', graph: { [PLAYER_DEV]: [PLAYER_OTHER], [PLAYER_OTHER]: [] } },
+    {
+        name: 'a module using another through its index',
+        graph: { [APP_ROUTER]: [IDENTITY_INDEX], [IDENTITY_INDEX]: [IDENTITY_ROUTES], [IDENTITY_ROUTES]: [] }
+    },
+    { name: 'a module using the shared code', graph: { [IDENTITY_ROUTES]: [SHARED_ERRORS], [SHARED_ERRORS]: [] } }
 ]
 
 export const FLAGGED: Flagged[] = [
@@ -96,5 +109,21 @@ export const FLAGGED: Flagged[] = [
         name: 'the player importing the dev gallery',
         graph: { [PLAYER]: [PLAYER_DEV], [PLAYER_DEV]: [] },
         broken: [RULE.PRODUCTION_ON_DEV]
+    },
+    {
+        name: 'a module reaching into the internals of another',
+        graph: { [APP_ROUTER]: [IDENTITY_ROUTES], [IDENTITY_ROUTES]: [] },
+        broken: [RULE.MODULES_VIA_INDEX]
+    },
+    {
+        // ESLint's no-restricted-imports does not look at import(): lazy routes would slip through.
+        name: 'a module lazily reaching into the internals of another',
+        graph: { [APP_ROUTER]: [lazy(IDENTITY_ROUTES)], [IDENTITY_ROUTES]: [] },
+        broken: [RULE.MODULES_VIA_INDEX]
+    },
+    {
+        name: 'a nested index file used as if it were the door of a module',
+        graph: { [APP_ROUTER]: [IDENTITY_NESTED_INDEX], [IDENTITY_NESTED_INDEX]: [] },
+        broken: [RULE.MODULES_VIA_INDEX]
     }
 ]
