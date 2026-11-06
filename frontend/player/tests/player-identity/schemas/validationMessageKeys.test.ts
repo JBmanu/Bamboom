@@ -9,4 +9,16 @@ describe('validationMessageKeys', () => {
             expect(translator.t(messageKey), `${language} has an empty message for ${messageKey}`).toMatch(/\S/)
         })
     })
+
+    it.each([
+        ['usernameTooShort', { minimum: 7 }],
+        ['usernameTooLong', { maximum: 7 }],
+        ['passwordTooShort', { minimum: 7 }],
+        ['passwordTooLong', { maximum: 7 }],
+        ['codeLength', { length: 7 }]
+    ] as const)('%s shows the number it is given', (name, values) => {
+        identityTranslators.forEach(({ language, translator }) => {
+            expect(translator.t(validationMessageKeys[name], values), `${language} ignores the number`).toContain('7')
+        })
+    })
 })
