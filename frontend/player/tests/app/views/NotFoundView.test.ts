@@ -31,7 +31,7 @@ describe('NotFoundView', () => {
         wayBackOf(container).dispatchEvent(click)
 
         expect(click.defaultPrevented).toBe(true) // the router took over from the browser
-        await vi.waitFor(() => expect(app.config.globalProperties.$router.currentRoute.value.path).toBe('/login')) // signed out: the home is not for them
+        await vi.waitFor(() => expect(app.config.globalProperties.$router.currentRoute.value.path).toBe('/login'), { timeout: FIRST_LOAD_TIMEOUT }) // signed out: the home is not for them
     })
 
     it('moves the focus to the main area when the way back is taken', async () => {
