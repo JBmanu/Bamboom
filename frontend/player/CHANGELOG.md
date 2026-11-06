@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.6.0...player-frontend-v0.7.0) (2026-11-06)
+
+
+### Features
+
+* **player:** add the routing shell and the layout of the access pages ([#148](https://github.com/JBmanu/Bamboom/issues/148)) ([70267d4](https://github.com/JBmanu/Bamboom/commit/70267d42f57ca511ca97b45e01f9859c67541b6d))
+
 ## [0.6.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.5.0...player-frontend-v0.6.0) (2026-10-28)
 
 
