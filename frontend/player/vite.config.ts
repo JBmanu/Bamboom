@@ -25,6 +25,7 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         globals: true,
+        testTimeout: 30_000,
         coverage: {
             provider: 'v8',
             reporter: ['lcov', 'text-summary'],

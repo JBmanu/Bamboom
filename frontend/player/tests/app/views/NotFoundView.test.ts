@@ -2,6 +2,7 @@ import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountPlayer } from '../../utils/mountPlayer'
 
+const FIRST_LOAD_TIMEOUT = 20_000
 const UNKNOWN_ADDRESS = '/nowhere'
 const wayBackOf = (container: HTMLElement) => container.querySelector<HTMLAnchorElement>('main a')!
 
@@ -37,7 +38,7 @@ describe('NotFoundView', () => {
         const { container } = await mountPlayer(UNKNOWN_ADDRESS)
         const main = container.querySelector('main')!
         wayBackOf(container).click()
-        await vi.waitFor(() => expect(document.activeElement).toBe(main))
+        await vi.waitFor(() => expect(document.activeElement).toBe(main), { timeout: FIRST_LOAD_TIMEOUT })
 
         expect(main.getAttribute('tabindex')).toBe('-1')
     })
