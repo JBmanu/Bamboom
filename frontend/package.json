@@ -8,12 +8,15 @@
     "common"
   ],
   "scripts": {
+    "demo-player": "npm run dev -w player",
     "lint": "npm run lint -w admin && npm run lint -w player && npm run lint -w common",
     "format": "npm run format -w admin && npm run format -w player && npm run format -w common",
     "arch": "depcruise --config .dependency-cruiser.cjs --output-type err-long common/src player/src admin/src",
     "clean": "rm -rf node_modules/.tmp dist"
   },
   "devDependencies": {
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/runtime": "^1.11.3",
     "@iconify-json/flag": "^1.2.15",
     "@iconify-json/ph": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^11.2.7",
