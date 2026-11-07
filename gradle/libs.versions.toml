@@ -10,7 +10,7 @@
 #   [bundles]   → gruppi di librerie usate sempre insieme
 
 [versions]
-spotless       = "8.10.4"
+spotless       = "8.11.0"
 wartremover    = "3.6.3"
 shadow         = "9.6.1"
 kotlin         = "2.4.21"
