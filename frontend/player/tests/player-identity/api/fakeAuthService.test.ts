@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService'
 import { createFailure } from '../../../src/player-identity/errors/failures'
 import { fail, succeed } from '../../../src/player-identity/errors/result'
-import { contractFixtures, describeAuthServiceContract } from './authServiceContract'
+import { contractFixtures, describeAuthServiceContract, GOOGLE_EMAIL, GOOGLE_USERNAME } from './authServiceContract'
 
 describeAuthServiceContract('fake adapter', (fixtures) => createFakeAuthService({ accounts: [fixtures.account], resetCode: fixtures.resetCode }))
 
@@ -52,29 +52,29 @@ describe('fake adapter: what only the fake does', () => {
 
     it('completes the profile of a person who came back from Google, and signs them in', async () => {
         const service = createFakeAuthService({ accounts: [account] })
-        service.beginGoogleSignIn('ada.google@example.com')
+        service.beginGoogleSignIn(GOOGLE_EMAIL)
 
-        const completed = await service.completeGoogleProfile({ username: 'ada_g' })
+        const completed = await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
 
-        expect(completed).toEqual(succeed({ username: 'ada_g', email: 'ada.google@example.com' }))
+        expect(completed).toEqual(succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL }))
         expect(await service.fetchCurrentPlayer()).toEqual(completed)
     })
 
     it('keeps the Google step open after a taken username, so another one can be tried', async () => {
         const service = createFakeAuthService({ accounts: [account] })
-        service.beginGoogleSignIn('ada.google@example.com')
+        service.beginGoogleSignIn(GOOGLE_EMAIL)
 
         expect(await service.completeGoogleProfile({ username: account.username })).toEqual(fail(createFailure('username-already-taken')))
-        expect(await service.completeGoogleProfile({ username: 'ada_g' })).toEqual(succeed({ username: 'ada_g', email: 'ada.google@example.com' }))
+        expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL }))
     })
 
     it('does not let an account created through Google sign in with a password', async () => {
         const service = createFakeAuthService()
-        service.beginGoogleSignIn('ada.google@example.com')
-        await service.completeGoogleProfile({ username: 'ada_g' })
+        service.beginGoogleSignIn(GOOGLE_EMAIL)
+        await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
         await service.logOut()
 
-        expect(await service.logIn({ email: 'ada.google@example.com', password: '' })).toEqual(fail(createFailure('invalid-credentials')))
+        expect(await service.logIn({ email: GOOGLE_EMAIL, password: '' })).toEqual(fail(createFailure('invalid-credentials')))
     })
 
     it('does not share its accounts with another fake', async () => {

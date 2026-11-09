@@ -18,6 +18,12 @@ export const contractFixtures: ContractFixtures = {
 /** More wrong codes than any sensible limit allows: after this many, the reset must be blocked. */
 const MOST_WRONG_CODES_TO_TRY = 25
 const WRONG_RESET_CODE = '000000'
+const NEW_PASSWORD = 'brand-new-horse-1'
+const OTHER_NEW_PASSWORD = 'yet-another-horse-2'
+const WRONG_PASSWORD = 'not-the-password'
+const UNKNOWN_EMAIL = 'nobody@example.com'
+export const GOOGLE_USERNAME = 'ada_g'
+export const GOOGLE_EMAIL = 'ada.google@example.com'
 
 /**
  * What every AuthService must do, whoever implements it: the fake adapter now, the HTTP adapter on the day of the backend.
@@ -45,15 +51,15 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
 
             it('refuses a wrong password and stays signed out', async () => {
-                expect(await service.logIn({ email: account.email, password: 'not-the-password' })).toEqual(
+                expect(await service.logIn({ email: account.email, password: WRONG_PASSWORD })).toEqual(
                     fail(createFailure('invalid-credentials'))
                 )
                 expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
             })
 
             it('refuses an unknown email with the very same answer as a wrong password', async () => {
-                const wrongPassword = await service.logIn({ email: account.email, password: 'not-the-password' })
-                const unknownEmail = await service.logIn({ email: 'nobody@example.com', password: account.password })
+                const wrongPassword = await service.logIn({ email: account.email, password: WRONG_PASSWORD })
+                const unknownEmail = await service.logIn({ email: UNKNOWN_EMAIL, password: account.password })
 
                 expect(unknownEmail).toEqual(wrongPassword)
             })
@@ -96,7 +102,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
         describe('password reset', () => {
             it('answers the request in the same way for a registered and for an unknown email', async () => {
                 const registered = await service.requestResetCode({ email: account.email })
-                const unknown = await service.requestResetCode({ email: 'nobody@example.com' })
+                const unknown = await service.requestResetCode({ email: UNKNOWN_EMAIL })
 
                 expect(unknown).toEqual(registered)
                 expect(registered).toEqual(succeed(undefined))
@@ -119,7 +125,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
 
             it('gives an unknown email the same refusal as a wrong code, never a hint', async () => {
-                await service.requestResetCode({ email: 'nobody@example.com' })
+                await service.requestResetCode({ email: UNKNOWN_EMAIL })
 
                 expect(await service.confirmResetCode({ code: resetCode })).toEqual(fail(createFailure('reset-code-invalid')))
             })
@@ -138,30 +144,30 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             it('does not accept a new password before the code is confirmed', async () => {
                 await service.requestResetCode({ email: account.email })
 
-                expect(await service.setNewPassword({ password: 'brand-new-horse-1' })).toEqual(fail(createFailure('reset-not-confirmed')))
+                expect(await service.setNewPassword({ password: NEW_PASSWORD })).toEqual(fail(createFailure('reset-not-confirmed')))
             })
 
             it('changes the password once the code is confirmed: the new one works, the old one does not', async () => {
                 await service.requestResetCode({ email: account.email })
                 await service.confirmResetCode({ code: resetCode })
 
-                expect(await service.setNewPassword({ password: 'brand-new-horse-1' })).toEqual(succeed(undefined))
+                expect(await service.setNewPassword({ password: NEW_PASSWORD })).toEqual(succeed(undefined))
                 expect(await service.logIn(adaCredentials)).toEqual(fail(createFailure('invalid-credentials')))
-                expect(await service.logIn({ email: account.email, password: 'brand-new-horse-1' })).toEqual(succeed(ada))
+                expect(await service.logIn({ email: account.email, password: NEW_PASSWORD })).toEqual(succeed(ada))
             })
 
             it('lets a confirmed reset be used only once', async () => {
                 await service.requestResetCode({ email: account.email })
                 await service.confirmResetCode({ code: resetCode })
-                await service.setNewPassword({ password: 'brand-new-horse-1' })
+                await service.setNewPassword({ password: NEW_PASSWORD })
 
-                expect(await service.setNewPassword({ password: 'yet-another-horse-2' })).toEqual(fail(createFailure('reset-not-confirmed')))
+                expect(await service.setNewPassword({ password: OTHER_NEW_PASSWORD })).toEqual(fail(createFailure('reset-not-confirmed')))
             })
         })
 
         describe('Google profile', () => {
             it('has nothing to complete when the person did not come from Google', async () => {
-                expect(await service.completeGoogleProfile({ username: 'ada_g' })).toEqual(fail(createFailure('session-expired')))
+                expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(fail(createFailure('session-expired')))
             })
         })
     })
