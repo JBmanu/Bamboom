@@ -1,9 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": [ "npm ^11: npm 12 fails lockfile updates with EALLOWREMOTE (npm/cli#9800). Remove once fixed."],
   "extends": ["config:recommended"],
   "schedule": ["every weekend"],
   "labels": ["dependencies"],
   "assignees": ["JBmanu"],
+  "constraints": {
+    "npm": "^11"
+  },
   "customManagers": [
     {
       "customType": "regex",
@@ -22,7 +26,7 @@
       "enabled": false
     },
     {
-      "groupName": "vite toolchain",
+      "groupName": "jest toolchain",
       "matchPackageNames": ["jest","ts-jest","@types/jest","@jest/**","babel-jest"]
     },
     {
