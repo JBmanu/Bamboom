@@ -39,6 +39,9 @@ const resetCodeSchema = textSchema
     .length(RESET_CODE_LENGTH, { error: messageKeys.codeLength })
     .regex(/^\d+$/, { error: messageKeys.codeDigitsOnly })
 
+/** The values each form hands over once it is valid (trimmed where the schema trims): `FormValues['logIn']`. */
+export type FormValues = { [Form in keyof typeof formSchemas]: z.output<(typeof formSchemas)[Form]> }
+
 /** One schema for each form of the module, named after what the person is doing. */
 export const formSchemas = {
     logIn: z.object({

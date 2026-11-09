@@ -25,6 +25,9 @@ type FailureTemplate = {
     readonly messageKey: string
     readonly treatment: FailureTreatment
 }
+
+const errorFailuresPath = 'playerIdentity.failures.'
+
 /**
  * Every expected failure, in one place. The keys are the stable codes shared with the backend contract (feature 17);
  * message keys and treatments belong to the frontend only.
@@ -32,62 +35,62 @@ type FailureTemplate = {
 export const failureCatalog = {
     'invalid-credentials': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.invalidCredentials',
+        messageKey: errorFailuresPath + 'invalidCredentials',
         treatment: TREATMENT.banner
     },
     'email-already-registered': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.emailAlreadyRegistered',
+        messageKey: errorFailuresPath + 'emailAlreadyRegistered',
         treatment: TREATMENT.field
     },
     'username-already-taken': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.usernameAlreadyTaken',
+        messageKey: errorFailuresPath + 'usernameAlreadyTaken',
         treatment: TREATMENT.field
     },
     'reset-code-invalid': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.resetCodeInvalid',
+        messageKey: errorFailuresPath + 'resetCodeInvalid',
         treatment: TREATMENT.field
     },
     'reset-code-expired': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.resetCodeExpired',
+        messageKey: errorFailuresPath + 'resetCodeExpired',
         treatment: TREATMENT.banner
     },
     'too-many-attempts': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.tooManyAttempts',
+        messageKey: errorFailuresPath + 'tooManyAttempts',
         treatment: TREATMENT.banner
     },
     'reset-not-confirmed': {
         kind: KINDS.domain,
-        messageKey: 'playerIdentity.failures.resetNotConfirmed',
+        messageKey: errorFailuresPath + 'resetNotConfirmed',
         treatment: TREATMENT.banner
     },
     'network-unreachable': {
         kind: KINDS.transport,
-        messageKey: 'playerIdentity.failures.networkUnreachable',
+        messageKey: errorFailuresPath + 'networkUnreachable',
         treatment: TREATMENT.banner
     },
     'request-timeout': {
         kind: KINDS.transport,
-        messageKey: 'playerIdentity.failures.requestTimeout',
+        messageKey: errorFailuresPath + 'requestTimeout',
         treatment: TREATMENT.banner
     },
     'server-failure': {
         kind: KINDS.transport,
-        messageKey: 'playerIdentity.failures.serverFailure',
+        messageKey: errorFailuresPath + 'serverFailure',
         treatment: TREATMENT.banner
     },
     'unexpected-response': {
         kind: KINDS.transport,
-        messageKey: 'playerIdentity.failures.unexpectedResponse',
+        messageKey: errorFailuresPath + 'unexpectedResponse',
         treatment: TREATMENT.banner
     },
     'session-expired': {
         kind: KINDS.transport,
-        messageKey: 'playerIdentity.failures.sessionExpired',
+        messageKey: errorFailuresPath + 'sessionExpired',
         treatment: TREATMENT.redirectToLogin
     }
 } as const satisfies Record<string, FailureTemplate>
