@@ -5,6 +5,7 @@ import { createFailure } from '../../../src/player-identity/errors/failures.ts'
 import { restoreSession } from '../../../src/player-identity/stores/restoreSession.ts'
 import { sessionStatuses, useSessionStore } from '../../../src/player-identity/stores/useSessionStore.ts'
 import { contractFixtures } from '../api/authServiceContract.ts'
+import { clearSignedInHint, readSignedInHint, saveSignedInHint } from '../../../src/player-identity/stores/signedInHint.ts'
 
 describe('restoreSession', () => {
     const { account } = contractFixtures
@@ -12,6 +13,7 @@ describe('restoreSession', () => {
 
     beforeEach(() => {
         setActivePinia(createPinia())
+        clearSignedInHint()
     })
 
     it('starts the session of the player the server says is signed in', async () => {
@@ -55,5 +57,26 @@ describe('restoreSession', () => {
 
         await restoration
         expect(session.status).toBe(sessionStatuses.signedOut)
+    })
+
+    it('forgets the hint when the server says nobody is signed in', async () => {
+        saveSignedInHint()
+        const session = useSessionStore()
+
+        await restoreSession(createFakeAuthService({ accounts: [account] }), session)
+
+        expect(readSignedInHint()).toBe(false)
+    })
+
+    it('keeps the hint when the server could not be reached', async () => {
+        saveSignedInHint()
+        const authService = createFakeAuthService({ accounts: [account] })
+        authService.failNextCall(createFailure('network-unreachable'))
+        const session = useSessionStore()
+
+        await restoreSession(authService, session)
+
+        expect(session.status).toBe('signedOut')
+        expect(readSignedInHint()).toBe(true)
     })
 })
