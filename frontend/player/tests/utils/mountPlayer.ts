@@ -27,6 +27,7 @@ export async function mountPlayer(startPath = '/') {
 
 /** Signs the person in, then opens `path`: what a successful login will do. */
 export async function signInAndOpen(app: PlayerApp, path: string) {
-    useSessionStore(app.config.globalProperties.$pinia).isSignedIn = true
+    const ada = { username: 'ada', email: 'ada@example.com' }
+    useSessionStore(app.config.globalProperties.$pinia).startSession(ada)
     await app.config.globalProperties.$router.push(path)
 }

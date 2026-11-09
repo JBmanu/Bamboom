@@ -1,9 +1,26 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import type { Player } from '../api/authService.ts'
 
-export const SESSION_STORAGE_KEY = 'session'
+export const sessionStatuses = { signedIn: 'signedIn', signedOut: 'signedOut', restoring: 'restoring' } as const
+export type SessionStatuses = (typeof sessionStatuses)[keyof typeof sessionStatuses]
 
-export const useSessionStore = defineStore(SESSION_STORAGE_KEY, () => {
-    const isSignedIn = ref(false)
-    return { isSignedIn }
+export const SESSION_STORE_ID = 'session'
+
+export const useSessionStore = defineStore(SESSION_STORE_ID, () => {
+    const status = ref<SessionStatuses>(sessionStatuses.restoring)
+    const player = ref<Player>()
+    const isSignedIn = computed(() => status.value === sessionStatuses.signedIn)
+
+    function startSession(signedInPlayer: Player) {
+        player.value = signedInPlayer
+        status.value = sessionStatuses.signedIn
+    }
+
+    function endSession() {
+        player.value = undefined
+        status.value = sessionStatuses.signedOut
+    }
+
+    return { status, player, isSignedIn, startSession, endSession }
 })

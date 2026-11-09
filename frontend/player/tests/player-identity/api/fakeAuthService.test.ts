@@ -65,7 +65,9 @@ describe('fake adapter: what only the fake does', () => {
         service.beginGoogleSignIn(GOOGLE_EMAIL)
 
         expect(await service.completeGoogleProfile({ username: account.username })).toEqual(fail(createFailure('username-already-taken')))
-        expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL }))
+        expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(
+            succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL })
+        )
     })
 
     it('does not let an account created through Google sign in with a password', async () => {

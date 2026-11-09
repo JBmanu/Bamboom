@@ -51,9 +51,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
 
             it('refuses a wrong password and stays signed out', async () => {
-                expect(await service.logIn({ email: account.email, password: WRONG_PASSWORD })).toEqual(
-                    fail(createFailure('invalid-credentials'))
-                )
+                expect(await service.logIn({ email: account.email, password: WRONG_PASSWORD })).toEqual(fail(createFailure('invalid-credentials')))
                 expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
             })
 
