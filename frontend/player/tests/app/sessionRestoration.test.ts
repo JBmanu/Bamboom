@@ -7,14 +7,10 @@ import { authServiceKey } from '../../src/player-identity/index.ts'
 import { LOGIN_PATH } from '../../src/player-identity/routePaths.ts'
 import { contractFixtures } from '../player-identity/api/authServiceContract.ts'
 import { mountPlayer } from '../utils/mountPlayer.ts'
+import { createServiceWithPlayerSignedIn } from '../utils/createServiceWithPlayerSignedIn.ts'
+import { succeed } from '../../src/player-identity/errors/result.ts'
 
 const { account } = contractFixtures
-
-async function createServiceWithPlayerSignedIn() {
-    const authService = createFakeAuthService({ accounts: [account] })
-    await authService.logIn({ email: account.email, password: account.password })
-    return authService
-}
 
 describe('session restoration at startup', () => {
     it('opens the page asked for when the server says someone is signed in', async () => {
@@ -56,10 +52,13 @@ describe('session restoration at startup', () => {
 })
 
 describe('AuthService in the app', () => {
-    it('provides the given service to the components', async () => {
-        const authService = createFakeAuthService()
+    it('provides a service that talks to the given one', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
         const { app } = await mountPlayer(HOME_PATH, { authService })
+        const providedService = app.runWithContext(() => inject(authServiceKey)) // what a component would receive
 
-        expect(app.runWithContext(() => inject(authServiceKey))).toBe(authService)
+        await providedService?.logIn({ email: account.email, password: account.password })
+
+        expect(await authService.fetchCurrentPlayer()).toEqual(succeed({ username: account.username, email: account.email }))
     })
 })

@@ -2,7 +2,15 @@ import { createTranslations } from '@bamboom/common'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
-import { type AuthService, authServiceKey, createFakeAuthService, restoreSession, useSessionStore } from '../player-identity'
+import {
+    type AuthService,
+    authServiceKey,
+    createFakeAuthService,
+    LOGIN_PATH,
+    notifyWhenSessionExpires,
+    restoreSession,
+    useSessionStore
+} from '../player-identity'
 import { createPlayerRouter } from './router/createPlayerRouter.ts'
 import { createWebHistory, type RouterHistory } from 'vue-router'
 import { installFocusAfterNavigation } from './router/installFocusAfterNavigation.ts'
@@ -21,15 +29,21 @@ export async function createPlayerApp({ history = createWebHistory(), authServic
     const session = useSessionStore(pinia)
     // Started once, here: the guard runs on every navigation and must wait for this same restoration, not start another.
     const sessionRestoration = restoreSession(authService, session)
+
     const router = createPlayerRouter({
         history,
         session,
         whenSessionRestored: () => sessionRestoration
     })
 
+    const watchedAuthService = notifyWhenSessionExpires(authService, () => {
+        session.endSession()
+        router.replace(LOGIN_PATH)
+    })
+
     installFocusAfterNavigation(router) // before the router starts, so the first navigation is the one it skips
 
-    const app = createApp(App).use(pinia).use(translations).use(router).provide(authServiceKey, authService)
+    const app = createApp(App).use(pinia).use(translations).use(router).provide(authServiceKey, watchedAuthService)
 
     await router.isReady() // the first page is decided before anything is drawn: no flash of the wrong page
     return app

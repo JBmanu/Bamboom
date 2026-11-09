@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService.ts'
 import { createFailure } from '../../../src/player-identity/errors/failures.ts'
 import { restoreSession } from '../../../src/player-identity/stores/restoreSession.ts'
-import { useSessionStore, sessionStatuses } from '../../../src/player-identity/stores/useSessionStore.ts'
+import { sessionStatuses, useSessionStore } from '../../../src/player-identity/stores/useSessionStore.ts'
 import { contractFixtures } from '../api/authServiceContract.ts'
 
 describe('restoreSession', () => {
