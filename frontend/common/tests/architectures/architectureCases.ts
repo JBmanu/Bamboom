@@ -8,7 +8,8 @@ const RULE = {
     APPS_INDEPENDENT: 'apps-must-be-independent',
     COMMON_PRIVATE: 'apps-use-common-public-api-only',
     PRODUCTION_ON_DEV: 'production-code-must-not-import-dev',
-    MODULES_VIA_INDEX: 'modules-use-each-other-through-index-only'
+    MODULES_VIA_INDEX: 'modules-use-each-other-through-index-only',
+    FRAMEWORK_FREE_LAYERS: 'identity-layers-must-not-use-frameworks'
 } as const
 
 const BARREL = 'common/src/index.ts'
@@ -26,6 +27,10 @@ const APP_ROUTER = 'player/src/app/router.ts'
 const IDENTITY_INDEX = 'player/src/player-identity/index.ts'
 const IDENTITY_ROUTES = 'player/src/player-identity/routes.ts'
 const IDENTITY_NESTED_INDEX = 'player/src/player-identity/views/index.ts'
+const IDENTITY_SCHEMAS = 'player/src/player-identity/schemas/formSchemas.ts'
+const IDENTITY_ERRORS = 'player/src/player-identity/errors/result.ts'
+const IDENTITY_API = 'player/src/player-identity/api/authService.ts'
+const IDENTITY_STORE = 'player/src/player-identity/stores/useSessionStore.ts'
 const SHARED_ERRORS = 'player/src/shared/errors.ts'
 
 /** A fixture project: each file lists what it imports (a project file, a package name, or a lazy import of one). */
@@ -67,7 +72,9 @@ export const ACCEPTED: Accepted[] = [
         name: 'a module using another through its index',
         graph: { [APP_ROUTER]: [IDENTITY_INDEX], [IDENTITY_INDEX]: [IDENTITY_ROUTES], [IDENTITY_ROUTES]: [] }
     },
-    { name: 'a module using the shared code', graph: { [IDENTITY_ROUTES]: [SHARED_ERRORS], [SHARED_ERRORS]: [] } }
+    { name: 'a module using the shared code', graph: { [IDENTITY_ROUTES]: [SHARED_ERRORS], [SHARED_ERRORS]: [] } },
+    { name: 'a schema using zod', graph: { [IDENTITY_SCHEMAS]: ['zod'] } },
+    { name: 'the session store using pinia and vue', graph: { [IDENTITY_STORE]: ['pinia', 'vue'] } }
 ]
 
 export const FLAGGED: Flagged[] = [
@@ -125,5 +132,26 @@ export const FLAGGED: Flagged[] = [
         name: 'a nested index file used as if it were the door of a module',
         graph: { [APP_ROUTER]: [IDENTITY_NESTED_INDEX], [IDENTITY_NESTED_INDEX]: [] },
         broken: [RULE.MODULES_VIA_INDEX]
+    },
+    {
+        name: 'a schema using vue',
+        graph: { [IDENTITY_SCHEMAS]: ['vue'] },
+        broken: [RULE.FRAMEWORK_FREE_LAYERS]
+    },
+    {
+        name: 'the failures using pinia',
+        graph: { [IDENTITY_ERRORS]: ['pinia'] },
+        broken: [RULE.FRAMEWORK_FREE_LAYERS]
+    },
+    {
+        name: 'the AuthService port using vue-router',
+        graph: { [IDENTITY_API]: ['vue-router'] },
+        broken: [RULE.FRAMEWORK_FREE_LAYERS]
+    },
+    {
+        // ESLint's no-restricted-imports does not look at import(): the dependency would slip through.
+        name: 'an adapter lazily importing vue',
+        graph: { [IDENTITY_API]: [lazy('vue')] },
+        broken: [RULE.FRAMEWORK_FREE_LAYERS]
     }
 ]
