@@ -5,93 +5,42 @@ const TREATMENT = { field: 'field', banner: 'banner', redirectToLogin: 'redirect
 
 export type FailureKind = keyof typeof KINDS
 export type FailureTreatment = keyof typeof TREATMENT
-export type FailureCode = keyof typeof failureCatalog
+
+const failureMessagesPath = 'playerIdentity.failures.'
+
+// `const` type parameters keep the exact code and treatment as types, so a failure can be narrowed by its `code`.
+const domain = <const Code extends string, const Treatment extends FailureTreatment>(code: Code, treatment: Treatment) =>
+    ({ code, kind: KINDS.domain, treatment }) as const
+
+const transport = <const Code extends string, const Treatment extends FailureTreatment>(code: Code, treatment: Treatment) =>
+    ({ code, kind: KINDS.transport, treatment }) as const
 
 /**
- * One failure, or only some of them: `Failure<'invalid-credentials' | 'network-unreachable'>`.
- * The conditional type spreads over the codes, so checking `failure.code` narrows the rest of the object.
+ * Every expected failure, one line each: the name used in the code, the stable code shared with the backend contract
+ * (feature 17), and how the screen shows it. The message key is the name under `playerIdentity.failures` in the vocabularies.
  */
-export type Failure<Code extends FailureCode = FailureCode> = Code extends FailureCode
-    ? { readonly code: Code } & (typeof failureCatalog)[Code]
-    : never
-
-export function createFailure<Code extends FailureCode>(code: Code): Failure<Code> {
-    // TypeScript cannot follow the spread through the conditional type, so the cast is needed (the tests cover the result).
-    return { code, ...failureCatalog[code] } as Failure<Code>
+const failureDefinitions = {
+    invalidCredentials: domain('invalid-credentials', TREATMENT.banner),
+    emailAlreadyRegistered: domain('email-already-registered', TREATMENT.field),
+    usernameAlreadyTaken: domain('username-already-taken', TREATMENT.field),
+    resetCodeInvalid: domain('reset-code-invalid', TREATMENT.field),
+    resetCodeExpired: domain('reset-code-expired', TREATMENT.banner),
+    tooManyAttempts: domain('too-many-attempts', TREATMENT.banner),
+    resetNotConfirmed: domain('reset-not-confirmed', TREATMENT.banner),
+    networkUnreachable: transport('network-unreachable', TREATMENT.banner),
+    requestTimeout: transport('request-timeout', TREATMENT.banner),
+    serverFailure: transport('server-failure', TREATMENT.banner),
+    unexpectedResponse: transport('unexpected-response', TREATMENT.banner),
+    sessionExpired: transport('session-expired', TREATMENT.redirectToLogin)
 }
 
-type FailureTemplate = {
-    readonly kind: FailureKind
-    readonly messageKey: string
-    readonly treatment: FailureTreatment
-}
+export type FailureName = keyof typeof failureDefinitions
 
-const errorFailuresPath = 'playerIdentity.failures.'
+/** The ready-made failures: `failures.invalidCredentials`, to return, compare and test with, never rebuilt by hand. */
+export const failures = Object.fromEntries(
+    Object.entries(failureDefinitions).map(([name, definition]) => [name, { ...definition, messageKey: failureMessagesPath + name }])
+    // TypeScript sees the entries as plain pairs: the cast gives back the exact type of each failure.
+) as { [Name in FailureName]: (typeof failureDefinitions)[Name] & { readonly messageKey: string } }
 
-/**
- * Every expected failure, in one place. The keys are the stable codes shared with the backend contract (feature 17);
- * message keys and treatments belong to the frontend only.
- */
-export const failureCatalog = {
-    'invalid-credentials': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'invalidCredentials',
-        treatment: TREATMENT.banner
-    },
-    'email-already-registered': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'emailAlreadyRegistered',
-        treatment: TREATMENT.field
-    },
-    'username-already-taken': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'usernameAlreadyTaken',
-        treatment: TREATMENT.field
-    },
-    'reset-code-invalid': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'resetCodeInvalid',
-        treatment: TREATMENT.field
-    },
-    'reset-code-expired': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'resetCodeExpired',
-        treatment: TREATMENT.banner
-    },
-    'too-many-attempts': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'tooManyAttempts',
-        treatment: TREATMENT.banner
-    },
-    'reset-not-confirmed': {
-        kind: KINDS.domain,
-        messageKey: errorFailuresPath + 'resetNotConfirmed',
-        treatment: TREATMENT.banner
-    },
-    'network-unreachable': {
-        kind: KINDS.transport,
-        messageKey: errorFailuresPath + 'networkUnreachable',
-        treatment: TREATMENT.banner
-    },
-    'request-timeout': {
-        kind: KINDS.transport,
-        messageKey: errorFailuresPath + 'requestTimeout',
-        treatment: TREATMENT.banner
-    },
-    'server-failure': {
-        kind: KINDS.transport,
-        messageKey: errorFailuresPath + 'serverFailure',
-        treatment: TREATMENT.banner
-    },
-    'unexpected-response': {
-        kind: KINDS.transport,
-        messageKey: errorFailuresPath + 'unexpectedResponse',
-        treatment: TREATMENT.banner
-    },
-    'session-expired': {
-        kind: KINDS.transport,
-        messageKey: errorFailuresPath + 'sessionExpired',
-        treatment: TREATMENT.redirectToLogin
-    }
-} as const satisfies Record<string, FailureTemplate>
-// `satisfies` checks the shape of every entry; `as const` keeps the exact codes and treatments as types.
+/** One failure, or only some of them: `Failure<'invalidCredentials' | 'networkUnreachable'>`. */
+export type Failure<Name extends FailureName = FailureName> = (typeof failures)[Name]
