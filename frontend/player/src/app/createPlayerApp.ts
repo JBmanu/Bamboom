@@ -20,8 +20,13 @@ type PlayerAppOptions = {
     authService?: AuthService
 }
 
+const testAccount = {
+    accounts: [{ username: 'try', email: 'try@try.com', password: 'try123' }],
+    latencyMs: 800
+}
+
 /** Builds the player app with its plugins installed, so `main.ts` only has to mount it. */
-export async function createPlayerApp({ history = createWebHistory(), authService = createFakeAuthService() }: PlayerAppOptions = {}) {
+export async function createPlayerApp({ history = createWebHistory(), authService = createFakeAuthService(testAccount) }: PlayerAppOptions = {}) {
     // One folder per module: src/<module>/vocabulary/<language>.ts. The folder's name becomes the namespace.
     // The pattern starts from the root of the app: a relative one drops the folder name of the file it is written in.
     const translations = await createTranslations(import.meta.glob('/src/*/vocabulary/*.ts'))
