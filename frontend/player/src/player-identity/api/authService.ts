@@ -1,0 +1,69 @@
+import { failures } from '../errors/failures'
+import type { Result } from '../errors/result'
+import type { ValidationFailure } from '../errors/validationFailure'
+import type { FormValues } from '../schemas/formSchemas'
+
+/** Who is signed in, as the screens need to know it. */
+export type Player = {
+    readonly username: string
+    readonly email: string
+}
+
+/** The repeated password is checked on the screen only: it is never sent to the server. */
+export type NewPasswordInput = Pick<FormValues['passwordReset'], 'password'>
+
+/** What any call can end with when the server cannot be reached or does not answer as agreed. */
+export type ConnectionFailure =
+    typeof failures.networkUnreachable | typeof failures.requestTimeout | typeof failures.serverFailure | typeof failures.unexpectedResponse
+
+/**
+ * Everything the player app asks of the identity backend. Each method lists the failures it can end with:
+ * the compiler makes the screen handle them, and nothing is thrown.
+ * The server is the only authority on what is valid: the `ValidationFailure` of a method is its answer, not the form's check.
+ */
+export interface AuthService {
+    /** Asks who is signed in. Nobody signed in is an answer (`undefined`), not a failure. */
+    fetchCurrentPlayer(): Promise<Result<Player | undefined, ConnectionFailure>>
+
+    /** Credentials are never told apart: a wrong email and a wrong password end with the same failure. */
+    logIn(
+        input: FormValues['logIn']
+    ): Promise<Result<Player, typeof failures.invalidCredentials | typeof failures.tooManyAttempts | ConnectionFailure>>
+
+    /** Registering also signs the person in. */
+    register(
+        input: FormValues['register']
+    ): Promise<
+        Result<
+            Player,
+            | typeof failures.emailAlreadyRegistered
+            | typeof failures.usernameAlreadyTaken
+            | typeof failures.tooManyAttempts
+            | ValidationFailure<'username' | 'email' | 'password'>
+            | ConnectionFailure
+        >
+    >
+
+    logOut(): Promise<Result<void, ConnectionFailure>>
+
+    /** Always answers the same, whether the email is registered or not. */
+    requestResetCode(input: FormValues['codeRequest']): Promise<Result<void, typeof failures.tooManyAttempts | ConnectionFailure>>
+
+    /** The server remembers which reset is pending: the screen sends the code only. */
+    confirmResetCode(
+        input: FormValues['codeConfirmation']
+    ): Promise<
+        Result<void, typeof failures.resetCodeInvalid | typeof failures.resetCodeExpired | typeof failures.tooManyAttempts | ConnectionFailure>
+    >
+
+    setNewPassword(
+        input: NewPasswordInput
+    ): Promise<Result<void, typeof failures.resetNotConfirmed | ValidationFailure<'password'> | ConnectionFailure>>
+
+    /** Google gives no username: the person chooses it. */
+    completeGoogleProfile(
+        input: FormValues['googleProfile']
+    ): Promise<
+        Result<Player, typeof failures.usernameAlreadyTaken | typeof failures.sessionExpired | ValidationFailure<'username'> | ConnectionFailure>
+    >
+}

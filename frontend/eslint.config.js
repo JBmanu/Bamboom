@@ -21,6 +21,20 @@ const COMMON_INTERNALS = {
     message: 'Import from "@bamboom/common" only: its internals are private.',
 }
 
+const NO_THROWN_ERRORS = {
+    files: ['player/src/player-identity/**/*.{ts,vue}'],
+    rules: {
+        'no-restricted-syntax': [
+            'error',
+            { selector: 'ThrowStatement', message: 'Return a failure with fail() instead of throwing.' },
+            {
+                selector: "CallExpression[callee.object.name='Promise'][callee.property.name='reject']",
+                message: 'Resolve with a failure instead of rejecting.',
+            },
+        ],
+    },
+}
+
 /**
  * @param {string} pkg
  * @param {...{group: string[], message: string}} patterns
@@ -46,4 +60,5 @@ export default defineConfigWithVueTs(
             ...MODULES[app].map(privateFilesOf),
         )
     }),
+    NO_THROWN_ERRORS,
 )

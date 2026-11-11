@@ -55,6 +55,14 @@ module.exports = {
                 pathNot: ['^$1/src/$2/', '^$1/src/[^/]+/index\\.ts$', '^$1/src/(shared|dev)/'],
             },
         },
+        {
+            // These layers are plain TypeScript: they can be tested and reused without Vue, and Zod never reaches the main bundle through them.
+            name: 'identity-layers-must-not-use-frameworks',
+            severity: 'error',
+            from: {path: '^player/src/player-identity/(schemas|errors|api)/'},
+            // Real packages resolve to node_modules/<name>/..., packages absent from disk keep their name: both are matched.
+            to: {path: '^(node_modules/)?(vue|pinia|vue-router)(/|$)'},
+        },
     ],
     options: {
         doNotFollow: {path: 'node_modules'},
