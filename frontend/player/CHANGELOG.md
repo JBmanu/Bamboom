@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.7.0...player-frontend-v0.8.0) (2026-11-11)
+
+
+### Features
+
+* **player:** add the AuthService port with a fake adapter and session restore ([#155](https://github.com/JBmanu/Bamboom/issues/155)) ([d91624b](https://github.com/JBmanu/Bamboom/commit/d91624b1a469f5d5d7c10baf2c1596879a665d7e))
+
 ## [0.7.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.6.0...player-frontend-v0.7.0) (2026-11-06)
 
 
