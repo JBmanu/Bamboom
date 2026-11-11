@@ -1,6 +1,5 @@
 /** How the screen shows a failure: next to a field, in a banner, or by taking the person to the login. */
 
-const failureMessagesPath = 'playerIdentity.failures.'
 const KINDS = { domain: 'domain', transport: 'transport' } as const
 const TREATMENT = { field: 'field', banner: 'banner', redirectToLogin: 'redirectToLogin' } as const
 
@@ -34,6 +33,7 @@ const failureDefinitions = {
 }
 
 export type FailureName = keyof typeof failureDefinitions
+const failureMessagesPath = 'playerIdentity.failures.'
 
 /** The ready-made failures: `failures.invalidCredentials`, to return, compare and test with, never rebuilt by hand. */
 export const failures = Object.fromEntries(

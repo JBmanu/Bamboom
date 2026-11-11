@@ -1,4 +1,4 @@
-import { Failure } from '../errors/failures'
+import { failures } from '../errors/failures'
 import type { Result } from '../errors/result'
 import type { ValidationFailure } from '../errors/validationFailure'
 import type { FormValues } from '../schemas/formSchemas'
@@ -13,7 +13,8 @@ export type Player = {
 export type NewPasswordInput = Pick<FormValues['passwordReset'], 'password'>
 
 /** What any call can end with when the server cannot be reached or does not answer as agreed. */
-export type ConnectionFailure = Failure<'networkUnreachable' | 'requestTimeout' | 'serverFailure' | 'unexpectedResponse'>
+export type ConnectionFailure =
+    typeof failures.networkUnreachable | typeof failures.requestTimeout | typeof failures.serverFailure | typeof failures.unexpectedResponse
 
 /**
  * Everything the player app asks of the identity backend. Each method lists the failures it can end with:
@@ -25,7 +26,9 @@ export interface AuthService {
     fetchCurrentPlayer(): Promise<Result<Player | undefined, ConnectionFailure>>
 
     /** Credentials are never told apart: a wrong email and a wrong password end with the same failure. */
-    logIn(input: FormValues['logIn']): Promise<Result<Player, Failure<'invalidCredentials' | 'tooManyAttempts'> | ConnectionFailure>>
+    logIn(
+        input: FormValues['logIn']
+    ): Promise<Result<Player, typeof failures.invalidCredentials | typeof failures.tooManyAttempts | ConnectionFailure>>
 
     /** Registering also signs the person in. */
     register(
@@ -33,7 +36,9 @@ export interface AuthService {
     ): Promise<
         Result<
             Player,
-            | Failure<'emailAlreadyRegistered' | 'usernameAlreadyTaken' | 'tooManyAttempts'>
+            | typeof failures.emailAlreadyRegistered
+            | typeof failures.usernameAlreadyTaken
+            | typeof failures.tooManyAttempts
             | ValidationFailure<'username' | 'email' | 'password'>
             | ConnectionFailure
         >
@@ -42,17 +47,23 @@ export interface AuthService {
     logOut(): Promise<Result<void, ConnectionFailure>>
 
     /** Always answers the same, whether the email is registered or not. */
-    requestResetCode(input: FormValues['codeRequest']): Promise<Result<void, Failure<'tooManyAttempts'> | ConnectionFailure>>
+    requestResetCode(input: FormValues['codeRequest']): Promise<Result<void, typeof failures.tooManyAttempts | ConnectionFailure>>
 
     /** The server remembers which reset is pending: the screen sends the code only. */
     confirmResetCode(
         input: FormValues['codeConfirmation']
-    ): Promise<Result<void, Failure<'resetCodeInvalid' | 'resetCodeExpired' | 'tooManyAttempts'> | ConnectionFailure>>
+    ): Promise<
+        Result<void, typeof failures.resetCodeInvalid | typeof failures.resetCodeExpired | typeof failures.tooManyAttempts | ConnectionFailure>
+    >
 
-    setNewPassword(input: NewPasswordInput): Promise<Result<void, Failure<'resetNotConfirmed'> | ValidationFailure<'password'> | ConnectionFailure>>
+    setNewPassword(
+        input: NewPasswordInput
+    ): Promise<Result<void, typeof failures.resetNotConfirmed | ValidationFailure<'password'> | ConnectionFailure>>
 
     /** Google gives no username: the person chooses it. */
     completeGoogleProfile(
         input: FormValues['googleProfile']
-    ): Promise<Result<Player, Failure<'usernameAlreadyTaken' | 'sessionExpired'> | ValidationFailure<'username'> | ConnectionFailure>>
+    ): Promise<
+        Result<Player, typeof failures.usernameAlreadyTaken | typeof failures.sessionExpired | ValidationFailure<'username'> | ConnectionFailure>
+    >
 }
