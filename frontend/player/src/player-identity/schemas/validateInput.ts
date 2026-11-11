@@ -1,8 +1,8 @@
-import type { z } from 'zod'
+import type * as z from 'zod/mini'
 import { fail, succeed, type Result } from '../errors/result'
 import type { TranslatableMessage, ValidationFailure } from '../errors/validationFailure'
 
-type FieldOf<Schema extends z.ZodObject> = Extract<keyof z.output<Schema>, string>
+type FieldOf<Schema extends z.ZodMiniObject> = Extract<keyof z.output<Schema>, string>
 
 /**
  * The numbers of the rule that was broken, read from the issue itself: they are the ones the schema was written with,
@@ -18,7 +18,7 @@ function valuesOf(issue: z.core.$ZodIssue): TranslatableMessage['values'] {
  * Checks the values of a form against its schema.
  * On failure it keeps the first message of each invalid field; `safeParse` reports problems as data, it does not throw.
  */
-export function validateInput<Schema extends z.ZodObject>(
+export function validateInput<Schema extends z.ZodMiniObject>(
     schema: Schema,
     input: z.input<Schema>
 ): Result<z.output<Schema>, ValidationFailure<FieldOf<Schema>>> {
