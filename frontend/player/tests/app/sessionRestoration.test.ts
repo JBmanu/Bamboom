@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { inject } from 'vue'
 import { HOME_PATH } from '../../src/app/router/appRoutes.ts'
 import { createFakeAuthService } from '../../src/player-identity/api/fakeAuthService.ts'
-import { createFailure } from '../../src/player-identity/errors/failures.ts'
+import { failures } from '../../src/player-identity/errors/failures.ts'
 import { authServiceKey } from '../../src/player-identity/index.ts'
 import { LOGIN_PATH } from '../../src/player-identity/routePaths.ts'
 import { contractFixtures } from '../player-identity/api/authServiceContract.ts'
@@ -27,7 +27,7 @@ describe('session restoration at startup', () => {
 
     it('sends the person to the login when the server cannot be reached', async () => {
         const authService = await createServiceWithPlayerSignedIn()
-        authService.failNextCall(createFailure('network-unreachable'))
+        authService.failNextCall(failures.networkUnreachable)
         const { router } = await mountPlayer(HOME_PATH, { authService })
 
         expect(router.currentRoute.value.path).toBe(LOGIN_PATH)

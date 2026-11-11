@@ -1,10 +1,10 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService.ts'
-import { createFailure } from '../../../src/player-identity/errors/failures.ts'
-import { restoreSession } from '../../../src/player-identity/stores/restoreSession.ts'
-import { sessionStatuses, useSessionStore } from '../../../src/player-identity/stores/useSessionStore.ts'
 import { contractFixtures } from '../api/authServiceContract.ts'
+import { failures } from '../../../src/player-identity/errors/failures.ts'
+import { restoreSession } from '../../../src/player-identity/stores/restoreSession.ts'
+import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService.ts'
+import { sessionStatuses, useSessionStore } from '../../../src/player-identity/stores/useSessionStore.ts'
 import { clearSignedInHint, readSignedInHint, saveSignedInHint } from '../../../src/player-identity/stores/signedInHint.ts'
 
 describe('restoreSession', () => {
@@ -36,11 +36,11 @@ describe('restoreSession', () => {
         expect(session.player).toBeUndefined()
     })
 
-    it.each(['network-unreachable', 'request-timeout', 'server-failure', 'unexpected-response'] as const)(
+    it.each(['networkUnreachable', 'requestTimeout', 'serverFailure', 'unexpectedResponse'] as const)(
         'ends up signed out, without rejecting, when the server fails with %s',
         async (code) => {
             const authService = createFakeAuthService({ accounts: [account] })
-            authService.failNextCall(createFailure(code))
+            authService.failNextCall(failures[code])
             const session = useSessionStore()
 
             await expect(restoreSession(authService, session)).resolves.toBeUndefined()
@@ -71,7 +71,7 @@ describe('restoreSession', () => {
     it('keeps the hint when the server could not be reached', async () => {
         saveSignedInHint()
         const authService = createFakeAuthService({ accounts: [account] })
-        authService.failNextCall(createFailure('network-unreachable'))
+        authService.failNextCall(failures['networkUnreachable'])
         const session = useSessionStore()
 
         await restoreSession(authService, session)

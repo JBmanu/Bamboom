@@ -1,8 +1,9 @@
 import type { Result } from '../errors/result.ts'
 import type { AuthService } from './authService.ts'
+import { failures } from '../errors/failures.ts'
 
 const isSessionExpired = (failure: unknown) =>
-    typeof failure === 'object' && failure !== null && 'code' in failure && failure.code === 'session-expired'
+    typeof failure === 'object' && failure !== null && 'code' in failure && failure.code === failures.sessionExpired.code
 
 /**
  * Wraps a service so that `onSessionExpired` runs whenever any call answers "session expired".

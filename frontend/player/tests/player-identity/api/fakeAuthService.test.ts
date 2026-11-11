@@ -1,10 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService'
-import { createFailure } from '../../../src/player-identity/errors/failures'
+import { failures } from '../../../src/player-identity/errors/failures'
 import { fail, succeed } from '../../../src/player-identity/errors/result'
 import { contractFixtures, describeAuthServiceContract, GOOGLE_EMAIL, GOOGLE_USERNAME } from './authServiceContract'
 
-describeAuthServiceContract('fake adapter', (fixtures) => createFakeAuthService({ accounts: [fixtures.account], resetCode: fixtures.resetCode }))
+describeAuthServiceContract('fake adapter', (fixtures) =>
+    createFakeAuthService({
+        accounts: [fixtures.account],
+        resetCode: fixtures.resetCode
+    })
+)
 
 describe('fake adapter: what only the fake does', () => {
     const { account, resetCode } = contractFixtures
@@ -33,11 +38,16 @@ describe('fake adapter: what only the fake does', () => {
 
     it('fails the next call with the failure it was given, changes nothing, and works again after it', async () => {
         const service = createFakeAuthService({ accounts: [account] })
-        service.failNextCall(createFailure('network-unreachable'))
+        service.failNextCall(failures.networkUnreachable)
 
-        expect(await service.logIn(adaCredentials)).toEqual(fail(createFailure('network-unreachable')))
+        expect(await service.logIn(adaCredentials)).toEqual(fail(failures.networkUnreachable))
         expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined)) // the failed log-in did not sign anyone in
-        expect(await service.logIn(adaCredentials)).toEqual(succeed({ username: account.username, email: account.email }))
+        expect(await service.logIn(adaCredentials)).toEqual(
+            succeed({
+                username: account.username,
+                email: account.email
+            })
+        )
     })
 
     it('tells an expired code from a wrong one', async () => {
@@ -47,7 +57,7 @@ describe('fake adapter: what only the fake does', () => {
 
         await vi.advanceTimersByTimeAsync(1_001)
 
-        expect(await service.confirmResetCode({ code: resetCode })).toEqual(fail(createFailure('reset-code-expired')))
+        expect(await service.confirmResetCode({ code: resetCode })).toEqual(fail(failures.resetCodeExpired))
     })
 
     it('completes the profile of a person who came back from Google, and signs them in', async () => {
@@ -64,7 +74,7 @@ describe('fake adapter: what only the fake does', () => {
         const service = createFakeAuthService({ accounts: [account] })
         service.beginGoogleSignIn(GOOGLE_EMAIL)
 
-        expect(await service.completeGoogleProfile({ username: account.username })).toEqual(fail(createFailure('username-already-taken')))
+        expect(await service.completeGoogleProfile({ username: account.username })).toEqual(fail(failures.usernameAlreadyTaken))
         expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(
             succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL })
         )
@@ -76,7 +86,7 @@ describe('fake adapter: what only the fake does', () => {
         await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
         await service.logOut()
 
-        expect(await service.logIn({ email: GOOGLE_EMAIL, password: '' })).toEqual(fail(createFailure('invalid-credentials')))
+        expect(await service.logIn({ email: GOOGLE_EMAIL, password: '' })).toEqual(fail(failures.invalidCredentials))
     })
 
     it('does not share its accounts with another fake', async () => {
@@ -85,6 +95,11 @@ describe('fake adapter: what only the fake does', () => {
 
         await first.register({ username: 'grace', email: 'grace@example.com', password: 'another-horse-7' })
 
-        expect(await second.logIn({ email: 'grace@example.com', password: 'another-horse-7' })).toEqual(fail(createFailure('invalid-credentials')))
+        expect(
+            await second.logIn({
+                email: 'grace@example.com',
+                password: 'another-horse-7'
+            })
+        ).toEqual(fail(failures.invalidCredentials))
     })
 })

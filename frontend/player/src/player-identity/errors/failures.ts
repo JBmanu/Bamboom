@@ -1,12 +1,11 @@
 /** How the screen shows a failure: next to a field, in a banner, or by taking the person to the login. */
 
+const failureMessagesPath = 'playerIdentity.failures.'
 const KINDS = { domain: 'domain', transport: 'transport' } as const
 const TREATMENT = { field: 'field', banner: 'banner', redirectToLogin: 'redirectToLogin' } as const
 
 export type FailureKind = keyof typeof KINDS
 export type FailureTreatment = keyof typeof TREATMENT
-
-const failureMessagesPath = 'playerIdentity.failures.'
 
 // `const` type parameters keep the exact code and treatment as types, so a failure can be narrowed by its `code`.
 const domain = <const Code extends string, const Treatment extends FailureTreatment>(code: Code, treatment: Treatment) =>

@@ -1,5 +1,5 @@
-import { createFailure } from '../errors/failures.ts'
-import { fail, succeed, type Result } from '../errors/result.ts'
+import { failures } from '../errors/failures.ts'
+import { fail, type Result, succeed } from '../errors/result.ts'
 import type { AuthService, ConnectionFailure, Player } from './authService.ts'
 
 type FakeAccount = {
@@ -74,15 +74,15 @@ export function createFakeAuthService({
             answer(() => {
                 const account = findAccountByEmail(email)
                 // The same failure for an unknown email and a wrong password: the answer must not tell which one it was.
-                if (!account || account.password === undefined || account.password !== password) return fail(createFailure('invalid-credentials'))
+                if (!account || account.password === undefined || account.password !== password) return fail(failures.invalidCredentials)
                 signedInPlayer = toPlayer(account)
                 return succeed(signedInPlayer)
             }),
 
         register: ({ username, email, password }) =>
             answer(() => {
-                if (findAccountByEmail(email)) return fail(createFailure('email-already-registered'))
-                if (isUsernameTaken(username)) return fail(createFailure('username-already-taken'))
+                if (findAccountByEmail(email)) return fail(failures.emailAlreadyRegistered)
+                if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
                 knownAccounts.push({ username, email, password })
                 signedInPlayer = { username, email }
                 return succeed(signedInPlayer)
@@ -99,18 +99,23 @@ export function createFakeAuthService({
                 // A reset is "pending" for any email, registered or not: the answer, and what follows, must look the same.
                 // For an unknown email the empty string means "no account": no code will ever match.
                 const emailExists = findAccountByEmail(email) !== undefined
-                pendingReset = { email: emailExists ? email : '', issuedAt: Date.now(), wrongCodes: 0, confirmed: false }
+                pendingReset = {
+                    email: emailExists ? email : '',
+                    issuedAt: Date.now(),
+                    wrongCodes: 0,
+                    confirmed: false
+                }
                 return succeed(undefined)
             }),
 
         confirmResetCode: ({ code }) =>
             answer(() => {
-                if (!pendingReset) return fail(createFailure('reset-code-invalid'))
-                if (pendingReset.wrongCodes >= maxWrongResetCodes) return fail(createFailure('too-many-attempts'))
-                if (Date.now() - pendingReset.issuedAt > resetCodeLifetimeMs) return fail(createFailure('reset-code-expired'))
+                if (!pendingReset) return fail(failures.resetCodeInvalid)
+                if (pendingReset.wrongCodes >= maxWrongResetCodes) return fail(failures.tooManyAttempts)
+                if (Date.now() - pendingReset.issuedAt > resetCodeLifetimeMs) return fail(failures.resetCodeExpired)
                 if (pendingReset.email === '' || code !== resetCode) {
                     pendingReset.wrongCodes += 1
-                    return fail(createFailure('reset-code-invalid'))
+                    return fail(failures.resetCodeInvalid)
                 }
                 pendingReset.confirmed = true
                 return succeed(undefined)
@@ -119,7 +124,7 @@ export function createFakeAuthService({
         setNewPassword: ({ password }) =>
             answer(() => {
                 const account = pendingReset?.confirmed ? findAccountByEmail(pendingReset.email) : undefined
-                if (!account) return fail(createFailure('reset-not-confirmed'))
+                if (!account) return fail(failures.resetNotConfirmed)
                 account.password = password
                 pendingReset = undefined
                 return succeed(undefined)
@@ -127,8 +132,8 @@ export function createFakeAuthService({
 
         completeGoogleProfile: ({ username }) =>
             answer(() => {
-                if (pendingGoogleEmail === undefined) return fail(createFailure('session-expired'))
-                if (isUsernameTaken(username)) return fail(createFailure('username-already-taken'))
+                if (pendingGoogleEmail === undefined) return fail(failures.sessionExpired)
+                if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
                 knownAccounts.push({ username, email: pendingGoogleEmail })
                 signedInPlayer = { username, email: pendingGoogleEmail }
                 pendingGoogleEmail = undefined

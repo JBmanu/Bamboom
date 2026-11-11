@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { AuthService } from '../../../src/player-identity/api/authService.ts'
 import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService.ts'
 import { notifyWhenSessionExpires } from '../../../src/player-identity/api/notifyWhenSessionExpires.ts'
-import { createFailure } from '../../../src/player-identity/errors/failures.ts'
+import { failures } from '../../../src/player-identity/errors/failures.ts'
 import { fail, succeed } from '../../../src/player-identity/errors/result.ts'
 import { contractFixtures } from './authServiceContract.ts'
 
@@ -23,7 +23,7 @@ const portMethodNames = Object.keys(portMethods) as (keyof AuthService)[]
 
 /** A service whose every method answers "session expired", as an HTTP call that gets a 401 will. */
 function createServiceAlwaysExpired(): AuthService {
-    const answerExpired = async () => fail(createFailure('session-expired'))
+    const answerExpired = async () => fail(failures.sessionExpired)
     const methods = Object.fromEntries(portMethodNames.map((name) => [name, answerExpired]))
     return methods as unknown as AuthService // the port does not allow this answer on most methods: that is the point
 }
@@ -45,7 +45,7 @@ describe('notifyWhenSessionExpires', () => {
 
         const answer = await authService.logIn({ email: account.email, password: 'not-the-password' })
 
-        expect(answer).toEqual(fail(createFailure('invalid-credentials')))
+        expect(answer).toEqual(fail(failures.invalidCredentials))
         expect(onSessionExpired).not.toHaveBeenCalled()
     })
 
@@ -56,7 +56,7 @@ describe('notifyWhenSessionExpires', () => {
         // The fake answers "session expired" when there is no Google sign-in left to complete.
         const answer = await authService.completeGoogleProfile({ username: 'ada_g' })
 
-        expect(answer).toEqual(fail(createFailure('session-expired')))
+        expect(answer).toEqual(fail(failures.sessionExpired))
         expect(onSessionExpired).toHaveBeenCalledOnce()
     })
 
