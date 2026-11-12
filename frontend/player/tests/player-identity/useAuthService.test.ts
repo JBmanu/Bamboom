@@ -6,11 +6,14 @@ import { failures } from '../../src/player-identity/errors/failures.ts'
 import { MISSING_AUTH_SERVICE_MESSAGE, useAuthService } from '../../src/player-identity/useAuthService'
 
 describe('useAuthService', () => {
+    /** An app with nothing provided: `useAuthService` runs inside it as it would in a component's setup. */
+    const createAppWithoutProvide = () => createApp({})
+
     afterEach(() => vi.restoreAllMocks())
 
     it('gives the AuthService the app provided', () => {
         const fake = createFakeAuthService()
-        const app = createApp({}).provide(authServiceKey, fake)
+        const app = createAppWithoutProvide().provide(authServiceKey, fake)
         const receivedService = app.runWithContext(() => useAuthService())
 
         expect(receivedService).toBe(fake)
@@ -18,15 +21,14 @@ describe('useAuthService', () => {
 
     it('falls back to a service that always fails when the app provided none', async () => {
         vi.spyOn(console, 'error').mockImplementation(() => {})
-        const app = createApp({})
-        const fallbackService = app.runWithContext(() => useAuthService())
+        const fallbackService = createAppWithoutProvide().runWithContext(() => useAuthService())
 
         expect(await fallbackService.logIn({ email: 'ada@example.com', password: 'any' })).toEqual(fail(failures.serverFailure))
     })
 
     it('says in the console which wiring is missing', () => {
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {}) // records the calls, prints nothing
-        createApp({}).runWithContext(() => useAuthService())
+        createAppWithoutProvide().runWithContext(() => useAuthService())
 
         expect(consoleError).toHaveBeenCalledExactlyOnceWith(MISSING_AUTH_SERVICE_MESSAGE)
     })
