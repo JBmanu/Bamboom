@@ -2,7 +2,13 @@ import type en from './en'
 
 export default {
     login: {
-        title: 'Bentornato!'
+        title: 'Bentornato!',
+        subtitle: 'Pronto a far {highlight} la partita?',
+        subtitleHighlight: 'esplodere',
+        emailLabel: 'Email',
+        passwordLabel: 'Password',
+        submit: 'Accedi ora',
+        botFreeNote: 'Niente bot, solo bambù veri!'
     },
     failures: {
         invalidCredentials: 'Email o password non corrette.',
