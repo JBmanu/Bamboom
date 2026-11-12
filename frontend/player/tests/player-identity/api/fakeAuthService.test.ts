@@ -13,7 +13,9 @@ describeAuthServiceContract('fake adapter', (fixtures) =>
 
 describe('fake adapter: what only the fake does', () => {
     const { account, resetCode } = contractFixtures
+    const ada = { username: account.username, email: account.email }
     const adaCredentials = { email: account.email, password: account.password }
+    const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
 
     afterEach(() => {
         vi.useRealTimers()
@@ -101,5 +103,57 @@ describe('fake adapter: what only the fake does', () => {
                 password: 'another-horse-7'
             })
         ).toEqual(fail(failures.invalidCredentials))
+    })
+
+    it('blocks the log-in once the failed attempts reach the limit it was given', async () => {
+        const maxFailedLogIns = 3
+        const service = createFakeAuthService({ accounts: [account], maxFailedLogIns })
+        for (let attempt = 0; attempt < maxFailedLogIns; attempt++) {
+            expect(await service.logIn(wrongPasswordCredentials)).toEqual(fail(failures.invalidCredentials))
+        }
+
+        expect(await service.logIn(adaCredentials)).toEqual(fail(failures.tooManyAttempts))
+    })
+
+    it('lets the person log in again once the lockout is over', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({ accounts: [account], maxFailedLogIns: 1, logInLockoutMs: 1_000 })
+
+        expect(await service.logIn(wrongPasswordCredentials)).toEqual(fail(failures.invalidCredentials))
+        await vi.advanceTimersByTimeAsync(999)
+        expect(await service.logIn(adaCredentials)).toEqual(fail(failures.tooManyAttempts))
+        await vi.advanceTimersByTimeAsync(1)
+        expect(await service.logIn(adaCredentials)).toEqual(succeed(ada))
+    })
+
+    it('forgets the failed attempts after a successful log-in', async () => {
+        const service = createFakeAuthService({ accounts: [account], maxFailedLogIns: 2 })
+        await service.logIn(wrongPasswordCredentials)
+        await service.logIn(adaCredentials)
+        await service.logOut()
+
+        await service.logIn(wrongPasswordCredentials) // the second failure in total, but the first since the success
+
+        expect(await service.logIn(adaCredentials)).toEqual(succeed(ada))
+    })
+
+    it('counts the failed attempts of each email on its own', async () => {
+        const service = createFakeAuthService({ accounts: [account], maxFailedLogIns: 1 })
+
+        expect(
+            await service.logIn({
+                email: 'grace@example.com',
+                password: 'try'
+            })
+        ).toEqual(fail(failures.invalidCredentials))
+        expect(await service.logIn(adaCredentials)).toEqual(succeed(ada))
+    })
+
+    it('does not count a call that failed on the way to the server', async () => {
+        const service = createFakeAuthService({ accounts: [account], maxFailedLogIns: 1 })
+        service.failNextCall(failures.networkUnreachable)
+
+        expect(await service.logIn(wrongPasswordCredentials)).toEqual(fail(failures.networkUnreachable))
+        expect(await service.logIn(adaCredentials)).toEqual(succeed(ada))
     })
 })
