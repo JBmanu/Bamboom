@@ -18,6 +18,10 @@ export type FakeAuthServiceOptions = {
     maxWrongResetCodes?: number
     /** Time every answer takes, to see the loading states of the screens. */
     latencyMs?: number
+    /** Failed log-ins allowed for one email before its log-in is blocked. */
+    maxFailedLogIns?: number
+    /** How long the log-in of an email stays blocked once the limit is reached. */
+    logInLockoutMs?: number
 }
 
 /** The port, plus the two things only a test double can do. */
@@ -29,16 +33,21 @@ export type FakeAuthService = AuthService & {
 }
 
 type PendingReset = { readonly email: string; readonly issuedAt: number; wrongCodes: number; confirmed: boolean }
+type LogInAttempts = { failedLogIns: number; lockedUntil: number }
 
 /** An in-memory AuthService: it behaves like the real backend will, so the screens can be built and tested before it exists. */
 export function createFakeAuthService({
     accounts = [],
+    latencyMs = 0,
     resetCode = '123456',
-    resetCodeLifetimeMs = 10 * 60 * 1000,
     maxWrongResetCodes = 5,
-    latencyMs = 0
+    resetCodeLifetimeMs = 10 * 60 * 1000,
+    maxFailedLogIns = 5,
+    logInLockoutMs = 15 * 60 * 1000
 }: FakeAuthServiceOptions = {}): FakeAuthService {
     const knownAccounts: FakeAccount[] = accounts.map((account) => ({ ...account }))
+    const logInAttemptsByEmail = new Map<string, LogInAttempts>()
+
     let signedInPlayer: Player | undefined
     let pendingReset: PendingReset | undefined
     let pendingGoogleEmail: string | undefined
@@ -47,6 +56,17 @@ export function createFakeAuthService({
     const findAccountByEmail = (email: string) => knownAccounts.find((account) => account.email === email)
     const isUsernameTaken = (username: string) => knownAccounts.some((account) => account.username === username)
     const toPlayer = ({ username, email }: FakeAccount): Player => ({ username, email })
+    const isLogInBlocked = (email: string) => (logInAttemptsByEmail.get(email)?.lockedUntil ?? 0) > Date.now()
+
+    function recordFailedLogIn(email: string) {
+        const attempts = logInAttemptsByEmail.get(email) ?? { failedLogIns: 0, lockedUntil: 0 }
+        attempts.failedLogIns += 1
+        if (attempts.failedLogIns >= maxFailedLogIns) {
+            attempts.failedLogIns = 0 // once the lockout is over, the count starts again
+            attempts.lockedUntil = Date.now() + logInLockoutMs
+        }
+        logInAttemptsByEmail.set(email, attempts)
+    }
 
     // NoInfer: the failures a method can return come from the port, not from the first `fail(...)` found in the body.
     async function answer<Value, Reason>(produceAnswer: () => Result<Value, NoInfer<Reason>>): Promise<Result<Value, Reason | ConnectionFailure>> {
@@ -72,9 +92,15 @@ export function createFakeAuthService({
 
         logIn: ({ email, password }) =>
             answer(() => {
+                // Before the credentials: during the lockout even the right password is refused, or the guessing would go on.
+                if (isLogInBlocked(email)) return fail(failures.tooManyAttempts)
                 const account = findAccountByEmail(email)
                 // The same failure for an unknown email and a wrong password: the answer must not tell which one it was.
-                if (!account || account.password === undefined || account.password !== password) return fail(failures.invalidCredentials)
+                if (!account || account.password === undefined || account.password !== password) {
+                    recordFailedLogIn(email) // unknown emails count too, or the lockout would tell which emails exist
+                    return fail(failures.invalidCredentials)
+                }
+                logInAttemptsByEmail.delete(email)
                 signedInPlayer = toPlayer(account)
                 return succeed(signedInPlayer)
             }),
