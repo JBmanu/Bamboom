@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.8.0...player-frontend-v0.9.0) (2026-11-17)
+
+
+### Features
+
+* **player:** add the login screen with its states and errors ([#162](https://github.com/JBmanu/Bamboom/issues/162)) ([b26f454](https://github.com/JBmanu/Bamboom/commit/b26f4549bd4678a2fa1cb69caab0773f64860dd2))
+
 ## [0.8.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.7.0...player-frontend-v0.8.0) (2026-11-11)
 
 
