@@ -14,10 +14,14 @@ afterEach(() => {
     document.body.innerHTML = ''
 })
 
-type MountOptions = { authService?: AuthService }
+type MountOptions = {
+    authService?: AuthService
+    /** False to look at the page while the first one is still being decided (the session is being restored). */
+    waitsForFirstPage?: boolean
+}
 
 /** Mounts the whole app as a browser would: the person "opens" `startPath`, signed out unless the service says otherwise. */
-export async function mountPlayer(startPath = '/', { authService }: MountOptions = {}) {
+export async function mountPlayer(startPath = '/', { authService, waitsForFirstPage = true }: MountOptions = {}) {
     const history = createMemoryHistory()
     history.replace(startPath)
     const container = document.createElement('div')
@@ -25,6 +29,7 @@ export async function mountPlayer(startPath = '/', { authService }: MountOptions
     const app = await createPlayerApp({ history, authService })
     app.mount(container)
     mountedApps.push(app)
+    if (waitsForFirstPage) await app.config.globalProperties.$router.isReady()
     return { container, app, router: app.config.globalProperties.$router }
 }
 

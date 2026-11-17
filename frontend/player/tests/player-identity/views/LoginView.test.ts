@@ -17,7 +17,7 @@ const subtitleOf = (container: HTMLElement) => container.querySelector('[data-la
 /** Finds an input the way a person does: by the text of its label, through the label's `for`. */
 function findFieldByLabel(container: HTMLElement, labelText: string) {
     const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)
-    return container.querySelector<HTMLInputElement>(`#${ CSS.escape(label!.htmlFor) }`)!
+    return container.querySelector<HTMLInputElement>(`#${CSS.escape(label!.htmlFor)}`)!
 }
 
 /** The error a screen reader announces for the field: the element its `aria-describedby` points to. */

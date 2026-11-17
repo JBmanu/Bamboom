@@ -5,6 +5,9 @@ export default {
         title: 'Benvenuto su Bamboom',
         description: 'Il gioco arriverà presto.'
     },
+    startup: {
+        restoringSession: 'Ripristino della sessione…'
+    },
     notFound: {
         title: 'Pagina non trovata',
         description: 'La pagina che cerchi non esiste.',
