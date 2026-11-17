@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.4...deck-workshop-v0.3.0) (2026-11-17)
+
+
+### Features
+
+* **player:** add the login screen with its states and errors ([#162](https://github.com/JBmanu/Bamboom/issues/162)) ([b26f454](https://github.com/JBmanu/Bamboom/commit/b26f4549bd4678a2fa1cb69caab0773f64860dd2))
+
 ## [0.2.4](https://github.com/JBmanu/Bamboom/compare/deck-workshop-v0.2.3...deck-workshop-v0.2.4) (2026-10-29)
 
 
