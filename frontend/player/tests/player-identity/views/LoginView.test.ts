@@ -3,7 +3,8 @@ import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LOGIN_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
-import { createFakeAuthService } from '../../../src/player-identity'
+import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
+import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
 
 const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
 const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
@@ -90,5 +91,46 @@ describe('LoginView', () => {
 
         await typeInto(email, 'ada@example.com')
         expect(readFieldError(email)).toBeUndefined() // read again: the page changed, an old variable would not
+    })
+})
+
+describe('LoginView: a successful log-in', () => {
+    const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
+    const ada = { username: account.username, email: account.email }
+
+    /** Fills the form as a person would and sends it. */
+    async function logInThroughTheForm(container: HTMLElement, email: string, password: string) {
+        const emailField = findFieldByLabel(container, 'Email')
+        const passwordField = findFieldByLabel(container, 'Password')
+        await typeInto(emailField, email)
+        await typeInto(passwordField, password)
+        await submitForm(container)
+    }
+
+    it('opens the home', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container, router } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, account.email, account.password)
+
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+    })
+
+    it('starts the session with the player the server answered', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container, app } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, account.email, account.password)
+        const session = useSessionStore(app.config.globalProperties.$pinia)
+
+        expect(session.player).toEqual(ada)
+        expect(session.isSignedIn).toBe(true)
+    })
+
+    it('sends the email without the spaces around it', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const logIn = vi.spyOn(authService, 'logIn')
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, '  ada@example.com ', account.password)
+
+        expect(logIn).toHaveBeenCalledWith({ email: account.email, password: account.password })
     })
 })

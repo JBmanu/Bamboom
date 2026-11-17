@@ -1,6 +1,6 @@
 import { SUPPORTED_LANGUAGES } from '@bamboom/common'
 import { describe, expect, it } from 'vitest'
-import { identityTranslators } from './identityTranslators'
+import { identityTranslators } from '../utils/identityTranslators.ts'
 
 describe('identityTranslators', () => {
     it('has a vocabulary for every supported language', () => {

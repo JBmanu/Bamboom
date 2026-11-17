@@ -7,7 +7,14 @@ import LockIcon from '~icons/ph/lock-fill'
 import type { TranslatableMessage } from '../errors/validationFailure'
 import { formSchemas } from '../schemas/formSchemas'
 import { validateInput } from '../schemas/validateInput'
+import { useRouter } from 'vue-router'
+import { LOGIN_PATH } from '../routePaths'
+import { useSessionStore } from '../stores/useSessionStore'
+import { useAuthService } from '../useAuthService'
 
+const authService = useAuthService()
+const session = useSessionStore()
+const router = useRouter()
 const { t } = useI18n()
 
 const logInForm = useForm({
@@ -21,11 +28,15 @@ const logInForm = useForm({
             return validation.ok ? undefined : { fields: validation.failure.fieldMessages }
         }
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
         // TanStack hands over the typed values, not the schema output: validating again gives the trimmed email.
         const validation = validateInput(formSchemas.logIn, value)
         if (!validation.ok) return
-        // The call to the AuthService arrives in the next step.
+        const answer = await authService.logIn(validation.value)
+        if (!answer.ok) return // the failures get their banner in the next step
+        session.startSession(answer.value)
+        // Opening this page again lets the route guard decide where a signed-in person goes: this module does not know the home.
+        await router.replace({ path: LOGIN_PATH, force: true })
     }
 })
 
@@ -40,7 +51,7 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
     <div class="flex flex-col gap-6">
         <header class="text-center">
             <h1 class="text-2xl font-bold">{{ t('playerIdentity.login.title') }}</h1>
-            <I18nT keypath="playerIdentity.login.subtitle" tag="p" class="mt-1 text-foreground-muted">
+            <I18nT scope="global" keypath="playerIdentity.login.subtitle" tag="p" class="mt-1 text-foreground-muted">
                 <template #highlight>
                     <strong class="font-semibold text-link">{{ t('playerIdentity.login.subtitleHighlight') }}</strong>
                 </template>
