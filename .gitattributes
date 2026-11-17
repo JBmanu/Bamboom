@@ -1,0 +1,13 @@
+# Every text file is stored and checked out with LF, on every OS: Prettier, ktlint and scalafmt all write LF.
+* text=auto eol=lf
+
+# Windows scripts need CRLF to run in cmd.exe.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never touch the bytes of binary files.
+*.png binary
+*.jpg binary
+*.webp binary
+*.avif binary
+*.jar binary
