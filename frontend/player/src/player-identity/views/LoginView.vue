@@ -59,6 +59,15 @@ const logInForm = useForm({
     }
 })
 
+/** True from the submit until the answer: the button shows a spinner meanwhile. */
+const isSubmitting = logInForm.useSelector((state) => state.isSubmitting)
+
+/** The loading button stops a second click, but Enter in a field submits the form directly: this stops that too. */
+function submitUnlessWaiting() {
+    if (isSubmitting.value) return
+    logInForm.handleSubmit()
+}
+
 /** TanStack keeps every error of a field in a list: the screen shows the first one, translated. */
 function translateFirstError(errors: readonly (TranslatableMessage | undefined)[]) {
     const firstError = errors.find((error) => error !== undefined)
@@ -80,7 +89,7 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
         <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
 
         <!-- novalidate: the browser's own bubbles would appear before our messages, in another style and language. -->
-        <form ref="logInFormElement" novalidate class="flex flex-col gap-4" @submit.prevent="logInForm.handleSubmit()">
+        <form ref="logInFormElement" novalidate class="flex flex-col gap-4" @submit.prevent="submitUnlessWaiting">
             <logInForm.Field v-slot="{ field }" name="email">
                 <VTextField
                     :label="t('playerIdentity.login.emailLabel')"
@@ -106,7 +115,7 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
                     @blur="field.handleBlur"
                 />
             </logInForm.Field>
-            <VButton type="submit" class="mt-2 w-full">{{ t('playerIdentity.login.submit') }}</VButton>
+            <VButton type="submit" :loading="isSubmitting" class="mt-2 w-full">{{ t('playerIdentity.login.submit') }}</VButton>
         </form>
 
         <p class="text-center text-sm text-link">{{ t('playerIdentity.login.botFreeNote') }}</p>

@@ -9,6 +9,7 @@ import { failures } from '../../../src/player-identity/errors/failures.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: account.username, email: account.email }
+const wrongPassword = 'not-the-password'
 
 const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
 const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
@@ -16,7 +17,7 @@ const subtitleOf = (container: HTMLElement) => container.querySelector('[data-la
 /** Finds an input the way a person does: by the text of its label, through the label's `for`. */
 function findFieldByLabel(container: HTMLElement, labelText: string) {
     const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)
-    return container.querySelector<HTMLInputElement>(`#${CSS.escape(label!.htmlFor)}`)!
+    return container.querySelector<HTMLInputElement>(`#${ CSS.escape(label!.htmlFor) }`)!
 }
 
 /** The error a screen reader announces for the field: the element its `aria-describedby` points to. */
@@ -141,7 +142,7 @@ describe('LoginView: a refused log-in', () => {
     const readErrorBanner = (container: HTMLElement) => container.querySelector('[role="alert"]')?.textContent?.trim()
 
     it.each([
-        ['a wrong password', account.email, 'not-the-password'],
+        ['a wrong password', account.email, wrongPassword],
         ['an unknown email', 'nobody@example.com', account.password]
     ])('gives the same answer for %s', async (_case, email, password) => {
         const authService = createFakeAuthService({ accounts: [account] })
@@ -154,7 +155,7 @@ describe('LoginView: a refused log-in', () => {
     it('keeps the email, empties the password and moves the focus there', async () => {
         const authService = createFakeAuthService({ accounts: [account] })
         const { container } = await mountPlayer(LOGIN_PATH, { authService })
-        await logInThroughTheForm(container, account.email, 'not-the-password')
+        await logInThroughTheForm(container, account.email, wrongPassword)
         const emailField = findFieldByLabel(container, 'Email')
         const passwordField = findFieldByLabel(container, 'Password')
 
@@ -167,7 +168,7 @@ describe('LoginView: a refused log-in', () => {
     it('says when there were too many attempts', async () => {
         const authService = createFakeAuthService({ accounts: [account], maxFailedLogIns: 1 })
         const { container } = await mountPlayer(LOGIN_PATH, { authService })
-        await logInThroughTheForm(container, account.email, 'not-the-password')
+        await logInThroughTheForm(container, account.email, wrongPassword)
         await logInThroughTheForm(container, account.email, account.password)
 
         expect(readErrorBanner(container)).toBe('Too many attempts. Try again in a few minutes.')
@@ -191,9 +192,37 @@ describe('LoginView: a refused log-in', () => {
         const { container } = await mountPlayer(LOGIN_PATH, { authService })
         authService.failNextCall(failures.networkUnreachable)
         await logInThroughTheForm(container, account.email, account.password)
-        await logInThroughTheForm(container, account.email, 'not-the-password')
+        await logInThroughTheForm(container, account.email, wrongPassword)
 
         expect(readErrorBanner(container)).toBe('Email or password is incorrect.')
         expect(container.querySelectorAll('[role="alert"]').length).toBe(1)
+    })
+})
+
+describe('LoginView: while waiting for the server', () => {
+    /** Long enough to look at the page while the answer is on its way, short enough not to slow the tests. */
+    const SLOW_ANSWER_MS = 50
+    const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
+
+    it('shows the button busy until the answer arrives', async () => {
+        const authService = createFakeAuthService({ accounts: [account], latencyMs: SLOW_ANSWER_MS })
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        const submitButton = findSubmitButton(container)
+        await logInThroughTheForm(container, account.email, wrongPassword)
+
+        expect(submitButton.getAttribute('aria-busy')).toBe('true')
+        await vi.waitFor(() => expect(submitButton.getAttribute('aria-busy')).toBeNull())
+    })
+
+    it('sends one request however many times the form is submitted while waiting', async () => {
+        const authService = createFakeAuthService({ accounts: [account], latencyMs: SLOW_ANSWER_MS })
+        const logIn = vi.spyOn(authService, 'logIn')
+        const { container, router } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, account.email, account.password)
+        await submitForm(container)
+        await submitForm(container)
+
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+        expect(logIn).toHaveBeenCalledTimes(1)
     })
 })
