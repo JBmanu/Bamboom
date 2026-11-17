@@ -20,8 +20,9 @@ const router = useRouter()
 const { t } = useI18n()
 
 /** The last refusal of the server, shown in the banner until the next submit. */
+const KEY_TEMPLATE_REF: string = 'logInFormElement'
 const serverFailure = ref<Failure>()
-const logInFormElement = useTemplateRef('logInFormElement')
+const logInFormElement = useTemplateRef(KEY_TEMPLATE_REF)
 
 /** After wrong credentials the person retypes the password: it is emptied and focused, the email stays. */
 function prepareForAnotherPassword() {
@@ -80,7 +81,7 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
         <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
 
         <!-- novalidate: the browser's own bubbles would appear before our messages, in another style and language. -->
-        <form ref="logInFormElement" novalidate class="flex flex-col gap-4" @submit.prevent="logInForm.handleSubmit()">
+        <form ref="{{KEY_TEMPLATE_REF}}" novalidate class="flex flex-col gap-4" @submit.prevent="logInForm.handleSubmit()">
             <logInForm.Field v-slot="{ field }" name="email">
                 <VTextField
                     :label="t('playerIdentity.login.emailLabel')"
