@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.5...api-gateway-v0.2.0) (2026-11-17)
+
+
+### Features
+
+* **player:** add the login screen with its states and errors ([#162](https://github.com/JBmanu/Bamboom/issues/162)) ([b26f454](https://github.com/JBmanu/Bamboom/commit/b26f4549bd4678a2fa1cb69caab0773f64860dd2))
+
 ## [0.1.5](https://github.com/JBmanu/Bamboom/compare/api-gateway-v0.1.4...api-gateway-v0.1.5) (2026-10-29)
 
 
