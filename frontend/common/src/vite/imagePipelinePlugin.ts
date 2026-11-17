@@ -9,11 +9,17 @@ const DEFAULT_DIRECTIVES = {
     format: 'avif;webp'
 } as const
 
-export function createImageDirectives(resourceRoot: URL) {
-    const root = decodeURIComponent(resourceRoot.pathname)
+/**
+ * The path of a URL without its Windows drive letter. The drive arrives in two shapes: a file URL keeps it in the path
+ * ('/C:/Users/…'), while imagetools reads a module id such as 'C:/Users/…' as a URL whose scheme is 'c:'.
+ */
+function pathWithoutDrive(url: URL): string {
+    return decodeURIComponent(url.pathname).replace(/^\/[A-Za-z]:(?=\/)/, '')
+}
 
-    return (url: URL): URLSearchParams =>
-        decodeURIComponent(url.pathname).startsWith(root) ? new URLSearchParams(DEFAULT_DIRECTIVES) : new URLSearchParams()
+export function createImageDirectives(resourceRoot: URL) {
+    const root = pathWithoutDrive(resourceRoot)
+    return (url: URL): URLSearchParams => (pathWithoutDrive(url).startsWith(root) ? new URLSearchParams(DEFAULT_DIRECTIVES) : new URLSearchParams())
 }
 
 export function imagePipelinePlugin(resourceRoot: URL): Plugin {
