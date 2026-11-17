@@ -6,7 +6,7 @@
   "labels": ["dependencies"],
   "assignees": ["JBmanu"],
   "constraints": {
-    "npm": "^11"
+    "npm": "^12.0.0"
   },
   "customManagers": [
     {
