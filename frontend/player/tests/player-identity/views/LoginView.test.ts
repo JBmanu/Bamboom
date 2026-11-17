@@ -4,7 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LOGIN_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
-import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
+import { HOME_PATH } from '../../../src/app/router/appRoutes'
+import { failures } from '../../../src/player-identity/errors/failures.ts'
+
+const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
+const ada = { username: account.username, email: account.email }
 
 const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
 const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
@@ -31,6 +35,15 @@ async function typeInto(input: HTMLInputElement, text: string) {
 async function submitForm(container: HTMLElement) {
     container.querySelector('form')!.dispatchEvent(new Event('submit'))
     await flushPromises()
+}
+
+/** Fills the form as a person would and sends it. */
+async function logInThroughTheForm(container: HTMLElement, email: string, password: string) {
+    const emailField = findFieldByLabel(container, 'Email')
+    const passwordField = findFieldByLabel(container, 'Password')
+    await typeInto(emailField, email)
+    await typeInto(passwordField, password)
+    await submitForm(container)
 }
 
 beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
@@ -95,18 +108,6 @@ describe('LoginView', () => {
 })
 
 describe('LoginView: a successful log-in', () => {
-    const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
-    const ada = { username: account.username, email: account.email }
-
-    /** Fills the form as a person would and sends it. */
-    async function logInThroughTheForm(container: HTMLElement, email: string, password: string) {
-        const emailField = findFieldByLabel(container, 'Email')
-        const passwordField = findFieldByLabel(container, 'Password')
-        await typeInto(emailField, email)
-        await typeInto(passwordField, password)
-        await submitForm(container)
-    }
-
     it('opens the home', async () => {
         const authService = createFakeAuthService({ accounts: [account] })
         const { container, router } = await mountPlayer(LOGIN_PATH, { authService })
@@ -132,5 +133,67 @@ describe('LoginView: a successful log-in', () => {
         await logInThroughTheForm(container, '  ada@example.com ', account.password)
 
         expect(logIn).toHaveBeenCalledWith({ email: account.email, password: account.password })
+    })
+})
+
+describe('LoginView: a refused log-in', () => {
+    /** The text of the error banner: `role="alert"` is what a screen reader announces. */
+    const readErrorBanner = (container: HTMLElement) => container.querySelector('[role="alert"]')?.textContent?.trim()
+
+    it.each([
+        ['a wrong password', account.email, 'not-the-password'],
+        ['an unknown email', 'nobody@example.com', account.password]
+    ])('gives the same answer for %s', async (_case, email, password) => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, email, password)
+
+        expect(readErrorBanner(container)).toBe('Email or password is incorrect.')
+    })
+
+    it('keeps the email, empties the password and moves the focus there', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, account.email, 'not-the-password')
+        const emailField = findFieldByLabel(container, 'Email')
+        const passwordField = findFieldByLabel(container, 'Password')
+
+        expect(emailField.value).toBe(account.email)
+        expect(passwordField.value).toBe('')
+        expect(document.activeElement).toBe(passwordField)
+        expect(readFieldError(passwordField)).toBeUndefined()
+    })
+
+    it('says when there were too many attempts', async () => {
+        const authService = createFakeAuthService({ accounts: [account], maxFailedLogIns: 1 })
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        await logInThroughTheForm(container, account.email, 'not-the-password')
+        await logInThroughTheForm(container, account.email, account.password)
+
+        expect(readErrorBanner(container)).toBe('Too many attempts. Try again in a few minutes.')
+    })
+
+    it('says when the server cannot be reached, keeps what was typed, and lets the person try again', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container, router } = await mountPlayer(LOGIN_PATH, { authService })
+        authService.failNextCall(failures.networkUnreachable)
+        await logInThroughTheForm(container, account.email, account.password)
+
+        expect(readErrorBanner(container)).toBe('No connection. Check your network and try again.')
+        expect(findFieldByLabel(container, 'Password').value).toBe(account.password)
+
+        await logInThroughTheForm(container, account.email, account.password)
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+    })
+
+    it('shows only the answer to the last attempt', async () => {
+        const authService = createFakeAuthService({ accounts: [account] })
+        const { container } = await mountPlayer(LOGIN_PATH, { authService })
+        authService.failNextCall(failures.networkUnreachable)
+        await logInThroughTheForm(container, account.email, account.password)
+        await logInThroughTheForm(container, account.email, 'not-the-password')
+
+        expect(readErrorBanner(container)).toBe('Email or password is incorrect.')
+        expect(container.querySelectorAll('[role="alert"]').length).toBe(1)
     })
 })

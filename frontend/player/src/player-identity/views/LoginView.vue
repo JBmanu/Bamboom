@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VButton, VPasswordField, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VPasswordField, VTextField } from '@bamboom/common'
 import { revalidateLogic, useForm } from '@tanstack/vue-form'
 import { I18nT, useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
@@ -11,11 +11,25 @@ import { useRouter } from 'vue-router'
 import { LOGIN_PATH } from '../routePaths'
 import { useSessionStore } from '../stores/useSessionStore'
 import { useAuthService } from '../useAuthService'
+import { ref, useTemplateRef } from 'vue'
+import { failures, type Failure } from '../errors/failures'
 
 const authService = useAuthService()
 const session = useSessionStore()
 const router = useRouter()
 const { t } = useI18n()
+
+/** The last refusal of the server, shown in the banner until the next submit. */
+const serverFailure = ref<Failure>()
+const logInFormElement = useTemplateRef('logInFormElement')
+
+/** After wrong credentials the person retypes the password: it is emptied and focused, the email stays. */
+function prepareForAnotherPassword() {
+    // dontValidate: after a submit every change is checked, and an empty password would add "required" under the banner.
+    logInForm.setFieldValue('password', '', { dontValidate: true })
+    const passwordInput = logInFormElement.value?.elements.namedItem('password')
+    if (passwordInput instanceof HTMLInputElement) passwordInput.focus()
+}
 
 const logInForm = useForm({
     defaultValues: { email: '', password: '' },
@@ -32,8 +46,13 @@ const logInForm = useForm({
         // TanStack hands over the typed values, not the schema output: validating again gives the trimmed email.
         const validation = validateInput(formSchemas.logIn, value)
         if (!validation.ok) return
+        serverFailure.value = undefined // a new attempt: the old answer no longer applies
         const answer = await authService.logIn(validation.value)
-        if (!answer.ok) return // the failures get their banner in the next step
+        if (!answer.ok) {
+            serverFailure.value = answer.failure
+            if (answer.failure.code === failures.invalidCredentials.code) prepareForAnotherPassword()
+            return
+        }
         session.startSession(answer.value)
         // Opening this page again lets the route guard decide where a signed-in person goes: this module does not know the home.
         await router.replace({ path: LOGIN_PATH, force: true })
@@ -58,12 +77,15 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
             </I18nT>
         </header>
 
+        <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+
         <!-- novalidate: the browser's own bubbles would appear before our messages, in another style and language. -->
-        <form novalidate class="flex flex-col gap-4" @submit.prevent="logInForm.handleSubmit()">
+        <form ref="logInFormElement" novalidate class="flex flex-col gap-4" @submit.prevent="logInForm.handleSubmit()">
             <logInForm.Field v-slot="{ field }" name="email">
                 <VTextField
                     :label="t('playerIdentity.login.emailLabel')"
                     :icon="LeafIcon"
+                    name="email"
                     type="email"
                     autocomplete="email"
                     :model-value="field.state.value"
@@ -76,6 +98,7 @@ function translateFirstError(errors: readonly (TranslatableMessage | undefined)[
                 <VPasswordField
                     :label="t('playerIdentity.login.passwordLabel')"
                     :icon="LockIcon"
+                    name="password"
                     autocomplete="current-password"
                     :model-value="field.state.value"
                     :error="translateFirstError(field.state.meta.errors)"
