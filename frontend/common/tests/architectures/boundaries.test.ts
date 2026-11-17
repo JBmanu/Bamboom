@@ -23,7 +23,6 @@ async function forbiddenSyntax(pkg: Pkg, code: string, folder = '') {
     return result.messages.filter((m) => m.ruleId === 'no-restricted-syntax')
 }
 
-
 /** ESLint's first lint loads parsers and plugins (seconds on a busy machine): the whole file pays for it, not its first case. */
 const ESLINT_WARM_UP_TIMEOUT_MS = 60_000
 
