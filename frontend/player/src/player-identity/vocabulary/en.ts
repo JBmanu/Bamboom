@@ -1,6 +1,12 @@
 export default {
     login: {
-        title: 'Welcome back!'
+        title: 'Welcome back!',
+        subtitle: 'Ready to make the match {highlight}?',
+        subtitleHighlight: 'explode',
+        emailLabel: 'Email',
+        passwordLabel: 'Password',
+        submit: 'Log in now',
+        botFreeNote: 'No bots, only real bamboo!'
     },
     failures: {
         invalidCredentials: 'Email or password is incorrect.',

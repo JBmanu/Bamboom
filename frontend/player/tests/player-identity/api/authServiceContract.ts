@@ -16,6 +16,7 @@ export const contractFixtures: ContractFixtures = {
 }
 
 /** More wrong codes than any sensible limit allows: after this many, the reset must be blocked. */
+const MOST_FAILED_LOG_INS_TO_TRY = 25
 const MOST_WRONG_CODES_TO_TRY = 25
 const WRONG_RESET_CODE = '000000'
 const NEW_PASSWORD = 'brand-new-horse-1'
@@ -34,6 +35,8 @@ export function describeAuthServiceContract(adapterName: string, createService: 
         const { account, resetCode } = contractFixtures
         const ada = { username: account.username, email: account.email }
         const adaCredentials = { email: account.email, password: account.password }
+        const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
+
         let service: AuthService
 
         beforeEach(() => {
@@ -73,6 +76,26 @@ export function describeAuthServiceContract(adapterName: string, createService: 
                 expect(await service.logOut()).toEqual(succeed(undefined))
                 expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
                 expect(await service.logOut()).toEqual(succeed(undefined))
+            })
+
+            it('blocks the log-in after too many failed attempts, even with the right password', async () => {
+                const answers = []
+                for (let attempt = 0; attempt < MOST_FAILED_LOG_INS_TO_TRY; attempt++) {
+                    answers.push(await service.logIn(wrongPasswordCredentials))
+                }
+
+                expect(answers).toContainEqual(fail(failures.tooManyAttempts))
+                expect(await service.logIn(adaCredentials)).toEqual(fail(failures.tooManyAttempts))
+                expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
+            })
+
+            it('blocks an unknown email just like a registered one, so the block never tells which emails exist', async () => {
+                const answers = []
+                for (let attempt = 0; attempt < MOST_FAILED_LOG_INS_TO_TRY; attempt++) {
+                    answers.push(await service.logIn({ email: UNKNOWN_EMAIL, password: WRONG_PASSWORD }))
+                }
+
+                expect(answers).toContainEqual(fail(failures.tooManyAttempts))
             })
         })
 

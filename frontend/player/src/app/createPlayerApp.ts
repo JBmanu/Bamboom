@@ -43,8 +43,5 @@ export async function createPlayerApp({ history = createWebHistory(), authServic
 
     installFocusAfterNavigation(router) // before the router starts, so the first navigation is the one it skips
 
-    const app = createApp(App).use(pinia).use(translations).use(router).provide(authServiceKey, watchedAuthService)
-
-    await router.isReady() // the first page is decided before anything is drawn: no flash of the wrong page
-    return app
+    return createApp(App).use(pinia).use(translations).use(router).provide(authServiceKey, watchedAuthService)
 }

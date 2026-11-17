@@ -32,4 +32,21 @@ describe('createImageDirectives', () => {
     it('does not match a sibling folder that merely shares the prefix', () => {
         expect([...directivesFor(at('/player/resource-old/hero.png'))]).toEqual([])
     })
+
+    describe('on Windows', () => {
+        const windowsRoot = new URL('file:///C:/Users/ada/player/resource/')
+        // What imagetools does with a Vite module id: new URL(id, 'file://'), which reads 'C:' as the scheme.
+        const imagetoolsUrlOf = (moduleId: string) => new URL(moduleId, 'file://')
+        const windowsDirectivesFor = createImageDirectives(windowsRoot)
+
+        it('recognizes an image under the resource root, although its drive letter became a URL scheme', () => {
+            const result = windowsDirectivesFor(imagetoolsUrlOf('C:/Users/ada/player/resource/hero.png?as=picture'))
+
+            expect(result.get('format')).toBe('avif;webp')
+        })
+
+        it('still leaves a sibling folder that shares the prefix untouched', () => {
+            expect([...windowsDirectivesFor(imagetoolsUrlOf('C:/Users/ada/player/resource-old/hero.png'))]).toEqual([])
+        })
+    })
 })

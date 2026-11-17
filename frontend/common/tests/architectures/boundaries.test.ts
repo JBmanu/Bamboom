@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { posix, resolve } from 'node:path'
 import { ESLint } from 'eslint'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { RASTER_EXTENSIONS } from '../../src/images/rasterFormats.ts'
 
 const PACKAGES = ['common', 'player', 'admin'] as const
@@ -22,6 +22,13 @@ async function forbiddenSyntax(pkg: Pkg, code: string, folder = '') {
     const [result] = await eslint.lintText(code, { filePath })
     return result.messages.filter((m) => m.ruleId === 'no-restricted-syntax')
 }
+
+/** ESLint's first lint loads parsers and plugins (seconds on a busy machine): the whole file pays for it, not its first case. */
+const ESLINT_WARM_UP_TIMEOUT_MS = 60_000
+
+beforeAll(async () => {
+    await eslint.lintText('', { filePath: posix.join('common', 'src', 'warm-up-probe.ts') })
+}, ESLINT_WARM_UP_TIMEOUT_MS)
 
 describe('frontend import boundaries', () => {
     it.each([

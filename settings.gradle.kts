@@ -1,5 +1,10 @@
 rootProject.name = "Bamboom"
 
+plugins {
+    // A missing JDK is downloaded from the foojay catalogue instead of failing the build.
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 // build-logic SEMPRE per prima
 includeBuild("build-logic")
 
