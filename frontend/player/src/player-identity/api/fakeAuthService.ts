@@ -53,19 +53,22 @@ export function createFakeAuthService({
     let pendingGoogleEmail: string | undefined
     let nextCallFailure: ConnectionFailure | undefined
 
-    const findAccountByEmail = (email: string) => knownAccounts.find((account) => account.email === email)
-    const isUsernameTaken = (username: string) => knownAccounts.some((account) => account.username === username)
+    const toComparable = (text: string) => text.toLowerCase()
+    const isSameText = (first: string, second: string) => toComparable(first) === toComparable(second)
+    const findAccountByEmail = (email: string) => knownAccounts.find((account) => isSameText(account.email, email))
+    const isUsernameTaken = (username: string) => knownAccounts.some((account) => isSameText(account.username, username))
     const toPlayer = ({ username, email }: FakeAccount): Player => ({ username, email })
-    const isLogInBlocked = (email: string) => (logInAttemptsByEmail.get(email)?.lockedUntil ?? 0) > Date.now()
+    const isLogInBlocked = (email: string) => (logInAttemptsByEmail.get(toComparable(email))?.lockedUntil ?? 0) > Date.now()
 
     function recordFailedLogIn(email: string) {
-        const attempts = logInAttemptsByEmail.get(email) ?? { failedLogIns: 0, lockedUntil: 0 }
+        const comparableEmail = toComparable(email)
+        const attempts = logInAttemptsByEmail.get(comparableEmail) ?? { failedLogIns: 0, lockedUntil: 0 }
         attempts.failedLogIns += 1
         if (attempts.failedLogIns >= maxFailedLogIns) {
             attempts.failedLogIns = 0 // once the lockout is over, the count starts again
             attempts.lockedUntil = Date.now() + logInLockoutMs
         }
-        logInAttemptsByEmail.set(email, attempts)
+        logInAttemptsByEmail.set(comparableEmail, attempts)
     }
 
     // NoInfer: the failures a method can return come from the port, not from the first `fail(...)` found in the body.
@@ -100,7 +103,7 @@ export function createFakeAuthService({
                     recordFailedLogIn(email) // unknown emails count too, or the lockout would tell which emails exist
                     return fail(failures.invalidCredentials)
                 }
-                logInAttemptsByEmail.delete(email)
+                logInAttemptsByEmail.delete(toComparable(email))
                 signedInPlayer = toPlayer(account)
                 return succeed(signedInPlayer)
             }),
@@ -109,8 +112,9 @@ export function createFakeAuthService({
             answer(() => {
                 if (findAccountByEmail(email)) return fail(failures.emailAlreadyRegistered)
                 if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
-                knownAccounts.push({ username, email, password })
-                signedInPlayer = { username, email }
+                const comparableCredentials = { username: username, email: toComparable(email), password }
+                knownAccounts.push(comparableCredentials)
+                signedInPlayer = { username: comparableCredentials.username, email: comparableCredentials.email }
                 return succeed(signedInPlayer)
             }),
 
@@ -160,8 +164,9 @@ export function createFakeAuthService({
             answer(() => {
                 if (pendingGoogleEmail === undefined) return fail(failures.sessionExpired)
                 if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
-                knownAccounts.push({ username, email: pendingGoogleEmail })
-                signedInPlayer = { username, email: pendingGoogleEmail }
+                const newAccount = { username, email: toComparable(pendingGoogleEmail) }
+                knownAccounts.push(newAccount)
+                signedInPlayer = newAccount
                 pendingGoogleEmail = undefined
                 return succeed(signedInPlayer)
             })
