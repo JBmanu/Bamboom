@@ -120,7 +120,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
 
         describe('registration', () => {
             const newcomer = { username: 'grace', email: 'grace@example.com', password: 'another-horse-7' }
-            const newComerUpperCase = {
+            const newcomerWithCapitals = {
                 username: newcomer.username.toUpperCase(),
                 email: newcomer.email.toUpperCase(),
                 password: newcomer.password
@@ -187,7 +187,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
 
             it('signs in with the email in lower case after registering it with capital letters', async () => {
-                await service.register(newComerUpperCase)
+                await service.register(newcomerWithCapitals)
                 await service.logOut()
                 expect(await service.logIn({ email: newcomer.email, password: newcomer.password })).toEqual(
                     succeed({ username: 'GRACE', email: 'grace@example.com' })
@@ -195,13 +195,9 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
 
             it('refuses a username that differs from one registered with capital letters only by letter case', async () => {
-                await service.register(newComerUpperCase)
-                expect(
-                    await service.register({
-                        ...newcomer,
-                        username: account.username.toUpperCase()
-                    })
-                ).toEqual(fail(failures.usernameAlreadyTaken))
+                await service.register(newcomerWithCapitals) // GRACE, stored as typed
+                expect(await service.register({ ...newcomer, email: 'other@example.com' })) // grace, free email
+                    .toEqual(fail(failures.usernameAlreadyTaken))
             })
         })
 

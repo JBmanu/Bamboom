@@ -112,9 +112,9 @@ export function createFakeAuthService({
             answer(() => {
                 if (findAccountByEmail(email)) return fail(failures.emailAlreadyRegistered)
                 if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
-                const comparableCredentials = { username: username, email: toComparable(email), password }
-                knownAccounts.push(comparableCredentials)
-                signedInPlayer = { username: comparableCredentials.username, email: comparableCredentials.email }
+                const newAccount = { username, email: toComparable(email), password }
+                knownAccounts.push(newAccount)
+                signedInPlayer = toPlayer(newAccount)
                 return succeed(signedInPlayer)
             }),
 
@@ -166,7 +166,7 @@ export function createFakeAuthService({
                 if (isUsernameTaken(username)) return fail(failures.usernameAlreadyTaken)
                 const newAccount = { username, email: toComparable(pendingGoogleEmail) }
                 knownAccounts.push(newAccount)
-                signedInPlayer = newAccount
+                signedInPlayer = toPlayer(newAccount)
                 pendingGoogleEmail = undefined
                 return succeed(signedInPlayer)
             })
