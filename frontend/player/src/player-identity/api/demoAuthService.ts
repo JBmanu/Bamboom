@@ -5,7 +5,7 @@ import { createFakeAuthService } from './fakeAuthService.ts'
 export const DEMO_LATENCY_MS = 600
 
 /** The account to sign in with during `npm run dev`. */
-export const DEMO_ACCOUNT = { username: 'demo_player', email: 'demo@example.com', password: 'demoPassword1' }
+export const DEMO_ACCOUNT = { username: 'demo_player', email: 'demo@example.com', password: 'password' }
 
 /**
  * The fake with a demo account and some latency, for `npm run dev` only: `main.ts` uses it when Vite says DEV,
