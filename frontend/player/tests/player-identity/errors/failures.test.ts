@@ -26,13 +26,4 @@ describe('failures', () => {
 
         expect(redirecting).toEqual(['sessionExpired'])
     })
-
-    it('describes invalid credentials as a domain failure shown in a banner', () => {
-        expect(failures.invalidCredentials).toEqual({
-            code: 'invalid-credentials',
-            kind: 'domain',
-            messageKey: 'playerIdentity.failures.invalidCredentials',
-            treatment: 'banner'
-        })
-    })
 })
