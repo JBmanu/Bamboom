@@ -8,19 +8,15 @@ beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
 afterEach(() => vi.restoreAllMocks())
 
 describe('RegisterView', () => {
-    it('shows its title and subtitle inside the layout of the access pages', async () => {
+    it.each([
+        ['English', languages.en, 'Join the explosion!', 'Create your account and start playing!'],
+        ['Italian', languages.it, 'Unisciti all’esplosione!', 'Crea il tuo account e inizia a giocare!']
+    ])('shows its title and subtitle in %s, inside the layout of the access pages', async (_languageName, language, title, subtitle) => {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, language)
         const { container } = await mountPlayer(REGISTER_PATH)
 
-        expect(titleOf(container)).toBe('Join the explosion!')
-        expect(subtitleOf(container)).toBe('Create your account and start playing!')
-    })
-
-    it('speaks Italian when Italian is the stored language', async () => {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, languages.it)
-        const { container } = await mountPlayer(REGISTER_PATH)
-
-        expect(titleOf(container)).toBe('Unisciti all’esplosione!')
-        expect(subtitleOf(container)).toBe('Crea il tuo account e inizia a giocare!')
+        expect(titleOf(container)).toBe(title)
+        expect(subtitleOf(container)).toBe(subtitle)
     })
 
     it.each([
@@ -49,4 +45,14 @@ describe('RegisterView', () => {
         expect(link?.getAttribute('href')).toBe(LOGIN_PATH)
         expect(container.textContent).toContain('Already have an account?')
     })
+})
+
+describe('RegisterView: the validation', () => {
+    it.each([
+        ['Nickname', 'ada_9', true, 'valid'],
+        ['Email', 'ada@example.com', true, 'valid'],
+        ['Password', 'long-enough-1', true, 'valid'], // one row per field: proves each is wired
+        ['Email', 'not-an-email', true, undefined], // the trap: no validation has run yet, but it must not turn green
+        ['Email', 'ada@example.com', false, undefined] // valid but not left yet
+    ])('%s with "%s", left: %s, is shown as %s', async () => {})
 })

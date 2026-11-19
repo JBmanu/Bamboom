@@ -1,11 +1,11 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LOGIN_PATH } from '../../../src/player-identity/routePaths'
+import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
-import { findFieldByLabel, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
+import { findFieldByLabel, findLinkByText, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: account.username, email: account.email }
@@ -24,19 +24,15 @@ beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
 afterEach(() => vi.restoreAllMocks())
 
 describe('LoginView', () => {
-    it('shows its title and subtitle inside the layout of the access pages', async () => {
+    it.each([
+        ['English', languages.en, 'Welcome back!', 'Ready to make the match explode?'],
+        ['Italian', languages.it, 'Bentornato!', 'Pronto a far esplodere la partita?']
+    ])('shows its title and subtitle in %s, inside the layout of the access pages', async (_languageName, language, title, subtitle) => {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, language)
         const { container } = await mountPlayer(LOGIN_PATH)
 
-        expect(titleOf(container)).toBe('Welcome back!')
-        expect(subtitleOf(container)).toBe('Ready to make the match explode?')
-    })
-
-    it('speaks Italian when Italian is the stored language', async () => {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, languages.it)
-        const { container } = await mountPlayer(LOGIN_PATH)
-
-        expect(titleOf(container)).toBe('Bentornato!')
-        expect(subtitleOf(container)).toBe('Pronto a far esplodere la partita?')
+        expect(titleOf(container)).toBe(title)
+        expect(subtitleOf(container)).toBe(subtitle)
     })
 
     it('lets the browser fill in the saved credentials', async () => {
@@ -78,6 +74,14 @@ describe('LoginView', () => {
 
         await typeInto(email, 'ada@example.com')
         expect(readFieldError(email)).toBeUndefined() // read again: the page changed, an old variable would not
+    })
+
+    it('offers a way to the register page', async () => {
+        const { container } = await mountPlayer(LOGIN_PATH)
+        const link = findLinkByText(container, 'Create an account')
+
+        expect(link?.getAttribute('href')).toBe(REGISTER_PATH)
+        expect(container.textContent).toContain('New to Bamboom?')
     })
 })
 

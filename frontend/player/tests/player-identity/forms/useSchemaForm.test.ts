@@ -76,4 +76,6 @@ describe('useSchemaForm', () => {
         expect(schemaForm.translateFirstError([undefined, { key: 'tooShort', values: { minimum: 3 } }])).toBe('at least 3')
         expect(schemaForm.translateFirstError([])).toBeUndefined()
     })
+
+    it('says whether a single value follows the rule of its field', () => {})
 })
