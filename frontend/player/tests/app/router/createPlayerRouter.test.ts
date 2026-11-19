@@ -1,10 +1,11 @@
 import { createMemoryHistory } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 import { createPlayerRouter } from '../../../src/app/router/createPlayerRouter'
-import { AUTH_LAYOUT_PATH, LOGIN_PATH } from '../../../src/player-identity/routePaths.ts'
+import { AUTH_LAYOUT_PATH, LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
 import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
 
 const NOT_FOUND_ROUTE_NAME = 'notFound'
+const accessPages = [LOGIN_PATH, REGISTER_PATH]
 
 function createRouterFor(session: { isSignedIn: boolean }) {
     return createPlayerRouter({ history: createMemoryHistory(), session, whenSessionRestored: () => Promise.resolve() })
@@ -18,16 +19,16 @@ describe('createPlayerRouter', () => {
         expect(router.currentRoute.value.path).toBe(LOGIN_PATH)
     })
 
-    it('lets a signed-out person stay on the login', async () => {
+    it.each(accessPages)('lets a signed-out person stay on %s', async (path) => {
         const router = createRouterFor({ isSignedIn: false })
-        await router.push(LOGIN_PATH)
+        await router.push(path)
 
-        expect(router.currentRoute.value.path).toBe(LOGIN_PATH)
+        expect(router.currentRoute.value.path).toBe(path)
     })
 
-    it('sends a signed-in person who opens the login to the home', async () => {
+    it.each(accessPages)('sends a signed-in person who opens %s to the home', async (path) => {
         const router = createRouterFor({ isSignedIn: true })
-        await router.push(LOGIN_PATH)
+        await router.push(path)
 
         expect(router.currentRoute.value.path).toBe(HOME_PATH)
     })

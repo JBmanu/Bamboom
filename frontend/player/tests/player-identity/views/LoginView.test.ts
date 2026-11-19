@@ -1,42 +1,15 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
-import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LOGIN_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
+import { findFieldByLabel, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: account.username, email: account.email }
 const wrongPassword = 'not-the-password'
-
-const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
-const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
-
-/** Finds an input the way a person does: by the text of its label, through the label's `for`. */
-function findFieldByLabel(container: HTMLElement, labelText: string) {
-    const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)
-    return container.querySelector<HTMLInputElement>(`#${CSS.escape(label!.htmlFor)}`)!
-}
-
-/** The error a screen reader announces for the field: the element its `aria-describedby` points to. */
-function readFieldError(input: HTMLInputElement) {
-    const errorId = input.getAttribute('aria-describedby')
-    return errorId ? document.getElementById(errorId)?.textContent : undefined
-}
-
-// flushPromises: TanStack validates asynchronously, so the test waits for every pending promise before looking.
-async function typeInto(input: HTMLInputElement, text: string) {
-    input.value = text
-    input.dispatchEvent(new Event('input'))
-    await flushPromises()
-}
-
-async function submitForm(container: HTMLElement) {
-    container.querySelector('form')!.dispatchEvent(new Event('submit'))
-    await flushPromises()
-}
 
 /** Fills the form as a person would and sends it. */
 async function logInThroughTheForm(container: HTMLElement, email: string, password: string) {
