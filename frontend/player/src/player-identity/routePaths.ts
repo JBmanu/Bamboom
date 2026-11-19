@@ -2,3 +2,4 @@
 export const AUTH_LAYOUT_PATH = '/auth'
 
 export const LOGIN_PATH = '/login'
+export const REGISTER_PATH = '/register'
