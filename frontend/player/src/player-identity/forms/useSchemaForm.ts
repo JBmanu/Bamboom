@@ -1,7 +1,7 @@
 import { validateInput } from '../schemas/validateInput'
 import { type Failure } from '../errors/failures'
 import { shallowRef, type ShallowRef } from 'vue'
-import type * as z from 'zod/mini'
+import * as z from 'zod/mini'
 import { revalidateLogic, useForm } from '@tanstack/vue-form'
 import { type TranslatableMessage } from '../errors/validationFailure'
 import { useI18n } from 'vue-i18n'
@@ -71,5 +71,19 @@ export function useSchemaForm<Schema extends z.ZodMiniObject>(options: SchemaFor
         form.setFieldValue(fieldName as never, '' as never, { dontValidate: true })
     }
 
-    return { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstError, focusField, emptyField }
+    /** Whether this value alone follows the rule of its field: it does not wait for the first submit. */
+    function isFieldValueValid(fieldName: Extract<keyof z.input<Schema>, string>, value: unknown) {
+        return z.safeParse(options.schema.shape[fieldName], value).success
+    }
+
+    return {
+        form,
+        serverFailure,
+        isSubmitting,
+        isFieldValueValid,
+        submitUnlessWaiting,
+        translateFirstError,
+        focusField,
+        emptyField
+    }
 }

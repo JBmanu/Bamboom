@@ -21,7 +21,7 @@ const { t } = useI18n()
 
 const logInFormElement = useTemplateRef('logInFormElement')
 
-const { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstError, focusField, emptyField } = useSchemaForm({
+const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstError, focusField, emptyField } = useSchemaForm({
     schema: formSchemas.logIn,
     defaultValues: { email: '', password: '' },
     formElement: logInFormElement,

@@ -22,7 +22,7 @@ const { t } = useI18n()
 
 const registerFormElement = useTemplateRef('registerFormElement')
 
-const { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstError, focusField, emptyField } = useSchemaForm({
+const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaiting, translateFirstError, focusField, emptyField } = useSchemaForm({
     schema: formSchemas.register,
     defaultValues: { username: '', email: '', password: '' },
     formElement: registerFormElement,
@@ -69,6 +69,7 @@ const { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstEr
                     autocomplete="nickname"
                     :model-value="field.state.value"
                     :error="translateFirstError(field.state.meta.errors)"
+                    :valid="field.state.meta.isBlurred && isFieldValueValid('username', field.state.value)"
                     @update:model-value="field.handleChange"
                     @blur="field.handleBlur"
                 />
@@ -82,6 +83,7 @@ const { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstEr
                     autocomplete="email"
                     :model-value="field.state.value"
                     :error="translateFirstError(field.state.meta.errors)"
+                    :valid="field.state.meta.isBlurred && isFieldValueValid('email', field.state.value)"
                     @update:model-value="field.handleChange"
                     @blur="field.handleBlur"
                 />
@@ -94,6 +96,7 @@ const { form, isSubmitting, serverFailure, submitUnlessWaiting, translateFirstEr
                     autocomplete="new-password"
                     :model-value="field.state.value"
                     :error="translateFirstError(field.state.meta.errors)"
+                    :valid="field.state.meta.isBlurred && isFieldValueValid('password', field.state.value)"
                     @update:model-value="field.handleChange"
                     @blur="field.handleBlur"
                 />

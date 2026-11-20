@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { mountPlayer } from '../../utils/mountPlayer.ts'
-import { findFieldByLabel, findLinkByText, subtitleOf, titleOf } from '../../utils/accessPageQueries.ts'
+import { findFieldByLabel, findLinkByText, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
 import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
+import { flushPromises } from '@vue/test-utils'
 
 beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
 afterEach(() => vi.restoreAllMocks())
@@ -45,6 +46,19 @@ describe('RegisterView', () => {
         expect(link?.getAttribute('href')).toBe(LOGIN_PATH)
         expect(container.textContent).toContain('Already have an account?')
     })
+
+    it.each([
+        ['Nickname', 'two words'],
+        ['Email', 'not-an-email'],
+        ['Password', 'short']
+    ])('shows a message under %s when it holds "%s" and the form is submitted', async (fieldText, value) => {
+        const { container } = await mountPlayer(REGISTER_PATH)
+        const field = findFieldByLabel(container, fieldText)
+        await typeInto(field, value)
+        await submitForm(container)
+
+        expect(readFieldError(field)).toBeDefined()
+    })
 })
 
 describe('RegisterView: the validation', () => {
@@ -54,5 +68,15 @@ describe('RegisterView: the validation', () => {
         ['Password', 'long-enough-1', true, 'valid'], // one row per field: proves each is wired
         ['Email', 'not-an-email', true, undefined], // the trap: no validation has run yet, but it must not turn green
         ['Email', 'ada@example.com', false, undefined] // valid but not left yet
-    ])('%s with "%s", left: %s, is shown as %s', async () => {})
+    ])('%s with "%s", left: %s, is shown as %s', async (fieldText, value, left, state) => {
+        const { container } = await mountPlayer(REGISTER_PATH)
+        const field = findFieldByLabel(container, fieldText)
+        await typeInto(field, value)
+        if (left) {
+            field.dispatchEvent(new Event('blur'))
+            await flushPromises()
+        }
+
+        expect(field.closest('[data-state]')?.getAttribute('data-state') ?? undefined).toBe(state)
+    })
 })

@@ -77,5 +77,14 @@ describe('useSchemaForm', () => {
         expect(schemaForm.translateFirstError([])).toBeUndefined()
     })
 
-    it('says whether a single value follows the rule of its field', () => {})
+    it.each<['email' | 'password', string, boolean]>([
+        ['email', 'ada@example.com', true],
+        ['email', ' ada@example.com ', true], // the schema trims: spaces do not make it invalid
+        ['email', 'ada', false],
+        ['password', '', false]
+    ])('says whether %s "%s" follows the rule of its field: %s', (fieldName, value, expected) => {
+        const { schemaForm } = mountForm(async () => undefined)
+
+        expect(schemaForm.isFieldValueValid(fieldName, value)).toBe(expected)
+    })
 })
