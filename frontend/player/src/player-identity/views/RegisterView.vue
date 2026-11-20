@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { I18nT, useI18n } from 'vue-i18n'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
-import { VBanner, VButton, VPasswordField, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VPasswordField, VStrengthMeter, VTextField } from '@bamboom/common'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
 import UserIcon from '~icons/ph/user-fill'
@@ -9,11 +9,12 @@ import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import { formSchemas } from '../schemas/formSchemas.ts'
 import { failures } from '../errors/failures.ts'
 import { LOGIN_PATH, REGISTER_PATH } from '../routePaths.ts'
-import { useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { useAuthService } from '../useAuthService.ts'
 import { useSessionStore } from '../stores/useSessionStore.ts'
 import { useRouter } from 'vue-router'
 import AuthAlternativeLink from '../components/AuthAlternativeLink.vue'
+import { usePasswordStrength } from '../forms/usePasswordStrength.ts'
 
 const authService = useAuthService()
 const session = useSessionStore()
@@ -41,6 +42,12 @@ const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaitin
         return undefined
     }
 })
+
+const password = form.useSelector((state) => state.values.password)
+const nickname = form.useSelector((state) => state.values.username)
+const email = form.useSelector((state) => state.values.email)
+const personalInputs = computed(() => [nickname.value, email.value])
+const { strength } = usePasswordStrength(password, personalInputs)
 </script>
 
 <template>
@@ -100,6 +107,7 @@ const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaitin
                     @update:model-value="field.handleChange"
                     @blur="field.handleBlur"
                 />
+                <VStrengthMeter :level="strength.level" :label="strength.labelKey ? t(strength.labelKey) : ''" />
             </form.Field>
 
             <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.register.submit') }} </VButton>

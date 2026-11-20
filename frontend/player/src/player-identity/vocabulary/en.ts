@@ -21,6 +21,13 @@ export default {
         loginQuestion: 'Already have an account?',
         loginLink: 'Log in now'
     },
+    passwordStrength: {
+        veryWeak: 'Very weak',
+        weak: 'Weak',
+        fair: 'Fair',
+        good: 'Good',
+        strong: 'Strong'
+    },
     failures: {
         invalidCredentials: 'Email or password is incorrect.',
         emailAlreadyRegistered: 'This email is already registered.',

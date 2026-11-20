@@ -23,6 +23,13 @@ export default {
         loginQuestion: 'Hai già un account?',
         loginLink: 'Accedi ora'
     },
+    passwordStrength: {
+        veryWeak: 'Molto debole',
+        weak: 'Debole',
+        fair: 'Discreta',
+        good: 'Buona',
+        strong: 'Forte'
+    },
     failures: {
         invalidCredentials: 'Email o password non corrette.',
         emailAlreadyRegistered: 'Questa email è già registrata.',
