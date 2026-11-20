@@ -27,12 +27,13 @@ const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaitin
     schema: formSchemas.register,
     defaultValues: { username: '', email: '', password: '' },
     formElement: registerFormElement,
+    fieldOfFailure: {
+        [failures.emailAlreadyRegistered.code]: 'email',
+        [failures.usernameAlreadyTaken.code]: 'username'
+    },
     submitValidValues: async (newAccount) => {
         const answer = await authService.register(newAccount)
-        if (!answer.ok) {
-            // Step 8 shows the server's field messages under their field; until then the screen can only say it did not understand.
-            return answer.failure.kind === 'validation' ? failures.unexpectedResponse : answer.failure
-        }
+        if (!answer.ok) return answer.failure
         session.startSession(answer.value)
         // Opening this page again lets the route guard decide where a signed-in person goes: this module does not know the home.
         await router.replace({ path: REGISTER_PATH, force: true })

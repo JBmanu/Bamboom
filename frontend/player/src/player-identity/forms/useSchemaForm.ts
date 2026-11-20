@@ -3,8 +3,13 @@ import { type Failure } from '../errors/failures'
 import { shallowRef, type ShallowRef } from 'vue'
 import * as z from 'zod/mini'
 import { revalidateLogic, useForm } from '@tanstack/vue-form'
-import { type TranslatableMessage } from '../errors/validationFailure'
+import { type TranslatableMessage, ValidationFailure } from '../errors/validationFailure'
 import { useI18n } from 'vue-i18n'
+
+/** Our own key in the error map of a field: TanStack shows it but never clears it, so we do. */
+const SERVER_MESSAGE_KEY = 'onServer'
+
+type FieldName<Schema extends z.ZodMiniObject> = Extract<keyof z.input<Schema>, string>
 
 // Schema is whatever schema the caller passes: field names and value types come from it.
 type SchemaFormOptions<Schema extends z.ZodMiniObject> = {
@@ -12,8 +17,10 @@ type SchemaFormOptions<Schema extends z.ZodMiniObject> = {
     defaultValues: z.input<Schema>
     /** The `<form>` element: it is only used to move the focus to a field by its name. */
     formElement: Readonly<ShallowRef<HTMLFormElement | null>>
+    /** Which field each failure is about: the screen knows it, the engine does not. Keyed by failure code. */
+    fieldOfFailure?: Readonly<Record<string, FieldName<Schema>>>
     /** Receives the clean values; answers the failure to show, or nothing when it worked. */
-    submitValidValues: (values: z.output<Schema>) => Promise<Failure | undefined>
+    submitValidValues: (values: z.output<Schema>) => Promise<Failure | ValidationFailure<Extract<keyof z.input<Schema>, string>> | undefined>
 }
 
 /**
@@ -24,10 +31,15 @@ export function useSchemaForm<Schema extends z.ZodMiniObject>(options: SchemaFor
     const { t } = useI18n()
     /** The server's last refusal, shown until the next submit. */
     const serverFailure = shallowRef<Failure>()
+    const fieldNames = Object.keys(options.defaultValues) as FieldName<Schema>[]
 
     const form = useForm({
         defaultValues: options.defaultValues,
         validationLogic: revalidateLogic(),
+        // A new edit makes the server's message about that field out of date.
+        listeners: {
+            onChange: ({ fieldApi }) => setServerMessage(fieldApi.name, undefined)
+        },
         validators: {
             // Our validator, not the bare schema: it keeps the numbers a message needs ({ minimum }) and the first-message rule.
             onDynamic: ({ value }) => {
@@ -36,13 +48,43 @@ export function useSchemaForm<Schema extends z.ZodMiniObject>(options: SchemaFor
             }
         },
         onSubmit: async ({ value }) => {
-            // TanStack passes the raw values: validating again gives the clean ones (trimmed email).
             const validation = validateInput(options.schema, value)
             if (!validation.ok) return
             serverFailure.value = undefined // new attempt: forget the old refusal
-            serverFailure.value = await options.submitValidValues(validation.value)
+            const refusal = await options.submitValidValues(validation.value)
+            if (refusal) showRefusal(refusal)
         }
     })
+
+    /** Puts a refusal where the person looks: under its field, or in the banner when it is about no field in particular. */
+    function showRefusal(refusal: Failure | ValidationFailure<FieldName<Schema>>) {
+        if (refusal.kind === 'validation') {
+            // Form order, not the server's: the focus goes to the first field the person sees.
+            const refusedFields = fieldNames.filter((fieldName) => refusal.fieldMessages[fieldName])
+            for (const fieldName of refusedFields) setServerMessage(fieldName, refusal.fieldMessages[fieldName])
+            if (refusedFields[0]) focusField(refusedFields[0])
+            return
+        }
+        const fieldName = options.fieldOfFailure?.[refusal.code]
+        if (fieldName) {
+            // A failure is a single message key with no numbers: the same shape a field message needs.
+            setServerMessage(fieldName, { key: refusal.messageKey, values: {} })
+            focusField(fieldName)
+            return
+        }
+        serverFailure.value = refusal
+    }
+
+    function setServerMessage(fieldName: string, message: TranslatableMessage | undefined): void {
+        form.setFieldMeta(fieldName as never, (meta) => ({
+            ...meta,
+            errorMap: { ...meta.errorMap, [SERVER_MESSAGE_KEY]: message }
+        }))
+    }
+
+    function forgetAllServerMessages() {
+        for (const fieldName of fieldNames) setServerMessage(fieldName, undefined)
+    }
 
     /** True from the submit until the answer: the button shows a spinner meanwhile. */
     const isSubmitting = form.useSelector((state) => state.isSubmitting)
@@ -50,6 +92,7 @@ export function useSchemaForm<Schema extends z.ZodMiniObject>(options: SchemaFor
     /** Enter submits even while the button is loading: this blocks the second submit. */
     function submitUnlessWaiting() {
         if (isSubmitting.value) return
+        forgetAllServerMessages() // before the submit: a leftover message would count as an invalid field and block it
         void form.handleSubmit() // isSubmitting already tells when it ends
     }
 

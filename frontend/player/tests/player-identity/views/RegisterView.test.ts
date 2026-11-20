@@ -24,6 +24,16 @@ const ada = { username: newAccount.username, email: newAccount.email }
 
 const findMeter = (container: HTMLElement) => container.querySelector('[data-level]')
 
+/** Fills the form as a person would and sends it. */
+async function registerThroughTheForm(container: HTMLElement, accountToRegister = newAccount) {
+    // typeInto the "Nickname", "Email" and "Password" fields with the values of newAccount
+    // then submitForm(container)
+    await typeInto(findFieldByLabel(container, 'Nickname'), accountToRegister.username)
+    await typeInto(findFieldByLabel(container, 'Email'), accountToRegister.email)
+    await typeInto(findFieldByLabel(container, 'Password'), accountToRegister.password)
+    await submitForm(container)
+}
+
 beforeEach(() => {
     vi.mocked(assessPasswordStrength).mockReset()
     vi.mocked(assessPasswordStrength).mockResolvedValue(0)
@@ -58,7 +68,7 @@ describe('RegisterView', () => {
 
     it('has a submit button with its label', async () => {
         const { container } = await mountPlayer(REGISTER_PATH)
-        const submitButton = container.querySelector('button[type="submit"]')
+        const submitButton = findSubmitButton(container)
 
         expect(submitButton?.textContent?.trim()).toBe('Create my account')
     })
@@ -170,16 +180,6 @@ describe('RegisterView: the password strength', () => {
     })
 })
 
-/** Fills the form as a person would and sends it. */
-async function registerThroughTheForm(container: HTMLElement) {
-    // typeInto the "Nickname", "Email" and "Password" fields with the values of newAccount
-    // then submitForm(container)
-    await typeInto(findFieldByLabel(container, 'Nickname'), newAccount.username)
-    await typeInto(findFieldByLabel(container, 'Email'), newAccount.email)
-    await typeInto(findFieldByLabel(container, 'Password'), newAccount.password)
-    await submitForm(container)
-}
-
 describe('RegisterView: a successful registration', () => {
     it('given valid values, when the form is submitted, then the session starts with the registered player', async () => {
         const authService = createFakeAuthService({ accounts: [] })
@@ -204,7 +204,7 @@ describe('RegisterView: while waiting for the server', () => {
     /** Long enough to look at the page while the answer is on its way, short enough not to slow the tests. */
     const SLOW_ANSWER_MS = 50
 
-    it('given a slow answer, when the form is submitted, then the button is busy until it arrives', async () => {
+    it('given a slow answer, when the form is submitted, then the button is busy while it waits', async () => {
         const authService = createFakeAuthService({ accounts: [], latencyMs: SLOW_ANSWER_MS })
         const { container, router } = await mountPlayer(REGISTER_PATH, { authService })
         const submitButton = findSubmitButton(container)
@@ -226,5 +226,19 @@ describe('RegisterView: while waiting for the server', () => {
 
         await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
         expect(register).toHaveBeenCalledTimes(1)
+    })
+})
+
+describe('RegisterView: a refused registration', () => {
+    it.each([
+        ['an email already registered', 'Email', { username: 'someone-else', email: newAccount.email }, 'This email is already registered.'],
+        ['a nickname already taken', 'Nickname', { username: newAccount.username, email: 'someone@example.com' }, 'This nickname is already taken.']
+    ])('given %s, when the form is submitted, then %s shows "%s"', async (_situation, fieldText, other, message) => {
+        const existing = { ...other, password: newAccount.password }
+        const authService = createFakeAuthService({ accounts: [existing] })
+        const { container } = await mountPlayer(REGISTER_PATH, { authService })
+
+        await registerThroughTheForm(container, newAccount)
+        expect(readFieldError(findFieldByLabel(container, fieldText))).toBe(message)
     })
 })
