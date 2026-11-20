@@ -13,7 +13,11 @@ import {
 } from '../../utils/accessPageQueries.ts'
 import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
 import { flushPromises } from '@vue/test-utils'
-import { assessPasswordStrength, type PasswordStrengthLevel } from '../../../src/player-identity/schemas/assessPasswordStrength.ts'
+import {
+    assessPasswordStrength,
+    type PasswordStrengthLevel,
+    preloadPasswordStrength
+} from '../../../src/player-identity/schemas/assessPasswordStrength.ts'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
 
@@ -26,8 +30,6 @@ const findMeter = (container: HTMLElement) => container.querySelector('[data-lev
 
 /** Fills the form as a person would and sends it. */
 async function registerThroughTheForm(container: HTMLElement, accountToRegister = newAccount) {
-    // typeInto the "Nickname", "Email" and "Password" fields with the values of newAccount
-    // then submitForm(container)
     await typeInto(findFieldByLabel(container, 'Nickname'), accountToRegister.username)
     await typeInto(findFieldByLabel(container, 'Email'), accountToRegister.email)
     await typeInto(findFieldByLabel(container, 'Password'), accountToRegister.password)
@@ -35,6 +37,7 @@ async function registerThroughTheForm(container: HTMLElement, accountToRegister 
 }
 
 beforeEach(() => {
+    vi.mocked(preloadPasswordStrength).mockReset()
     vi.mocked(assessPasswordStrength).mockReset()
     vi.mocked(assessPasswordStrength).mockResolvedValue(0)
     localStorage.removeItem(LANGUAGE_STORAGE_KEY)
@@ -178,6 +181,13 @@ describe('RegisterView: the password strength', () => {
 
         expect(findMeter(container)?.getAttribute('data-level')).toBe('4')
     })
+
+    it('given the person reaches the password field, when it is focused, then the dictionaries start loading', async () => {
+        const { container } = await mountPlayer(REGISTER_PATH)
+        findFieldByLabel(container, 'Password').dispatchEvent(new Event('focus'))
+
+        expect(preloadPasswordStrength).toHaveBeenCalledTimes(1)
+    })
 })
 
 describe('RegisterView: a successful registration', () => {
@@ -231,9 +241,10 @@ describe('RegisterView: while waiting for the server', () => {
 
 describe('RegisterView: a refused registration', () => {
     it.each([
-        ['an email already registered', 'Email', { username: 'someone-else', email: newAccount.email }, 'This email is already registered.'],
-        ['a nickname already taken', 'Nickname', { username: newAccount.username, email: 'someone@example.com' }, 'This nickname is already taken.']
-    ])('given %s, when the form is submitted, then %s shows "%s"', async (_situation, fieldText, other, message) => {
+        // Vitest fills the %s placeholders in order, so the message must come before the object
+        ['an email already registered', 'Email', 'This email is already registered.', { username: 'someone-else', email: newAccount.email }],
+        ['a nickname already taken', 'Nickname', 'This nickname is already taken.', { username: newAccount.username, email: 'someone@example.com' }]
+    ])('given %s, when the form is submitted, then %s shows "%s"', async (_situation, fieldText, message, other) => {
         const existing = { ...other, password: newAccount.password }
         const authService = createFakeAuthService({ accounts: [existing] })
         const { container } = await mountPlayer(REGISTER_PATH, { authService })

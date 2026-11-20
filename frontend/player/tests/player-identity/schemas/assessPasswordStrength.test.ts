@@ -40,4 +40,16 @@ describe('assessPasswordStrength', () => {
 
         expect(ZxcvbnFactory).toHaveBeenCalledTimes(1)
     })
+
+    it('given the dictionaries were requested ahead of time, when a password is assessed, then the checker is still built once', async () => {
+        vi.resetModules() // the checker is cached per module: start from a module that has none
+        const { preloadPasswordStrength, assessPasswordStrength: freshAssess } =
+            await import('../../../src/player-identity/schemas/assessPasswordStrength.ts')
+        const { ZxcvbnFactory } = await import('@zxcvbn-ts/core')
+
+        preloadPasswordStrength()
+        await freshAssess('a1')
+
+        expect(ZxcvbnFactory).toHaveBeenCalledTimes(1)
+    })
 })

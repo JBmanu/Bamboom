@@ -15,6 +15,7 @@ import { useSessionStore } from '../stores/useSessionStore.ts'
 import { useRouter } from 'vue-router'
 import AuthAlternativeLink from '../components/AuthAlternativeLink.vue'
 import { usePasswordStrength } from '../forms/usePasswordStrength.ts'
+import { preloadPasswordStrength } from '../schemas/assessPasswordStrength.ts'
 
 const authService = useAuthService()
 const session = useSessionStore()
@@ -104,6 +105,7 @@ const { strength } = usePasswordStrength(password, personalInputs)
                     :valid="field.state.meta.isBlurred && isFieldValueValid('password', field.state.value)"
                     @update:model-value="field.handleChange"
                     @blur="field.handleBlur"
+                    @focus="preloadPasswordStrength"
                 />
                 <VStrengthMeter :level="strength.level" :label="strength.labelKey ? t(strength.labelKey) : ''" />
             </form.Field>
