@@ -97,10 +97,34 @@ export function describeAuthServiceContract(adapterName: string, createService: 
 
                 expect(answers).toContainEqual(fail(failures.tooManyAttempts))
             })
+            it('signs in with the email written in other letter case, and answers with the registered one', async () => {
+                const upperCaseCredentials = { email: account.email.toUpperCase(), password: account.password }
+                expect(await service.logIn(upperCaseCredentials)).toEqual(succeed(ada))
+            })
+
+            it('counts the failed attempts of an email whatever its letter case', async () => {
+                const answers = []
+                for (let attempt = 0; attempt < MOST_FAILED_LOG_INS_TO_TRY; attempt++) {
+                    const credentials = {
+                        email: attempt % 2 === 0 ? wrongPasswordCredentials.email : wrongPasswordCredentials.email.toUpperCase(),
+                        password: wrongPasswordCredentials.password
+                    }
+                    answers.push(await service.logIn(credentials))
+                }
+
+                expect(answers).toContainEqual(fail(failures.tooManyAttempts))
+                expect(await service.logIn(adaCredentials)).toEqual(fail(failures.tooManyAttempts))
+                expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
+            })
         })
 
         describe('registration', () => {
             const newcomer = { username: 'grace', email: 'grace@example.com', password: 'another-horse-7' }
+            const newcomerWithCapitals = {
+                username: newcomer.username.toUpperCase(),
+                email: newcomer.email.toUpperCase(),
+                password: newcomer.password
+            }
 
             it('creates the account and signs the person in', async () => {
                 expect(await service.register(newcomer)).toEqual(
@@ -142,6 +166,38 @@ export function describeAuthServiceContract(adapterName: string, createService: 
                         username: account.username
                     })
                 ).toEqual(fail(failures.usernameAlreadyTaken))
+            })
+
+            it('refuses an email that differs from a registered one only by letter case', async () => {
+                expect(
+                    await service.register({
+                        ...newcomer,
+                        email: account.email.toUpperCase()
+                    })
+                ).toEqual(fail(failures.emailAlreadyRegistered))
+            })
+
+            it('refuses a username that differs from a registered one only by letter case', async () => {
+                expect(
+                    await service.register({
+                        ...newcomer,
+                        username: account.username.toUpperCase()
+                    })
+                ).toEqual(fail(failures.usernameAlreadyTaken))
+            })
+
+            it('signs in with the email in lower case after registering it with capital letters', async () => {
+                await service.register(newcomerWithCapitals)
+                await service.logOut()
+                expect(await service.logIn({ email: newcomer.email, password: newcomer.password })).toEqual(
+                    succeed({ username: 'GRACE', email: 'grace@example.com' })
+                )
+            })
+
+            it('refuses a username that differs from one registered with capital letters only by letter case', async () => {
+                await service.register(newcomerWithCapitals) // GRACE, stored as typed
+                expect(await service.register({ ...newcomer, email: 'other@example.com' })) // grace, free email
+                    .toEqual(fail(failures.usernameAlreadyTaken))
             })
         })
 

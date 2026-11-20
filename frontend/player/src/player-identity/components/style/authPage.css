@@ -1,0 +1,20 @@
+@reference 'tailwindcss';
+@reference '@bamboom/common/theme.css';
+
+/* The blocks of a screen of the access pages: header, banner, form, link. */
+.auth-page {
+    @apply flex flex-col gap-6;
+}
+
+.auth-form {
+    @apply flex flex-col gap-4;
+}
+
+.auth-submit {
+    @apply mt-2 w-full;
+}
+
+/* The word of the subtitle that stands out. */
+.auth-highlight {
+    @apply font-semibold text-link;
+}

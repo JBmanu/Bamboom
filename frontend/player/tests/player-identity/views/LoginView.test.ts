@@ -1,42 +1,24 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
-import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LOGIN_PATH } from '../../../src/player-identity/routePaths'
+import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
+import {
+    findFieldByLabel,
+    findLinkByText,
+    findSubmitButton,
+    readFieldError,
+    submitForm,
+    subtitleOf,
+    titleOf,
+    typeInto
+} from '../../utils/accessPageQueries.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: account.username, email: account.email }
 const wrongPassword = 'not-the-password'
-
-const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
-const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
-
-/** Finds an input the way a person does: by the text of its label, through the label's `for`. */
-function findFieldByLabel(container: HTMLElement, labelText: string) {
-    const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)
-    return container.querySelector<HTMLInputElement>(`#${CSS.escape(label!.htmlFor)}`)!
-}
-
-/** The error a screen reader announces for the field: the element its `aria-describedby` points to. */
-function readFieldError(input: HTMLInputElement) {
-    const errorId = input.getAttribute('aria-describedby')
-    return errorId ? document.getElementById(errorId)?.textContent : undefined
-}
-
-// flushPromises: TanStack validates asynchronously, so the test waits for every pending promise before looking.
-async function typeInto(input: HTMLInputElement, text: string) {
-    input.value = text
-    input.dispatchEvent(new Event('input'))
-    await flushPromises()
-}
-
-async function submitForm(container: HTMLElement) {
-    container.querySelector('form')!.dispatchEvent(new Event('submit'))
-    await flushPromises()
-}
 
 /** Fills the form as a person would and sends it. */
 async function logInThroughTheForm(container: HTMLElement, email: string, password: string) {
@@ -51,19 +33,15 @@ beforeEach(() => localStorage.removeItem(LANGUAGE_STORAGE_KEY))
 afterEach(() => vi.restoreAllMocks())
 
 describe('LoginView', () => {
-    it('shows its title and subtitle inside the layout of the access pages', async () => {
+    it.each([
+        ['English', languages.en, 'Welcome back!', 'Ready to make the match explode?'],
+        ['Italian', languages.it, 'Bentornato!', 'Pronto a far esplodere la partita?']
+    ])('shows its title and subtitle in %s, inside the layout of the access pages', async (_languageName, language, title, subtitle) => {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, language)
         const { container } = await mountPlayer(LOGIN_PATH)
 
-        expect(titleOf(container)).toBe('Welcome back!')
-        expect(subtitleOf(container)).toBe('Ready to make the match explode?')
-    })
-
-    it('speaks Italian when Italian is the stored language', async () => {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, languages.it)
-        const { container } = await mountPlayer(LOGIN_PATH)
-
-        expect(titleOf(container)).toBe('Bentornato!')
-        expect(subtitleOf(container)).toBe('Pronto a far esplodere la partita?')
+        expect(titleOf(container)).toBe(title)
+        expect(subtitleOf(container)).toBe(subtitle)
     })
 
     it('lets the browser fill in the saved credentials', async () => {
@@ -105,6 +83,14 @@ describe('LoginView', () => {
 
         await typeInto(email, 'ada@example.com')
         expect(readFieldError(email)).toBeUndefined() // read again: the page changed, an old variable would not
+    })
+
+    it('offers a way to the register page', async () => {
+        const { container } = await mountPlayer(LOGIN_PATH)
+        const link = findLinkByText(container, 'Create an account')
+
+        expect(link?.getAttribute('href')).toBe(REGISTER_PATH)
+        expect(container.textContent).toContain('New to Bamboom?')
     })
 })
 
@@ -202,7 +188,6 @@ describe('LoginView: a refused log-in', () => {
 describe('LoginView: while waiting for the server', () => {
     /** Long enough to look at the page while the answer is on its way, short enough not to slow the tests. */
     const SLOW_ANSWER_MS = 50
-    const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
 
     it('shows the button busy until the answer arrives', async () => {
         const authService = createFakeAuthService({ accounts: [account], latencyMs: SLOW_ANSWER_MS })
