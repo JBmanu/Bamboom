@@ -3,6 +3,8 @@ import { flushPromises } from '@vue/test-utils'
 export const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
 export const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
 
+export const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
+
 /** Finds an input the way a person does: by the text of its label, through the label's `for`. */
 export function findFieldByLabel(container: HTMLElement, labelText: string) {
     const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)

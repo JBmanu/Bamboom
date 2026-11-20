@@ -23,18 +23,15 @@ const { t } = useI18n()
 
 const registerFormElement = useTemplateRef('registerFormElement')
 
-const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaiting, translateFirstError, focusField, emptyField } = useSchemaForm({
+const { form, serverFailure, isSubmitting, isFieldValueValid, submitUnlessWaiting, translateFirstError } = useSchemaForm({
     schema: formSchemas.register,
     defaultValues: { username: '', email: '', password: '' },
     formElement: registerFormElement,
-    submitValidValues: async (credentials) => {
-        const answer = await authService.logIn(credentials)
+    submitValidValues: async (newAccount) => {
+        const answer = await authService.register(newAccount)
         if (!answer.ok) {
-            if (answer.failure.code === failures.invalidCredentials.code) {
-                emptyField('password')
-                focusField('password')
-            }
-            return answer.failure
+            // Step 8 shows the server's field messages under their field; until then the screen can only say it did not understand.
+            return answer.failure.kind === 'validation' ? failures.unexpectedResponse : answer.failure
         }
         session.startSession(answer.value)
         // Opening this page again lets the route guard decide where a signed-in person goes: this module does not know the home.

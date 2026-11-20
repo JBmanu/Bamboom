@@ -5,7 +5,16 @@ import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
-import { findFieldByLabel, findLinkByText, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
+import {
+    findFieldByLabel,
+    findLinkByText,
+    findSubmitButton,
+    readFieldError,
+    submitForm,
+    subtitleOf,
+    titleOf,
+    typeInto
+} from '../../utils/accessPageQueries.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: account.username, email: account.email }
@@ -179,7 +188,6 @@ describe('LoginView: a refused log-in', () => {
 describe('LoginView: while waiting for the server', () => {
     /** Long enough to look at the page while the answer is on its way, short enough not to slow the tests. */
     const SLOW_ANSWER_MS = 50
-    const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
 
     it('shows the button busy until the answer arrives', async () => {
         const authService = createFakeAuthService({ accounts: [account], latencyMs: SLOW_ANSWER_MS })

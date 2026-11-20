@@ -1,12 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { mountPlayer } from '../../utils/mountPlayer.ts'
-import { findFieldByLabel, findLinkByText, readFieldError, submitForm, subtitleOf, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
+import {
+    findFieldByLabel,
+    findLinkByText,
+    findSubmitButton,
+    readFieldError,
+    submitForm,
+    subtitleOf,
+    titleOf,
+    typeInto
+} from '../../utils/accessPageQueries.ts'
 import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
 import { flushPromises } from '@vue/test-utils'
 import { assessPasswordStrength, type PasswordStrengthLevel } from '../../../src/player-identity/schemas/assessPasswordStrength.ts'
+import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
+import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
 
 vi.mock('../../../src/player-identity/schemas/assessPasswordStrength.ts')
+
+const newAccount = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
+const ada = { username: newAccount.username, email: newAccount.email }
+
+const findMeter = (container: HTMLElement) => container.querySelector('[data-level]')
 
 beforeEach(() => {
     vi.mocked(assessPasswordStrength).mockReset()
@@ -72,10 +88,10 @@ describe('RegisterView', () => {
 describe('RegisterView: the validation', () => {
     it.each([
         ['Nickname', 'ada_9', true, 'valid'],
-        ['Email', 'ada@example.com', true, 'valid'],
+        ['Email', newAccount.email, true, 'valid'],
         ['Password', 'long-enough-1', true, 'valid'],
         ['Email', 'not-an-email', true, undefined],
-        ['Email', 'ada@example.com', false, undefined]
+        ['Email', newAccount.email, false, undefined]
     ])('%s with "%s", left: %s, is shown as %s', async (fieldText, value, left, state) => {
         const { container } = await mountPlayer(REGISTER_PATH)
         const field = findFieldByLabel(container, fieldText)
@@ -90,8 +106,6 @@ describe('RegisterView: the validation', () => {
 })
 
 describe('RegisterView: the password strength', () => {
-    const findMeter = (container: HTMLElement) => container.querySelector('[data-level]')
-
     it('given an empty password, when the screen opens, then the meter is empty and has no label', async () => {
         const { container } = await mountPlayer(REGISTER_PATH)
         const meter = findMeter(container)
@@ -153,5 +167,64 @@ describe('RegisterView: the password strength', () => {
         await flushPromises()
 
         expect(findMeter(container)?.getAttribute('data-level')).toBe('4')
+    })
+})
+
+/** Fills the form as a person would and sends it. */
+async function registerThroughTheForm(container: HTMLElement) {
+    // typeInto the "Nickname", "Email" and "Password" fields with the values of newAccount
+    // then submitForm(container)
+    await typeInto(findFieldByLabel(container, 'Nickname'), newAccount.username)
+    await typeInto(findFieldByLabel(container, 'Email'), newAccount.email)
+    await typeInto(findFieldByLabel(container, 'Password'), newAccount.password)
+    await submitForm(container)
+}
+
+describe('RegisterView: a successful registration', () => {
+    it('given valid values, when the form is submitted, then the session starts with the registered player', async () => {
+        const authService = createFakeAuthService({ accounts: [] })
+        const { container, app } = await mountPlayer(REGISTER_PATH, { authService })
+        const session = useSessionStore(app.config.globalProperties.$pinia)
+
+        await registerThroughTheForm(container)
+        expect(session.player).toEqual(ada)
+        expect(session.isSignedIn).toBe(true)
+    })
+
+    it('given valid values, when the form is submitted, then the home opens', async () => {
+        const authService = createFakeAuthService({ accounts: [] })
+        const { container, router } = await mountPlayer(REGISTER_PATH, { authService })
+        await registerThroughTheForm(container)
+
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+    })
+})
+
+describe('RegisterView: while waiting for the server', () => {
+    /** Long enough to look at the page while the answer is on its way, short enough not to slow the tests. */
+    const SLOW_ANSWER_MS = 50
+
+    it('given a slow answer, when the form is submitted, then the button is busy until it arrives', async () => {
+        const authService = createFakeAuthService({ accounts: [], latencyMs: SLOW_ANSWER_MS })
+        const { container, router } = await mountPlayer(REGISTER_PATH, { authService })
+        const submitButton = findSubmitButton(container)
+
+        await registerThroughTheForm(container)
+
+        expect(submitButton.getAttribute('aria-busy')).toBe('true')
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+    })
+
+    it('given a slow answer, when the form is submitted again, then only one request is sent', async () => {
+        const authService = createFakeAuthService({ accounts: [], latencyMs: SLOW_ANSWER_MS })
+        const register = vi.spyOn(authService, 'register')
+        const { container, router } = await mountPlayer(REGISTER_PATH, { authService })
+
+        await registerThroughTheForm(container)
+        await submitForm(container)
+        await submitForm(container)
+
+        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(HOME_PATH))
+        expect(register).toHaveBeenCalledTimes(1)
     })
 })
