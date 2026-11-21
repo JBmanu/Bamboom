@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.9.0...player-frontend-v0.10.0) (2026-11-21)
+
+
+### Features
+
+* **player:** add the register screen ([#170](https://github.com/JBmanu/Bamboom/issues/170)) ([0a0ef56](https://github.com/JBmanu/Bamboom/commit/0a0ef564bee0555bfd285ccc381bdc5a82f13e96))
+
 ## [0.9.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.8.0...player-frontend-v0.9.0) (2026-11-17)
 
 
