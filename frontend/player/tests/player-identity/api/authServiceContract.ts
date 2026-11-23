@@ -216,6 +216,36 @@ export function describeAuthServiceContract(adapterName: string, createService: 
                 expect(await service.confirmResetCode({ code: resetCode })).toEqual(succeed(undefined))
             })
 
+            it('when the same email asks for a code again right away, the request is refused', async () => {
+                await service.requestResetCode({ email: account.email })
+
+                expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
+            })
+
+            it('when an unknown email asks again right away, the refusal is the same as for a registered one', async () => {
+                await service.requestResetCode({ email: account.email })
+                await service.requestResetCode({ email: UNKNOWN_EMAIL })
+
+                const registered = await service.requestResetCode({ email: account.email })
+                const unknown = await service.requestResetCode({ email: UNKNOWN_EMAIL })
+
+                expect(unknown).toEqual(registered) // the point is "no hint": both answers must be identical
+                expect(registered).toEqual(fail(failures.tooManyAttempts))
+            })
+
+            it('when a typo is corrected right away with another email, the request is accepted', async () => {
+                await service.requestResetCode({ email: UNKNOWN_EMAIL })
+
+                expect(await service.requestResetCode({ email: account.email })).toEqual(succeed(undefined))
+            })
+
+            it('when a request is refused for coming too soon, the code already sent still works', async () => {
+                await service.requestResetCode({ email: account.email })
+                await service.requestResetCode({ email: account.email }) // refused
+
+                expect(await service.confirmResetCode({ code: resetCode })).toEqual(succeed(undefined))
+            })
+
             it('refuses a wrong code', async () => {
                 await service.requestResetCode({ email: account.email })
 

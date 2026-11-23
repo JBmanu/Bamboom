@@ -5,6 +5,9 @@ export const subtitleOf = (container: HTMLElement) => container.querySelector('[
 
 export const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
 
+export const findButtonByText = (container: HTMLElement, text: string) =>
+    [...container.querySelectorAll('button')].find((button) => button.textContent?.trim().startsWith(text))!
+
 /** Finds an input the way a person does: by the text of its label, through the label's `for`. */
 export function findFieldByLabel(container: HTMLElement, labelText: string) {
     const label = [...container.querySelectorAll('label')].find((element) => element.textContent?.trim() === labelText)

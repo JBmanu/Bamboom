@@ -4,6 +4,14 @@ import { failures } from '../../../src/player-identity/errors/failures'
 import { fail, succeed } from '../../../src/player-identity/errors/result'
 import { contractFixtures, describeAuthServiceContract, GOOGLE_EMAIL, GOOGLE_USERNAME } from './authServiceContract'
 
+const WRONG_RESET_CODE = '000000'
+const anotherEmail = 'grace@example.com'
+
+const { account, resetCode } = contractFixtures
+const ada = { username: account.username, email: account.email }
+const adaCredentials = { email: account.email, password: account.password }
+const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
+
 describeAuthServiceContract('fake adapter', (fixtures) =>
     createFakeAuthService({
         accounts: [fixtures.account],
@@ -12,11 +20,6 @@ describeAuthServiceContract('fake adapter', (fixtures) =>
 )
 
 describe('fake adapter: what only the fake does', () => {
-    const { account, resetCode } = contractFixtures
-    const ada = { username: account.username, email: account.email }
-    const adaCredentials = { email: account.email, password: account.password }
-    const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
-
     afterEach(() => {
         vi.useRealTimers()
     })
@@ -60,6 +63,55 @@ describe('fake adapter: what only the fake does', () => {
         await vi.advanceTimersByTimeAsync(1_001)
 
         expect(await service.confirmResetCode({ code: resetCode })).toEqual(fail(failures.resetCodeExpired))
+    })
+
+    it('when the resend wait is over, a new code request is accepted', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({ accounts: [account], resetCodeResendWaitMs: 1_000 })
+        await service.requestResetCode({ email: account.email })
+
+        await vi.advanceTimersByTimeAsync(999)
+        expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
+        await vi.advanceTimersByTimeAsync(1)
+        expect(await service.requestResetCode({ email: account.email })).toEqual(succeed(undefined))
+    })
+
+    it('when wrong codes blocked a reset, asking again does not renew it until it would have expired', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({
+            accounts: [account],
+            resetCode,
+            maxWrongResetCodes: 1,
+            resetCodeResendWaitMs: 1_000,
+            resetCodeLifetimeMs: 10_000
+        })
+        await service.requestResetCode({ email: account.email })
+        await service.confirmResetCode({ code: WRONG_RESET_CODE }) // the only wrong code allowed: the reset is now blocked
+
+        await vi.advanceTimersByTimeAsync(1_001) // the resend wait is over, the block is not
+        expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
+        await vi.advanceTimersByTimeAsync(8_999) // exactly the lifetime of the code, counted from when it was sent
+        expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
+        await vi.advanceTimersByTimeAsync(1)
+        expect(await service.requestResetCode({ email: account.email })).toEqual(succeed(undefined))
+        expect(await service.confirmResetCode({ code: resetCode })).toEqual(succeed(undefined)) // a fresh reset, fresh count
+    })
+
+    it('when a reset is blocked, asking for another email in between does not free it', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({
+            accounts: [account],
+            maxWrongResetCodes: 1,
+            resetCodeResendWaitMs: 1_000,
+            resetCodeLifetimeMs: 10_000
+        })
+        await service.requestResetCode({ email: account.email })
+        await service.confirmResetCode({ code: WRONG_RESET_CODE })
+
+        expect(await service.requestResetCode({ email: anotherEmail })).toEqual(succeed(undefined))
+        await vi.advanceTimersByTimeAsync(1_001)
+
+        expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
     })
 
     it('completes the profile of a person who came back from Google, and signs them in', async () => {

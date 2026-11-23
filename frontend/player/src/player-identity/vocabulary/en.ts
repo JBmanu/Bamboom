@@ -8,7 +8,8 @@ export default {
         submit: 'Log in now',
         botFreeNote: 'No bots, only real bamboo!',
         registerQuestion: 'New to Bamboom?',
-        registerLink: 'Create an account'
+        registerLink: 'Create an account',
+        forgotPasswordLink: 'Forgot your password?'
     },
     register: {
         title: 'Join the explosion!',
@@ -20,6 +21,32 @@ export default {
         submit: 'Create my account',
         loginQuestion: 'Already have an account?',
         loginLink: 'Log in now'
+    },
+    forgotPassword: {
+        emailStep: {
+            title: 'Boom! Password exploded?',
+            subtitle: 'No problem, we will help you get back in the game.',
+            instruction: 'Enter your email and we will send you a code to reset your password.',
+            emailLabel: 'Email',
+            submit: 'Send code'
+        },
+        codeStep: {
+            title: 'Check your email',
+            subtitle: 'Enter the code to choose a new password.',
+            emailLabel: 'Email',
+            codeSent: 'If an account exists for {email}, we sent a {length}-digit code. Check your spam folder too.',
+            codeLabel: 'Code',
+            submit: 'Confirm code',
+            resend: 'Send the code again',
+            resendIn: 'Send the code again in {seconds} s',
+            resendReady: 'You can ask for a new code now.',
+            changeEmail: 'Change email'
+        },
+        backToLoginQuestion: 'Remembered your password?',
+        backToLoginLink: 'Back to login'
+    },
+    newPassword: {
+        title: 'New password?'
     },
     passwordStrength: {
         veryWeak: 'Very weak',

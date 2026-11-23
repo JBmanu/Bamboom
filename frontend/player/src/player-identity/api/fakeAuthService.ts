@@ -14,6 +14,8 @@ export type FakeAuthServiceOptions = {
     /** The code the fake "sends" by email. */
     resetCode?: string
     resetCodeLifetimeMs?: number
+    /** How long the same email must wait before it can ask for another code. */
+    resetCodeResendWaitMs?: number
     /** Wrong codes allowed before the pending reset is blocked. */
     maxWrongResetCodes?: number
     /** Time every answer takes, to see the loading states of the screens. */
@@ -32,7 +34,10 @@ export type FakeAuthService = AuthService & {
     beginGoogleSignIn(googleEmail: string): void
 }
 
-type PendingReset = { readonly email: string; readonly issuedAt: number; wrongCodes: number; confirmed: boolean }
+/** What the server remembers about the codes of one email: it outlives the pending reset, which another email can replace. */
+type ResetAttempts = { readonly requestedAt: number; wrongCodes: number }
+/** `email` is the one that was typed, in lower case, whether or not an account has it. */
+type PendingReset = { readonly email: string; readonly attempts: ResetAttempts; confirmed: boolean }
 type LogInAttempts = { failedLogIns: number; lockedUntil: number }
 
 /** An in-memory AuthService: it behaves like the real backend will, so the screens can be built and tested before it exists. */
@@ -42,11 +47,13 @@ export function createFakeAuthService({
     resetCode = '123456',
     maxWrongResetCodes = 5,
     resetCodeLifetimeMs = 10 * 60 * 1000,
+    resetCodeResendWaitMs = 60 * 1000,
     maxFailedLogIns = 5,
     logInLockoutMs = 15 * 60 * 1000
 }: FakeAuthServiceOptions = {}): FakeAuthService {
     const knownAccounts: FakeAccount[] = accounts.map((account) => ({ ...account }))
     const logInAttemptsByEmail = new Map<string, LogInAttempts>()
+    const resetAttemptsByEmail = new Map<string, ResetAttempts>()
 
     let signedInPlayer: Player | undefined
     let pendingReset: PendingReset | undefined
@@ -59,6 +66,10 @@ export function createFakeAuthService({
     const isUsernameTaken = (username: string) => knownAccounts.some((account) => isSameText(account.username, username))
     const toPlayer = ({ username, email }: FakeAccount): Player => ({ username, email })
     const isLogInBlocked = (email: string) => (logInAttemptsByEmail.get(toComparable(email))?.lockedUntil ?? 0) > Date.now()
+
+    // Blocked for as long as the code lives: asking again must not hand out a fresh count of wrong codes.
+    const isResetBlocked = ({ wrongCodes, requestedAt }: ResetAttempts) =>
+        wrongCodes >= maxWrongResetCodes && Date.now() - requestedAt <= resetCodeLifetimeMs
 
     function recordFailedLogIn(email: string) {
         const comparableEmail = toComparable(email)
@@ -126,25 +137,28 @@ export function createFakeAuthService({
 
         requestResetCode: ({ email }) =>
             answer(() => {
-                // A reset is "pending" for any email, registered or not: the answer, and what follows, must look the same.
-                // For an unknown email the empty string means "no account": no code will ever match.
-                const emailExists = findAccountByEmail(email) !== undefined
-                pendingReset = {
-                    email: emailExists ? email : '',
-                    issuedAt: Date.now(),
-                    wrongCodes: 0,
-                    confirmed: false
-                }
+                // Keyed by the email as typed, registered or not: an unknown email must wait and get blocked exactly like a known one.
+                const typedEmail = toComparable(email)
+                const previousAttempts = resetAttemptsByEmail.get(typedEmail)
+                const mustWait = previousAttempts !== undefined && Date.now() - previousAttempts.requestedAt < resetCodeResendWaitMs
+                // A refusal changes nothing: the reset already in progress keeps working and the wait does not restart.
+                if (previousAttempts && (mustWait || isResetBlocked(previousAttempts))) return fail(failures.tooManyAttempts)
+
+                const attempts = { requestedAt: Date.now(), wrongCodes: 0 }
+                resetAttemptsByEmail.set(typedEmail, attempts)
+                pendingReset = { email: typedEmail, attempts, confirmed: false }
                 return succeed(undefined)
             }),
 
         confirmResetCode: ({ code }) =>
             answer(() => {
                 if (!pendingReset) return fail(failures.resetCodeInvalid)
-                if (pendingReset.wrongCodes >= maxWrongResetCodes) return fail(failures.tooManyAttempts)
-                if (Date.now() - pendingReset.issuedAt > resetCodeLifetimeMs) return fail(failures.resetCodeExpired)
-                if (pendingReset.email === '' || code !== resetCode) {
-                    pendingReset.wrongCodes += 1
+                const { attempts } = pendingReset
+                if (attempts.wrongCodes >= maxWrongResetCodes) return fail(failures.tooManyAttempts)
+                if (Date.now() - attempts.requestedAt > resetCodeLifetimeMs) return fail(failures.resetCodeExpired)
+                // An unknown email has no account: no code can match, and the refusal is the same as for a wrong code.
+                if (findAccountByEmail(pendingReset.email) === undefined || code !== resetCode) {
+                    attempts.wrongCodes += 1
                     return fail(failures.resetCodeInvalid)
                 }
                 pendingReset.confirmed = true

@@ -1,11 +1,11 @@
 import { createMemoryHistory } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 import { createPlayerRouter } from '../../../src/app/router/createPlayerRouter'
-import { AUTH_LAYOUT_PATH, LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
+import { AUTH_LAYOUT_PATH, FORGOT_PASSWORD_PATH, LOGIN_PATH, NEW_PASSWORD_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths.ts'
 import { HOME_PATH } from '../../../src/app/router/appRoutes.ts'
 
 const NOT_FOUND_ROUTE_NAME = 'notFound'
-const accessPages = [LOGIN_PATH, REGISTER_PATH]
+const accessPages = [LOGIN_PATH, REGISTER_PATH, FORGOT_PASSWORD_PATH, NEW_PASSWORD_PATH]
 
 function createRouterFor(session: { isSignedIn: boolean }) {
     return createPlayerRouter({ history: createMemoryHistory(), session, whenSessionRestored: () => Promise.resolve() })
