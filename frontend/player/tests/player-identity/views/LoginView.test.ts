@@ -1,6 +1,6 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths'
+import { FORGOT_PASSWORD_PATH, LOGIN_PATH, REGISTER_PATH } from '../../../src/player-identity/routePaths'
 import { mountPlayer } from '../../utils/mountPlayer'
 import { createFakeAuthService, useSessionStore } from '../../../src/player-identity'
 import { HOME_PATH } from '../../../src/app/router/appRoutes'
@@ -91,6 +91,13 @@ describe('LoginView', () => {
 
         expect(link?.getAttribute('href')).toBe(REGISTER_PATH)
         expect(container.textContent).toContain('New to Bamboom?')
+    })
+
+    it('offers a way to the forgot password page', async () => {
+        const { container } = await mountPlayer(LOGIN_PATH)
+        const link = findLinkByText(container, 'Forgot your password?')
+
+        expect(link?.getAttribute('href')).toBe(FORGOT_PASSWORD_PATH)
     })
 })
 
