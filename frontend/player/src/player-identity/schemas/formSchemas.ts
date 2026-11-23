@@ -5,7 +5,7 @@ const USERNAME_MIN_LENGTH = 3
 const USERNAME_MAX_LENGTH = 20
 const PASSWORD_MIN_LENGTH = 8
 const PASSWORD_MAX_LENGTH = 128
-const RESET_CODE_LENGTH = 6
+export const RESET_CODE_LENGTH = 6
 
 // Not `minLength(1)`: that check would hand "at least 1" to the message, and "required" has no number to show.
 const isNotEmpty = (text: string) => text.length > 0
