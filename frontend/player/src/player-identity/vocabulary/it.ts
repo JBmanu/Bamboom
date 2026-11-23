@@ -65,6 +65,7 @@ export default {
         resetCodeExpired: 'Il codice è scaduto. Richiedine uno nuovo.',
         tooManyAttempts: 'Troppi tentativi. Riprova tra qualche minuto.',
         resetNotConfirmed: 'Conferma il codice prima di scegliere una nuova password.',
+        resetProofExpired: 'Il tempo per scegliere la nuova password è scaduto. Ricomincia.',
         networkUnreachable: 'Nessuna connessione. Controlla la rete e riprova.',
         requestTimeout: 'Il server ha impiegato troppo a rispondere. Riprova.',
         serverFailure: 'Qualcosa è andato storto da parte nostra. Riprova più tardi.',

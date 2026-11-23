@@ -19,6 +19,7 @@ describeAuthServiceContract('fake adapter', (fixtures) =>
     })
 )
 
+const NEW_PASSWORD = 'newPassword'
 describe('fake adapter: what only the fake does', () => {
     afterEach(() => {
         vi.useRealTimers()
@@ -65,6 +66,40 @@ describe('fake adapter: what only the fake does', () => {
         expect(await service.confirmResetCode({ code: resetCode })).toEqual(fail(failures.resetCodeExpired))
     })
 
+    it('when the proof lifetime has passed, setting the password fails with resetProofExpired', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({ accounts: [account], resetProofLifetimeMs: 1_000 })
+        await service.requestResetCode({ email: account.email })
+        await service.confirmResetCode({ code: resetCode })
+        await vi.advanceTimersByTimeAsync(1_001)
+
+        expect(await service.setNewPassword({ password: NEW_PASSWORD })).toEqual(fail(failures.resetProofExpired))
+    })
+
+    it('when the code is confirmed late, the proof lifetime counts from the confirmation, not from the request', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({ accounts: [account], resetProofLifetimeMs: 1_000 })
+        await service.requestResetCode({ email: account.email })
+        await vi.advanceTimersByTimeAsync(900)
+        await service.confirmResetCode({ code: resetCode })
+        await vi.advanceTimersByTimeAsync(900)
+
+        expect(await service.setNewPassword({ password: NEW_PASSWORD })).toEqual(succeed(undefined))
+    })
+
+    it('when the proof has expired, the old password keeps working', async () => {
+        vi.useFakeTimers()
+        const service = createFakeAuthService({ accounts: [account], resetProofLifetimeMs: 1_000 })
+        await service.requestResetCode({ email: account.email })
+        await service.confirmResetCode({ code: resetCode })
+        await vi.advanceTimersByTimeAsync(1_001)
+
+        const newCredentials = { ...adaCredentials, password: NEW_PASSWORD }
+        await service.setNewPassword({ password: newCredentials.password })
+        expect(await service.logIn(adaCredentials)).toEqual(succeed(ada))
+        expect(await service.logIn(newCredentials)).toEqual(fail(failures.invalidCredentials))
+    })
+
     it('when the resend wait is over, a new code request is accepted', async () => {
         vi.useFakeTimers()
         const service = createFakeAuthService({ accounts: [account], resetCodeResendWaitMs: 1_000 })
@@ -88,9 +123,9 @@ describe('fake adapter: what only the fake does', () => {
         await service.requestResetCode({ email: account.email })
         await service.confirmResetCode({ code: WRONG_RESET_CODE }) // the only wrong code allowed: the reset is now blocked
 
-        await vi.advanceTimersByTimeAsync(1_001) // the resend wait is over, the block is not
+        await vi.advanceTimersByTimeAsync(1_001)
         expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
-        await vi.advanceTimersByTimeAsync(8_999) // exactly the lifetime of the code, counted from when it was sent
+        await vi.advanceTimersByTimeAsync(8_999)
         expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
         await vi.advanceTimersByTimeAsync(1)
         expect(await service.requestResetCode({ email: account.email })).toEqual(succeed(undefined))

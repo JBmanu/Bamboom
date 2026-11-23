@@ -51,8 +51,9 @@ describe('AuthService: what each method answers', () => {
         >()
     })
 
-    it('setNewPassword needs the code to have been confirmed', () => {
-        expectTypeOf<CodesOf<AuthService['setNewPassword']>>().toEqualTypeOf<'reset-not-confirmed' | ConnectionCodes>()
+    it('setNewPassword needs the code to be confirmed, and recently', () => {
+        expectTypeOf<CodesOf<AuthService['setNewPassword']>>().toEqualTypeOf<'reset-not-confirmed' | 'reset-proof-expired' | ConnectionCodes>()
+
         expectTypeOf<ValidationOf<AuthService['setNewPassword']>>().toEqualTypeOf<ValidationFailure<'password'>>()
     })
 

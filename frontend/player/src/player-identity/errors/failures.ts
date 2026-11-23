@@ -25,6 +25,7 @@ const failureDefinitions = {
     resetCodeExpired: domain('reset-code-expired', TREATMENT.banner),
     tooManyAttempts: domain('too-many-attempts', TREATMENT.banner),
     resetNotConfirmed: domain('reset-not-confirmed', TREATMENT.banner),
+    resetProofExpired: domain('reset-proof-expired', TREATMENT.banner),
     networkUnreachable: transport('network-unreachable', TREATMENT.banner),
     requestTimeout: transport('request-timeout', TREATMENT.banner),
     serverFailure: transport('server-failure', TREATMENT.banner),
