@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import type { AuthService, NewPasswordInput, Player } from '../../../src/player-identity/api/authService'
+import type { AuthService, Player } from '../../../src/player-identity/api/authService'
 import type { Result } from '../../../src/player-identity/errors/result'
 import type { ValidationFailure } from '../../../src/player-identity/errors/validationFailure'
 import { FormValues } from '../../../src/player-identity/schemas/formSchemas.ts'
@@ -70,12 +70,8 @@ describe('AuthService: what each method receives', () => {
         expectTypeOf<FormValues['register']>().toEqualTypeOf<{ username: string; email: string; password: string }>()
         expectTypeOf<FormValues['codeRequest']>().toEqualTypeOf<{ email: string }>()
         expectTypeOf<FormValues['codeConfirmation']>().toEqualTypeOf<{ code: string }>()
-        expectTypeOf<FormValues['passwordReset']>().toEqualTypeOf<{ password: string; passwordConfirmation: string }>()
+        expectTypeOf<FormValues['passwordReset']>().toEqualTypeOf<{ password: string }>()
         expectTypeOf<FormValues['googleProfile']>().toEqualTypeOf<{ username: string }>()
-    })
-
-    it('never receives the repeated password', () => {
-        expectTypeOf<NewPasswordInput>().toEqualTypeOf<{ password: string }>()
     })
 
     it('describes a player by username and email', () => {

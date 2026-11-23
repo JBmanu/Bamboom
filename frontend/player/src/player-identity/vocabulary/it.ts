@@ -80,7 +80,6 @@ export default {
         usernameCharacters: 'Usa solo lettere, numeri e trattini bassi.',
         passwordTooShort: 'La password deve avere almeno {minimum} caratteri.',
         passwordTooLong: 'La password può avere al massimo {maximum} caratteri.',
-        passwordConfirmationMismatch: 'Le password non coincidono.',
         codeLength: 'Inserisci il codice di {length} cifre.',
         codeDigitsOnly: 'Il codice contiene solo cifre.'
     }

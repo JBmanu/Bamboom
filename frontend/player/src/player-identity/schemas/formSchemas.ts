@@ -43,12 +43,8 @@ export const formSchemas = {
     register: z.object({ username: usernameSchema, email: emailSchema, password: newPasswordSchema }),
     codeRequest: z.object({ email: emailSchema }),
     codeConfirmation: z.object({ code: resetCodeSchema }),
-    passwordReset: z.object({ password: newPasswordSchema, passwordConfirmation: requiredText }).check(
-        z.refine(({ password, passwordConfirmation }) => password === passwordConfirmation, {
-            error: messageKeys.passwordConfirmationMismatch,
-            path: ['passwordConfirmation'] // the message belongs under the second field, not to the form
-        })
-    ),
+    /** The last step of the reset: the new password, with the same rules as in the registration. */
+    passwordReset: z.object({ password: newPasswordSchema }),
     /** Google gives no username: the person chooses it, with the same rules as in the registration. */
     googleProfile: z.object({ username: usernameSchema })
 }

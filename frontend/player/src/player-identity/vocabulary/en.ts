@@ -78,7 +78,6 @@ export default {
         usernameCharacters: 'Use only letters, numbers and underscores.',
         passwordTooShort: 'Password must be at least {minimum} characters.',
         passwordTooLong: 'Password must be at most {maximum} characters.',
-        passwordConfirmationMismatch: 'The passwords do not match.',
         codeLength: 'Enter the {length}-digit code.',
         codeDigitsOnly: 'The code only has digits.'
     }

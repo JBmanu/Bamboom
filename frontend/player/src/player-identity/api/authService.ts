@@ -9,8 +9,8 @@ export type Player = {
     readonly email: string
 }
 
-/** The repeated password is checked on the screen only: it is never sent to the server. */
-export type NewPasswordInput = Pick<FormValues['passwordReset'], 'password'>
+/** What the server needs to set the new password: the password only. */
+export type NewPasswordInput = FormValues['passwordReset']
 
 /** What any call can end with when the server cannot be reached or does not answer as agreed. */
 export type ConnectionFailure =

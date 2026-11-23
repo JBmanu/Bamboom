@@ -9,7 +9,6 @@ export const validationMessageKeys = {
     usernameCharacters: errorValidationPath + 'usernameCharacters',
     passwordTooShort: errorValidationPath + 'passwordTooShort',
     passwordTooLong: errorValidationPath + 'passwordTooLong',
-    passwordConfirmationMismatch: errorValidationPath + 'passwordConfirmationMismatch',
     codeLength: errorValidationPath + 'codeLength',
     codeDigitsOnly: errorValidationPath + 'codeDigitsOnly'
 } as const

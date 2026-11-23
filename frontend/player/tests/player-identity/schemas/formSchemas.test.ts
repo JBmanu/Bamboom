@@ -37,7 +37,12 @@ describe('email (checked in the log-in form)', () => {
 
 describe('log-in password', () => {
     it('only has to be present: a short or old password must still be able to log in', () => {
-        expect(validateInput(formSchemas.logIn, { email: validEmail, password: 'x' })).toEqual(succeed({ email: validEmail, password: 'x' }))
+        expect(
+            validateInput(formSchemas.logIn, {
+                email: validEmail,
+                password: 'x'
+            })
+        ).toEqual(succeed({ email: validEmail, password: 'x' }))
     })
 
     it('is required', () => {
@@ -129,29 +134,13 @@ describe('reset code', () => {
 })
 
 describe('password reset form', () => {
-    it('accepts a password repeated correctly', () => {
-        const values = { password: validPassword, passwordConfirmation: validPassword }
+    it('when the password is valid, the form hands over only the password', () => {
+        const result = validateInput(formSchemas.passwordReset, { password: validPassword })
 
-        expect(validateInput(formSchemas.passwordReset, values)).toEqual(succeed(values))
+        expect(result).toEqual(succeed({ password: validPassword }))
     })
-
-    it('puts the mismatch under the confirmation field', () => {
-        const result = validateInput(formSchemas.passwordReset, {
-            password: validPassword,
-            passwordConfirmation: 'something-else-1'
-        })
-
-        expect(result).toEqual(invalidField('passwordConfirmation', 'passwordConfirmationMismatch'))
-    })
-
-    it('asks for the confirmation before comparing it', () => {
-        const result = validateInput(formSchemas.passwordReset, { password: validPassword, passwordConfirmation: '' })
-
-        expect(result).toEqual(invalidField('passwordConfirmation', 'required'))
-    })
-
-    it('applies the password rules to the new password', () => {
-        const result = validateInput(formSchemas.passwordReset, { password: 'short', passwordConfirmation: 'short' })
+    it('when the password breaks the rules of the registration, the same message is shown', () => {
+        const result = validateInput(formSchemas.passwordReset, { password: 'short' })
 
         expect(result).toEqual(invalidField('password', 'passwordTooShort', { minimum: 8 }))
     })
