@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { accessLevels } from './guards/routeAccess'
-import { AUTH_LAYOUT_PATH, LOGIN_PATH, REGISTER_PATH } from './routePaths'
+import { AUTH_LAYOUT_PATH, FORGOT_PASSWORD_PATH, LOGIN_PATH, NEW_PASSWORD_PATH, REGISTER_PATH } from './routePaths'
 
 export const playerIdentityRoutes: RouteRecordRaw[] = [
     {
@@ -11,7 +11,9 @@ export const playerIdentityRoutes: RouteRecordRaw[] = [
         meta: { access: accessLevels.signedOutOnly }, // inherited by every page below
         children: [
             { path: LOGIN_PATH, name: 'login', component: () => import('./views/LoginView.vue') },
-            { path: REGISTER_PATH, name: 'register', component: () => import('./views/RegisterView.vue') }
+            { path: REGISTER_PATH, name: 'register', component: () => import('./views/RegisterView.vue') },
+            { path: FORGOT_PASSWORD_PATH, name: 'forgotPassword', component: () => import('./views/ForgotPasswordView.vue') },
+            { path: NEW_PASSWORD_PATH, name: 'newPassword', component: () => import('./views/NewPasswordView.vue') }
         ]
     }
 ]
