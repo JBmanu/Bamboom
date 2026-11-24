@@ -24,6 +24,7 @@
     @apply bg-primary;
 }
 
+/* One line is always reserved, so the label appearing does not push the form down. 1.25rem is the line height of text-sm. */
 .label {
-    @apply text-sm text-foreground-muted;
+    @apply min-h-5 text-sm text-foreground-muted;
 }
