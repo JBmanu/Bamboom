@@ -53,7 +53,11 @@ export default {
         passwordLabel: 'Nuova password',
         submit: 'Salva la nuova password',
         backToLoginQuestion: 'Hai ricordato la password?',
-        backToLoginLink: 'Torna al login'
+        backToLoginLink: 'Torna al login',
+        updatedTitle: 'Password aggiornata',
+        updatedMessage: 'La tua password è stata cambiata. Accedi con quella nuova per tornare in partita.',
+        goToLogin: 'Vai al login',
+        startAgain: 'Ricomincia'
     },
     passwordStrength: {
         veryWeak: 'Molto debole',

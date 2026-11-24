@@ -51,7 +51,11 @@ export default {
         passwordLabel: 'New password',
         submit: 'Save new password',
         backToLoginQuestion: 'Remembered your password?',
-        backToLoginLink: 'Back to login'
+        backToLoginLink: 'Back to login',
+        updatedTitle: 'Password updated',
+        updatedMessage: 'Your password has been changed. Log in with the new one to get back in the game.',
+        goToLogin: 'Go to login',
+        startAgain: 'Start again'
     },
     passwordStrength: {
         veryWeak: 'Very weak',
