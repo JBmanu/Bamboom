@@ -14,6 +14,8 @@ export type FakeAuthServiceOptions = {
     /** The code the fake "sends" by email. */
     resetCode?: string
     resetCodeLifetimeMs?: number
+    /** How long after the code is confirmed the new password can still be set. */
+    resetProofLifetimeMs?: number
     /** How long the same email must wait before it can ask for another code. */
     resetCodeResendWaitMs?: number
     /** Wrong codes allowed before the pending reset is blocked. */
@@ -36,8 +38,8 @@ export type FakeAuthService = AuthService & {
 
 /** What the server remembers about the codes of one email: it outlives the pending reset, which another email can replace. */
 type ResetAttempts = { readonly requestedAt: number; wrongCodes: number }
-/** `email` is the one that was typed, in lower case, whether or not an account has it. */
-type PendingReset = { readonly email: string; readonly attempts: ResetAttempts; confirmed: boolean }
+/** `email` is the one that was typed, in lower case, whether or not an account has it. `confirmedAt` is set once the code is accepted. */
+type PendingReset = { readonly email: string; readonly attempts: ResetAttempts; confirmedAt?: number }
 type LogInAttempts = { failedLogIns: number; lockedUntil: number }
 
 /** An in-memory AuthService: it behaves like the real backend will, so the screens can be built and tested before it exists. */
@@ -47,6 +49,7 @@ export function createFakeAuthService({
     resetCode = '123456',
     maxWrongResetCodes = 5,
     resetCodeLifetimeMs = 10 * 60 * 1000,
+    resetProofLifetimeMs = 10 * 60 * 1000,
     resetCodeResendWaitMs = 60 * 1000,
     maxFailedLogIns = 5,
     logInLockoutMs = 15 * 60 * 1000
@@ -146,7 +149,7 @@ export function createFakeAuthService({
 
                 const attempts = { requestedAt: Date.now(), wrongCodes: 0 }
                 resetAttemptsByEmail.set(typedEmail, attempts)
-                pendingReset = { email: typedEmail, attempts, confirmed: false }
+                pendingReset = { email: typedEmail, attempts }
                 return succeed(undefined)
             }),
 
@@ -161,13 +164,16 @@ export function createFakeAuthService({
                     attempts.wrongCodes += 1
                     return fail(failures.resetCodeInvalid)
                 }
-                pendingReset.confirmed = true
+                pendingReset.confirmedAt = Date.now()
                 return succeed(undefined)
             }),
 
         setNewPassword: ({ password }) =>
             answer(() => {
-                const account = pendingReset?.confirmed ? findAccountByEmail(pendingReset.email) : undefined
+                if (pendingReset?.confirmedAt === undefined) return fail(failures.resetNotConfirmed)
+                // Counted from the confirmation, not from the request: the person has this long once the code is accepted.
+                if (Date.now() - pendingReset.confirmedAt > resetProofLifetimeMs) return fail(failures.resetProofExpired)
+                const account = findAccountByEmail(pendingReset.email)
                 if (!account) return fail(failures.resetNotConfirmed)
                 account.password = password
                 pendingReset = undefined

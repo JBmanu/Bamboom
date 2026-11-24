@@ -1,8 +1,9 @@
 import { afterEach } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { createPlayerApp } from '../../src/app/createPlayerApp'
-import { useSessionStore } from '../../src/player-identity'
+import { useResetFlowStore, useSessionStore } from '../../src/player-identity'
 import { AuthService } from '../../src/player-identity/api/authService.ts'
+import { NEW_PASSWORD_PATH } from '../../src/player-identity/routePaths.ts'
 
 type PlayerApp = Awaited<ReturnType<typeof createPlayerApp>>
 
@@ -38,4 +39,12 @@ export async function signInAndOpen(app: PlayerApp, path: string) {
     const ada = { username: 'ada', email: 'ada@example.com' }
     useSessionStore(app.config.globalProperties.$pinia).startSession(ada)
     await app.config.globalProperties.$router.push(path)
+}
+
+/** Takes the reset flow to the confirmed code, then opens the new password page: what the code step does on success. */
+export async function openNewPasswordPage(app: PlayerApp, resetEmail = 'ada@example.com') {
+    const resetFlow = useResetFlowStore(app.config.globalProperties.$pinia)
+    resetFlow.markCodeRequested(resetEmail)
+    resetFlow.markCodeConfirmed()
+    await app.config.globalProperties.$router.push(NEW_PASSWORD_PATH)
 }

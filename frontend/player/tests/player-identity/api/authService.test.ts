@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import type { AuthService, NewPasswordInput, Player } from '../../../src/player-identity/api/authService'
+import type { AuthService, Player } from '../../../src/player-identity/api/authService'
 import type { Result } from '../../../src/player-identity/errors/result'
 import type { ValidationFailure } from '../../../src/player-identity/errors/validationFailure'
 import { FormValues } from '../../../src/player-identity/schemas/formSchemas.ts'
@@ -51,8 +51,9 @@ describe('AuthService: what each method answers', () => {
         >()
     })
 
-    it('setNewPassword needs the code to have been confirmed', () => {
-        expectTypeOf<CodesOf<AuthService['setNewPassword']>>().toEqualTypeOf<'reset-not-confirmed' | ConnectionCodes>()
+    it('setNewPassword needs the code to be confirmed, and recently', () => {
+        expectTypeOf<CodesOf<AuthService['setNewPassword']>>().toEqualTypeOf<'reset-not-confirmed' | 'reset-proof-expired' | ConnectionCodes>()
+
         expectTypeOf<ValidationOf<AuthService['setNewPassword']>>().toEqualTypeOf<ValidationFailure<'password'>>()
     })
 
@@ -69,12 +70,8 @@ describe('AuthService: what each method receives', () => {
         expectTypeOf<FormValues['register']>().toEqualTypeOf<{ username: string; email: string; password: string }>()
         expectTypeOf<FormValues['codeRequest']>().toEqualTypeOf<{ email: string }>()
         expectTypeOf<FormValues['codeConfirmation']>().toEqualTypeOf<{ code: string }>()
-        expectTypeOf<FormValues['passwordReset']>().toEqualTypeOf<{ password: string; passwordConfirmation: string }>()
+        expectTypeOf<FormValues['passwordReset']>().toEqualTypeOf<{ password: string }>()
         expectTypeOf<FormValues['googleProfile']>().toEqualTypeOf<{ username: string }>()
-    })
-
-    it('never receives the repeated password', () => {
-        expectTypeOf<NewPasswordInput>().toEqualTypeOf<{ password: string }>()
     })
 
     it('describes a player by username and email', () => {

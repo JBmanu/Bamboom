@@ -9,8 +9,8 @@ export type Player = {
     readonly email: string
 }
 
-/** The repeated password is checked on the screen only: it is never sent to the server. */
-export type NewPasswordInput = Pick<FormValues['passwordReset'], 'password'>
+/** What the server needs to set the new password: the password only. */
+export type NewPasswordInput = FormValues['passwordReset']
 
 /** What any call can end with when the server cannot be reached or does not answer as agreed. */
 export type ConnectionFailure =
@@ -56,9 +56,12 @@ export interface AuthService {
         Result<void, typeof failures.resetCodeInvalid | typeof failures.resetCodeExpired | typeof failures.tooManyAttempts | ConnectionFailure>
     >
 
+    /** Only accepted for a short time after the code was confirmed: later, the person must start the reset again. */
     setNewPassword(
         input: NewPasswordInput
-    ): Promise<Result<void, typeof failures.resetNotConfirmed | ValidationFailure<'password'> | ConnectionFailure>>
+    ): Promise<
+        Result<void, typeof failures.resetNotConfirmed | typeof failures.resetProofExpired | ValidationFailure<'password'> | ConnectionFailure>
+    >
 
     /** Google gives no username: the person chooses it. */
     completeGoogleProfile(

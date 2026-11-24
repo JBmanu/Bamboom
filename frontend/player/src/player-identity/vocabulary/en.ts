@@ -46,7 +46,16 @@ export default {
         backToLoginLink: 'Back to login'
     },
     newPassword: {
-        title: 'New password?'
+        title: 'New password?',
+        subtitle: 'Choose a new password and get back in the game.',
+        passwordLabel: 'New password',
+        submit: 'Save new password',
+        backToLoginQuestion: 'Remembered your password?',
+        backToLoginLink: 'Back to login',
+        updatedTitle: 'Password updated',
+        updatedMessage: 'Your password has been changed. Log in with the new one to get back in the game.',
+        goToLogin: 'Go to login',
+        startAgain: 'Start again'
     },
     passwordStrength: {
         veryWeak: 'Very weak',
@@ -63,6 +72,7 @@ export default {
         resetCodeExpired: 'This code has expired. Request a new one.',
         tooManyAttempts: 'Too many attempts. Try again in a few minutes.',
         resetNotConfirmed: 'Confirm the code before choosing a new password.',
+        resetProofExpired: 'The time to choose a new password has run out. Start again.',
         networkUnreachable: 'No connection. Check your network and try again.',
         requestTimeout: 'The server took too long to answer. Try again.',
         serverFailure: 'Something went wrong on our side. Try again later.',
@@ -77,7 +87,6 @@ export default {
         usernameCharacters: 'Use only letters, numbers and underscores.',
         passwordTooShort: 'Password must be at least {minimum} characters.',
         passwordTooLong: 'Password must be at most {maximum} characters.',
-        passwordConfirmationMismatch: 'The passwords do not match.',
         codeLength: 'Enter the {length}-digit code.',
         codeDigitsOnly: 'The code only has digits.'
     }

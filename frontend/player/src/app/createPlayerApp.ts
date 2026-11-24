@@ -9,6 +9,7 @@ import {
     LOGIN_PATH,
     notifyWhenSessionExpires,
     restoreSession,
+    useResetFlowStore,
     useSessionStore
 } from '../player-identity'
 import { createPlayerRouter } from './router/createPlayerRouter.ts'
@@ -27,12 +28,14 @@ export async function createPlayerApp({ history = createWebHistory(), authServic
     const translations = await createTranslations(import.meta.glob('/src/*/vocabulary/*.ts'))
     const pinia = createPinia()
     const session = useSessionStore(pinia)
+    const resetFlow = useResetFlowStore(pinia)
     // Started once, here: the guard runs on every navigation and must wait for this same restoration, not start another.
     const sessionRestoration = restoreSession(authService, session)
 
     const router = createPlayerRouter({
         history,
         session,
+        resetFlow,
         whenSessionRestored: () => sessionRestoration
     })
 
