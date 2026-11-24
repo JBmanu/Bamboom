@@ -4,6 +4,7 @@ import { mountPlayer } from '../../utils/mountPlayer.ts'
 import {
     findFieldByLabel,
     findLinkByText,
+    findMeter,
     findSubmitButton,
     readFieldError,
     submitForm,
@@ -25,8 +26,6 @@ vi.mock('../../../src/player-identity/schemas/assessPasswordStrength.ts')
 
 const newAccount = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const ada = { username: newAccount.username, email: newAccount.email }
-
-const findMeter = (container: HTMLElement) => container.querySelector('[data-level]')
 
 /** Fills the form as a person would and sends it. */
 async function registerThroughTheForm(container: HTMLElement, accountToRegister = newAccount) {

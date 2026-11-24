@@ -46,7 +46,12 @@ export default {
         backToLoginLink: 'Back to login'
     },
     newPassword: {
-        title: 'New password?'
+        title: 'New password?',
+        subtitle: 'Choose a new password and get back in the game.',
+        passwordLabel: 'New password',
+        submit: 'Save new password',
+        backToLoginQuestion: 'Remembered your password?',
+        backToLoginLink: 'Back to login'
     },
     passwordStrength: {
         veryWeak: 'Very weak',

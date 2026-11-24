@@ -3,6 +3,8 @@ import { flushPromises } from '@vue/test-utils'
 export const titleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] h1')?.textContent
 export const subtitleOf = (container: HTMLElement) => container.querySelector('[data-layer="content"] header p')?.textContent
 
+export const findMeter = (container: HTMLElement) => container.querySelector('[data-level]')
+
 export const findSubmitButton = (container: HTMLElement) => container.querySelector('button[type="submit"]')!
 
 export const findButtonByText = (container: HTMLElement, text: string) =>
