@@ -6,6 +6,7 @@ import { resetFlowSteps, useResetFlowStore } from '../../src/player-identity/sto
 import { findButtonByText, findFieldByLabel, findLinkByText, submitForm, titleOf, typeInto } from '../utils/accessPageQueries'
 import { installDialogStub } from '../utils/installDialogStub'
 import { mountPlayer } from '../utils/mountPlayer'
+import { waitForPageLoad } from '../utils/waitForPageLoad'
 
 // The strength of the password is covered by the view's own tests: here the real analyser would only slow the run down.
 vi.mock('../../src/player-identity/schemas/assessPasswordStrength.ts', () => ({
@@ -35,7 +36,7 @@ async function reachNewPasswordPage() {
 
     await typeInto(findFieldByLabel(container, 'Code'), resetCode)
     await submitForm(container)
-    await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+    await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
 
     return { container, app, router }
 }
