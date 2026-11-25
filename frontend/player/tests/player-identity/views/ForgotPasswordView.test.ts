@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity'
 import { FORGOT_PASSWORD_PATH, NEW_PASSWORD_PATH } from '../../../src/player-identity/routePaths'
 import { RESET_CODE_RESEND_WAIT_MS, resetFlowSteps, useResetFlowStore } from '../../../src/player-identity/stores/useResetFlowStore.ts'
 import { findButtonByText, findFieldByLabel, readFieldError, submitForm, titleOf, typeInto } from '../../utils/accessPageQueries.ts'
 import { mountPlayer } from '../../utils/mountPlayer'
+import { waitForPageLoad } from '../../utils/waitForPageLoad'
 import { flushPromises } from '@vue/test-utils'
 
 const registeredEmail = 'ada@example.com'
@@ -54,7 +55,7 @@ describe('ForgotPasswordView: the code step', () => {
         await typeInto(findFieldByLabel(container, 'Code'), correctCode)
         await submitForm(container)
 
-        await vi.waitFor(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+        await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
         expect(resetFlow.step).toBe(resetFlowSteps.codeConfirmed)
     })
 
@@ -88,7 +89,7 @@ describe('ForgotPasswordView: the code step', () => {
     })
 
     it('given the server refuses a new code, when it is asked again, then the banner says so and the wait does not restart', async () => {
-        const authService = createFakeAuthService({ accounts: [account] }) // its own wait of a minute is still running
+        const authService = createFakeAuthService({ accounts: [account] })
         const { container, app } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
         const resetFlow = useResetFlowStore(app.config.globalProperties.$pinia)
         await askForCode(container)

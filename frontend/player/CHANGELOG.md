@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.10.0...player-frontend-v0.11.0) (2026-11-24)
+
+
+### Features
+
+* **player:** add the new password step with proof expiry ([#179](https://github.com/JBmanu/Bamboom/issues/179)) ([c82677d](https://github.com/JBmanu/Bamboom/commit/c82677d4fb96b35f00cff6f3968edcaa07c730a5))
+* **player:** add the password reset email and code steps ([#177](https://github.com/JBmanu/Bamboom/issues/177)) ([6003008](https://github.com/JBmanu/Bamboom/commit/6003008ed1a510c37dfe6eddb2f57a758c48254a))
+
 ## [0.10.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.9.0...player-frontend-v0.10.0) (2026-11-22)
 
 
