@@ -54,7 +54,7 @@ describe('ForgotPasswordView: the code step', () => {
 
         await typeInto(findFieldByLabel(container, 'Code'), correctCode)
         await submitForm(container)
-        
+
         await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
         expect(resetFlow.step).toBe(resetFlowSteps.codeConfirmed)
     })
