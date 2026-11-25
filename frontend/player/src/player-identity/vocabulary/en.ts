@@ -73,6 +73,7 @@ export default {
         tooManyAttempts: 'Too many attempts. Try again in a few minutes.',
         resetNotConfirmed: 'Confirm the code before choosing a new password.',
         resetProofExpired: 'The time to choose a new password has run out. Start again.',
+        googleSignInCancelled: 'Google sign-in was cancelled. Try again whenever you are ready.',
         networkUnreachable: 'No connection. Check your network and try again.',
         requestTimeout: 'The server took too long to answer. Try again.',
         serverFailure: 'Something went wrong on our side. Try again later.',

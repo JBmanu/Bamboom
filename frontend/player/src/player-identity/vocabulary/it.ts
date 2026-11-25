@@ -75,6 +75,7 @@ export default {
         tooManyAttempts: 'Troppi tentativi. Riprova tra qualche minuto.',
         resetNotConfirmed: 'Conferma il codice prima di scegliere una nuova password.',
         resetProofExpired: 'Il tempo per scegliere la nuova password è scaduto. Ricomincia.',
+        googleSignInCancelled: 'Accesso con Google annullato. Riprova quando vuoi.',
         networkUnreachable: 'Nessuna connessione. Controlla la rete e riprova.',
         requestTimeout: 'Il server ha impiegato troppo a rispondere. Riprova.',
         serverFailure: 'Qualcosa è andato storto da parte nostra. Riprova più tardi.',
