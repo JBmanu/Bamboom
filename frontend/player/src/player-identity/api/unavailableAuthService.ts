@@ -19,6 +19,9 @@ export function createUnavailableAuthService(): AuthService {
         requestResetCode: answerServerFailure,
         confirmResetCode: answerServerFailure,
         setNewPassword: answerServerFailure,
-        completeGoogleProfile: answerServerFailure
+        completeGoogleProfile: answerServerFailure,
+        continueWithGoogle: answerServerFailure,
+        fetchPendingGoogleProfile: answerServerFailure,
+        cancelGoogleProfile: answerServerFailure
     }
 }

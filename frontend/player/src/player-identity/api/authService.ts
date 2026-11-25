@@ -9,6 +9,17 @@ export type Player = {
     readonly email: string
 }
 
+/** The two places the person can end up after the trip to Google. */
+export const googleSignInStatuses = { signedIn: 'signedIn', profileToComplete: 'profileToComplete' } as const
+
+/** What the person is left with after the trip to Google. */
+export type GoogleSignInOutcome =
+    | { readonly status: typeof googleSignInStatuses.signedIn; readonly player: Player }
+    | { readonly status: typeof googleSignInStatuses.profileToComplete }
+
+/** The profile Google handed over, still waiting for the person to choose a nickname. */
+export type PendingGoogleProfile = { readonly email: string }
+
 /** What the server needs to set the new password: the password only. */
 export type NewPasswordInput = FormValues['passwordReset']
 
@@ -62,6 +73,18 @@ export interface AuthService {
     ): Promise<
         Result<void, typeof failures.resetNotConfirmed | typeof failures.resetProofExpired | ValidationFailure<'password'> | ConnectionFailure>
     >
+
+    /**
+     * The whole trip to Google as one answer. The HTTP adapter will redirect and bring the outcome back (feature 18),
+     * so the port promises the outcome, not how it travels.
+     */
+    continueWithGoogle(): Promise<Result<GoogleSignInOutcome, typeof failures.googleSignInCancelled | ConnectionFailure>>
+
+    /** The profile still waiting for a nickname. Nobody waiting is an answer (`undefined`), not a failure. */
+    fetchPendingGoogleProfile(): Promise<Result<PendingGoogleProfile | undefined, ConnectionFailure>>
+
+    /** Forgets the pending profile because the person left the Google step. Having none is not a failure. */
+    cancelGoogleProfile(): Promise<Result<void, ConnectionFailure>>
 
     /** Google gives no username: the person chooses it. */
     completeGoogleProfile(

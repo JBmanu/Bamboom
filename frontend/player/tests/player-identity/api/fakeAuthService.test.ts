@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuthService'
 import { failures } from '../../../src/player-identity/errors/failures'
 import { fail, succeed } from '../../../src/player-identity/errors/result'
-import { contractFixtures, describeAuthServiceContract, GOOGLE_EMAIL, GOOGLE_USERNAME } from './authServiceContract'
+import { contractFixtures, describeAuthServiceContract } from './authServiceContract'
+import { googleSignInStatuses } from '../../../src/player-identity/api/authService'
 
 const WRONG_RESET_CODE = '000000'
 const anotherEmail = 'grace@example.com'
@@ -10,16 +11,19 @@ const anotherEmail = 'grace@example.com'
 const { account, resetCode } = contractFixtures
 const ada = { username: account.username, email: account.email }
 const adaCredentials = { email: account.email, password: account.password }
-const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
+const WRONG_PASSWORD = 'wrongPassword'
+const wrongPasswordCredentials = { email: account.email, password: WRONG_PASSWORD }
 
 describeAuthServiceContract('fake adapter', (fixtures) =>
     createFakeAuthService({
         accounts: [fixtures.account],
-        resetCode: fixtures.resetCode
+        resetCode: fixtures.resetCode,
+        googleEmail: fixtures.googleEmail
     })
 )
 
 const NEW_PASSWORD = 'newPassword'
+
 describe('fake adapter: what only the fake does', () => {
     afterEach(() => {
         vi.useRealTimers()
@@ -47,7 +51,7 @@ describe('fake adapter: what only the fake does', () => {
         service.failNextCall(failures.networkUnreachable)
 
         expect(await service.logIn(adaCredentials)).toEqual(fail(failures.networkUnreachable))
-        expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined)) // the failed log-in did not sign anyone in
+        expect(await service.fetchCurrentPlayer()).toEqual(succeed(undefined))
         expect(await service.logIn(adaCredentials)).toEqual(
             succeed({
                 username: account.username,
@@ -149,33 +153,21 @@ describe('fake adapter: what only the fake does', () => {
         expect(await service.requestResetCode({ email: account.email })).toEqual(fail(failures.tooManyAttempts))
     })
 
-    it('completes the profile of a person who came back from Google, and signs them in', async () => {
-        const service = createFakeAuthService({ accounts: [account] })
-        service.beginGoogleSignIn(GOOGLE_EMAIL)
-
-        const completed = await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
-
-        expect(completed).toEqual(succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL }))
-        expect(await service.fetchCurrentPlayer()).toEqual(completed)
-    })
-
-    it('keeps the Google step open after a taken username, so another one can be tried', async () => {
-        const service = createFakeAuthService({ accounts: [account] })
-        service.beginGoogleSignIn(GOOGLE_EMAIL)
-
-        expect(await service.completeGoogleProfile({ username: account.username })).toEqual(fail(failures.usernameAlreadyTaken))
-        expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(
-            succeed({ username: GOOGLE_USERNAME, email: GOOGLE_EMAIL })
-        )
-    })
-
-    it('does not let an account created through Google sign in with a password', async () => {
+    it('when the Google window is closed, the trip ends cancelled and the next trip works', async () => {
         const service = createFakeAuthService()
-        service.beginGoogleSignIn(GOOGLE_EMAIL)
-        await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
-        await service.logOut()
+        service.closeNextGoogleWindow()
 
-        expect(await service.logIn({ email: GOOGLE_EMAIL, password: '' })).toEqual(fail(failures.invalidCredentials))
+        expect(await service.continueWithGoogle()).toEqual(fail(failures.googleSignInCancelled))
+        expect(await service.fetchPendingGoogleProfile()).toEqual(succeed(undefined))
+        expect(await service.continueWithGoogle()).toEqual(succeed({ status: googleSignInStatuses.profileToComplete }))
+    })
+
+    it('when the next call is made to fail, the trip to Google ends with that failure and nothing is left pending', async () => {
+        const service = createFakeAuthService()
+        service.failNextCall(failures.networkUnreachable)
+
+        expect(await service.continueWithGoogle()).toEqual(fail(failures.networkUnreachable))
+        expect(await service.fetchPendingGoogleProfile()).toEqual(succeed(undefined))
     })
 
     it('does not share its accounts with another fake', async () => {

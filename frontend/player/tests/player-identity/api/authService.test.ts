@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import type { AuthService, Player } from '../../../src/player-identity/api/authService'
+import type { AuthService, GoogleSignInOutcome, PendingGoogleProfile, Player } from '../../../src/player-identity/api/authService'
 import type { Result } from '../../../src/player-identity/errors/result'
 import type { ValidationFailure } from '../../../src/player-identity/errors/validationFailure'
 import { FormValues } from '../../../src/player-identity/schemas/formSchemas.ts'
@@ -61,6 +61,21 @@ describe('AuthService: what each method answers', () => {
         expectTypeOf<ValueOf<AuthService['completeGoogleProfile']>>().toEqualTypeOf<Player>()
         expectTypeOf<CodesOf<AuthService['completeGoogleProfile']>>().toEqualTypeOf<'username-already-taken' | 'session-expired' | ConnectionCodes>()
         expectTypeOf<ValidationOf<AuthService['completeGoogleProfile']>>().toEqualTypeOf<ValidationFailure<'username'>>()
+    })
+
+    it('continueWithGoogle answers where the person stands, or that the Google window was closed', () => {
+        expectTypeOf<ValueOf<AuthService['continueWithGoogle']>>().toEqualTypeOf<GoogleSignInOutcome>()
+        expectTypeOf<CodesOf<AuthService['continueWithGoogle']>>().toEqualTypeOf<'google-sign-in-cancelled' | ConnectionCodes>()
+    })
+
+    it('fetchPendingGoogleProfile answers a profile or nobody, and fails only on the connection', () => {
+        expectTypeOf<ValueOf<AuthService['fetchPendingGoogleProfile']>>().toEqualTypeOf<PendingGoogleProfile | undefined>()
+        expectTypeOf<CodesOf<AuthService['fetchPendingGoogleProfile']>>().toEqualTypeOf<ConnectionCodes>()
+    })
+
+    it('cancelGoogleProfile answers nothing and fails only on the connection', () => {
+        expectTypeOf<ValueOf<AuthService['cancelGoogleProfile']>>().toBeVoid()
+        expectTypeOf<CodesOf<AuthService['cancelGoogleProfile']>>().toEqualTypeOf<ConnectionCodes>()
     })
 })
 
