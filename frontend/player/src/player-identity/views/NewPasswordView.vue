@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBanner, VButton, VPasswordField, VPicture, VStrengthMeter, VModal } from '@bamboom/common'
+import { VBanner, VButton, VPasswordField, VStrengthMeter, VModal } from '@bamboom/common'
 import { computed, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LockIcon from '~icons/ph/lock-fill'
@@ -15,6 +15,7 @@ import { useAuthService } from '../useAuthService.ts'
 import lockImage from '../../../resource/image/layout/element/lock.png?as=picture'
 import { useRouter } from 'vue-router'
 import { failures } from '../errors/failures.ts'
+import AuthPageIllustration from '../components/AuthPageIllustration.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -62,7 +63,7 @@ onMounted(() => focusField('password'))
 
 <template>
     <div class="auth-page">
-        <VPicture :picture="lockImage" alt="" sizes="9rem" class="mx-auto h-[min(13.5dvh,6.75rem)] w-auto [@media(max-height:40rem)]:hidden" />
+        <AuthPageIllustration :picture="lockImage" />
 
         <AuthPageHeader :title="t('playerIdentity.newPassword.title')">
             <template #subtitle>{{ t('playerIdentity.newPassword.subtitle') }}</template>
