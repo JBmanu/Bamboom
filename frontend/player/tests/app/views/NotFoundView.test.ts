@@ -1,6 +1,7 @@
 import { LANGUAGE_STORAGE_KEY, languages } from '@bamboom/common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountPlayer } from '../../utils/mountPlayer'
+import { waitForPageLoad } from '../../utils/waitForPageLoad'
 
 const FIRST_LOAD_TIMEOUT = 20_000
 const UNKNOWN_ADDRESS = '/nowhere'
@@ -30,8 +31,8 @@ describe('NotFoundView', () => {
         const click = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 })
         wayBackOf(container).dispatchEvent(click)
 
-        expect(click.defaultPrevented).toBe(true) // the router took over from the browser
-        await vi.waitFor(() => expect(app.config.globalProperties.$router.currentRoute.value.path).toBe('/login'), { timeout: FIRST_LOAD_TIMEOUT }) // signed out: the home is not for them
+        expect(click.defaultPrevented).toBe(true)
+        await waitForPageLoad(() => expect(app.config.globalProperties.$router.currentRoute.value.path).toBe('/login'))
     })
 
     it('moves the focus to the main area when the way back is taken', async () => {
