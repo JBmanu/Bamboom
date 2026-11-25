@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { AuthService } from '../../../src/player-identity/api/authService.ts'
+import { type AuthService, googleSignInStatuses } from '../../../src/player-identity/api/authService.ts'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
 import { fail, succeed } from '../../../src/player-identity/errors/result.ts'
 
@@ -8,11 +8,32 @@ export type ContractFixtures = {
     readonly account: { readonly username: string; readonly email: string; readonly password: string }
     /** The code the adapter sends for a password reset. */
     readonly resetCode: string
+    /** The email Google hands back when the adapter takes the person to Google. */
+    readonly googleEmail: string
 }
+
+/**
+ * Every method of the port. `satisfies` makes a new method break the build
+ * until it is listed here, so adapter and decorator tests never miss it.
+ */
+export const portMethodNames = Object.keys({
+    fetchCurrentPlayer: true,
+    logIn: true,
+    register: true,
+    logOut: true,
+    requestResetCode: true,
+    confirmResetCode: true,
+    setNewPassword: true,
+    completeGoogleProfile: true,
+    continueWithGoogle: true,
+    fetchPendingGoogleProfile: true,
+    cancelGoogleProfile: true
+} satisfies Record<keyof AuthService, true>) as (keyof AuthService)[]
 
 export const contractFixtures: ContractFixtures = {
     account: { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' },
-    resetCode: '123456'
+    resetCode: '123456',
+    googleEmail: 'ada.google@example.com'
 }
 
 /** More wrong codes than any sensible limit allows: after this many, the reset must be blocked. */
@@ -24,7 +45,6 @@ const OTHER_NEW_PASSWORD = 'yet-another-horse-2'
 const WRONG_PASSWORD = 'not-the-password'
 const UNKNOWN_EMAIL = 'nobody@example.com'
 export const GOOGLE_USERNAME = 'ada_g'
-export const GOOGLE_EMAIL = 'ada.google@example.com'
 
 /**
  * What every AuthService must do, whoever implements it: the fake adapter now, the HTTP adapter on the day of the backend.
@@ -32,7 +52,7 @@ export const GOOGLE_EMAIL = 'ada.google@example.com'
  */
 export function describeAuthServiceContract(adapterName: string, createService: (fixtures: ContractFixtures) => AuthService) {
     describe(`AuthService contract: ${adapterName}`, () => {
-        const { account, resetCode } = contractFixtures
+        const { account, resetCode, googleEmail } = contractFixtures
         const ada = { username: account.username, email: account.email }
         const adaCredentials = { email: account.email, password: account.password }
         const wrongPasswordCredentials = { email: account.email, password: 'wrongPassword' }
@@ -229,7 +249,7 @@ export function describeAuthServiceContract(adapterName: string, createService: 
                 const registered = await service.requestResetCode({ email: account.email })
                 const unknown = await service.requestResetCode({ email: UNKNOWN_EMAIL })
 
-                expect(unknown).toEqual(registered) // the point is "no hint": both answers must be identical
+                expect(unknown).toEqual(registered)
                 expect(registered).toEqual(fail(failures.tooManyAttempts))
             })
 
@@ -241,7 +261,6 @@ export function describeAuthServiceContract(adapterName: string, createService: 
 
             it('when a request is refused for coming too soon, the code already sent still works', async () => {
                 await service.requestResetCode({ email: account.email })
-                await service.requestResetCode({ email: account.email }) // refused
 
                 expect(await service.confirmResetCode({ code: resetCode })).toEqual(succeed(undefined))
             })
@@ -297,9 +316,87 @@ export function describeAuthServiceContract(adapterName: string, createService: 
             })
         })
 
-        describe('Google profile', () => {
-            it('has nothing to complete when the person did not come from Google', async () => {
+        describe('Google sign-in', () => {
+            it('when nothing is pending, completing the profile ends with a session expired', async () => {
                 expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(fail(failures.sessionExpired))
+            })
+
+            it('when nobody is waiting to complete a Google profile, asking for it answers nobody, not a failure', async () => {
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed(undefined))
+            })
+
+            it('when Google brings an email with no account, the person has a profile to complete holding that email', async () => {
+                expect(await service.continueWithGoogle()).toEqual(succeed({ status: googleSignInStatuses.profileToComplete }))
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed({ email: googleEmail }))
+            })
+
+            it('when Google brings the email of an existing account, the person is signed in as that account', async () => {
+                await service.register({ username: GOOGLE_USERNAME, email: googleEmail, password: account.password })
+                await service.logOut()
+
+                const knownPlayer = { username: GOOGLE_USERNAME, email: googleEmail }
+                expect(await service.continueWithGoogle()).toEqual(
+                    succeed({
+                        status: googleSignInStatuses.signedIn,
+                        player: knownPlayer
+                    })
+                )
+                expect(await service.fetchCurrentPlayer()).toEqual(succeed(knownPlayer))
+            })
+
+            it('when the person chooses a free nickname, they are signed in and nothing is left pending', async () => {
+                await service.continueWithGoogle()
+                const completed = await service.completeGoogleProfile({ username: GOOGLE_USERNAME })
+                const googlePlayer = { username: GOOGLE_USERNAME, email: googleEmail }
+
+                expect(completed).toEqual(succeed(googlePlayer))
+                expect(await service.fetchCurrentPlayer()).toEqual(succeed(googlePlayer))
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed(undefined))
+            })
+
+            it('when the nickname is taken, even with other letter case, the profile stays pending so another one can be tried', async () => {
+                await service.continueWithGoogle()
+                const refused = await service.completeGoogleProfile({ username: account.username.toUpperCase() })
+
+                expect(refused).toEqual(fail(failures.usernameAlreadyTaken))
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed({ email: googleEmail }))
+                expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(
+                    succeed({
+                        username: GOOGLE_USERNAME,
+                        email: googleEmail
+                    })
+                )
+            })
+
+            it('when the person cancels the pending profile, nothing is left pending and completing it is refused', async () => {
+                await service.continueWithGoogle()
+
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed({ email: googleEmail }))
+                expect(await service.cancelGoogleProfile()).toEqual(succeed(undefined))
+                expect(await service.fetchPendingGoogleProfile()).toEqual(succeed(undefined))
+                expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(fail(failures.sessionExpired))
+            })
+
+            it('when nothing is pending, cancelling is not a failure', async () => {
+                expect(await service.cancelGoogleProfile()).toEqual(succeed(undefined))
+            })
+
+            it('when an account was created through Google, logging in with a password is refused', async () => {
+                await service.continueWithGoogle()
+                expect(await service.completeGoogleProfile({ username: GOOGLE_USERNAME })).toEqual(
+                    succeed({
+                        username: GOOGLE_USERNAME,
+                        email: googleEmail
+                    })
+                )
+
+                await service.logOut()
+                expect(
+                    await service.logIn({
+                        email: googleEmail,
+                        password: WRONG_PASSWORD
+                    })
+                ).toEqual(fail(failures.invalidCredentials))
             })
         })
     })

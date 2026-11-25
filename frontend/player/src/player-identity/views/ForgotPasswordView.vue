@@ -9,7 +9,7 @@ import ResetEmailStep from '../components/ResetEmailStep.vue'
 import { LOGIN_PATH } from '../routePaths.ts'
 import { resetFlowSteps, useResetFlowStore } from '../stores/useResetFlowStore.ts'
 import explosiveLetter from '../../../resource/image/layout/element/letter.png?as=picture'
-import { VPicture } from '@bamboom/common'
+import AuthPageIllustration from '../components/AuthPageIllustration.vue'
 
 const { step } = storeToRefs(useResetFlowStore())
 const { t } = useI18n()
@@ -20,7 +20,7 @@ const isCodeStepShown = computed(() => step.value === resetFlowSteps.codeRequest
 
 <template>
     <div class="auth-page">
-        <VPicture :picture="explosiveLetter" alt="" sizes="9rem" class="mx-auto h-[min(12dvh,6rem)] w-auto [@media(max-height:40rem)]:hidden" />
+        <AuthPageIllustration :picture="explosiveLetter" />
 
         <AuthPageHeader
             :title="isCodeStepShown ? t('playerIdentity.forgotPassword.codeStep.title') : t('playerIdentity.forgotPassword.emailStep.title')"

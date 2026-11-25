@@ -4,28 +4,15 @@ import { createFakeAuthService } from '../../../src/player-identity/api/fakeAuth
 import { notifyWhenSessionExpires } from '../../../src/player-identity/api/notifyWhenSessionExpires.ts'
 import { failures } from '../../../src/player-identity/errors/failures.ts'
 import { fail, succeed } from '../../../src/player-identity/errors/result.ts'
-import { contractFixtures } from './authServiceContract.ts'
+import { contractFixtures, portMethodNames } from './authServiceContract.ts'
 
 const { account } = contractFixtures
-
-// `satisfies Record<keyof AuthService, true>` forces this list to name every method: a new method breaks the build until it is here.
-const portMethods = {
-    fetchCurrentPlayer: true,
-    logIn: true,
-    register: true,
-    logOut: true,
-    requestResetCode: true,
-    confirmResetCode: true,
-    setNewPassword: true,
-    completeGoogleProfile: true
-} satisfies Record<keyof AuthService, true>
-const portMethodNames = Object.keys(portMethods) as (keyof AuthService)[]
 
 /** A service whose every method answers "session expired", as an HTTP call that gets a 401 will. */
 function createServiceAlwaysExpired(): AuthService {
     const answerExpired = async () => fail(failures.sessionExpired)
     const methods = Object.fromEntries(portMethodNames.map((name) => [name, answerExpired]))
-    return methods as unknown as AuthService // the port does not allow this answer on most methods: that is the point
+    return methods as unknown as AuthService
 }
 
 describe('notifyWhenSessionExpires', () => {
@@ -52,8 +39,6 @@ describe('notifyWhenSessionExpires', () => {
     it('notifies once and passes the failure through unchanged when the session has expired', async () => {
         const onSessionExpired = vi.fn()
         const authService = notifyWhenSessionExpires(createFakeAuthService(), onSessionExpired)
-
-        // The fake answers "session expired" when there is no Google sign-in left to complete.
         const answer = await authService.completeGoogleProfile({ username: 'ada_g' })
 
         expect(answer).toEqual(fail(failures.sessionExpired))

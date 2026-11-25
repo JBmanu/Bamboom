@@ -22,6 +22,21 @@ export default {
         loginQuestion: 'Already have an account?',
         loginLink: 'Log in now'
     },
+    orDivider: 'or',
+    continueWithGoogle: 'Continue with Google',
+    completeGoogleProfile: {
+        title: 'Welcome to the explosion!',
+        subtitle: 'Choose your nickname and {highlight}!',
+        subtitleHighlight: 'start playing',
+        nicknameLabel: 'Nickname',
+        emailLabel: 'Email',
+        emailNote: 'This email is already linked to your Google account.',
+        infoBanner: 'Safe, fast, explosive!',
+        submit: 'Complete and play',
+        useAnotherEmail: 'Use another email',
+        loginQuestion: 'Already have an account?',
+        loginLink: 'Log in now'
+    },
     forgotPassword: {
         emailStep: {
             title: 'Boom! Password exploded?',
@@ -73,6 +88,7 @@ export default {
         tooManyAttempts: 'Too many attempts. Try again in a few minutes.',
         resetNotConfirmed: 'Confirm the code before choosing a new password.',
         resetProofExpired: 'The time to choose a new password has run out. Start again.',
+        googleSignInCancelled: 'Google sign-in was cancelled. Try again whenever you are ready.',
         networkUnreachable: 'No connection. Check your network and try again.',
         requestTimeout: 'The server took too long to answer. Try again.',
         serverFailure: 'Something went wrong on our side. Try again later.',

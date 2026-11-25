@@ -1,6 +1,6 @@
 import { failures } from '../errors/failures.ts'
 import { fail, type Result, succeed } from '../errors/result.ts'
-import type { AuthService, ConnectionFailure, Player } from './authService.ts'
+import { type AuthService, type ConnectionFailure, type GoogleSignInOutcome, googleSignInStatuses, type Player } from './authService.ts'
 
 type FakeAccount = {
     readonly username: string
@@ -26,14 +26,16 @@ export type FakeAuthServiceOptions = {
     maxFailedLogIns?: number
     /** How long the log-in of an email stays blocked once the limit is reached. */
     logInLockoutMs?: number
+    /** The email Google hands back on every trip to Google. */
+    googleEmail?: string
 }
 
 /** The port, plus the two things only a test double can do. */
 export type FakeAuthService = AuthService & {
     /** The next call, whichever it is, ends with this failure; the one after it works again. */
     failNextCall(failure: ConnectionFailure): void
-    /** Simulates the person coming back from Google, with a profile still to complete. */
-    beginGoogleSignIn(googleEmail: string): void
+    /** The next trip to Google ends as if the person closed the Google window; the one after it works again. */
+    closeNextGoogleWindow(): void
 }
 
 /** What the server remembers about the codes of one email: it outlives the pending reset, which another email can replace. */
@@ -52,7 +54,8 @@ export function createFakeAuthService({
     resetProofLifetimeMs = 10 * 60 * 1000,
     resetCodeResendWaitMs = 60 * 1000,
     maxFailedLogIns = 5,
-    logInLockoutMs = 15 * 60 * 1000
+    logInLockoutMs = 15 * 60 * 1000,
+    googleEmail = 'player.google@example.com'
 }: FakeAuthServiceOptions = {}): FakeAuthService {
     const knownAccounts: FakeAccount[] = accounts.map((account) => ({ ...account }))
     const logInAttemptsByEmail = new Map<string, LogInAttempts>()
@@ -62,6 +65,7 @@ export function createFakeAuthService({
     let pendingReset: PendingReset | undefined
     let pendingGoogleEmail: string | undefined
     let nextCallFailure: ConnectionFailure | undefined
+    let isNextGoogleWindowClosing = false
 
     const toComparable = (text: string) => text.toLowerCase()
     const isSameText = (first: string, second: string) => toComparable(first) === toComparable(second)
@@ -99,10 +103,6 @@ export function createFakeAuthService({
     return {
         failNextCall(failure) {
             nextCallFailure = failure
-        },
-
-        beginGoogleSignIn(googleEmail) {
-            pendingGoogleEmail = googleEmail
         },
 
         fetchCurrentPlayer: () => answer(() => succeed(signedInPlayer)),
@@ -179,6 +179,35 @@ export function createFakeAuthService({
                 pendingReset = undefined
                 return succeed(undefined)
             }),
+
+        closeNextGoogleWindow() {
+            isNextGoogleWindowClosing = true
+        },
+
+        cancelGoogleProfile: () =>
+            answer(() => {
+                pendingGoogleEmail = undefined
+                return succeed(undefined)
+            }),
+
+        continueWithGoogle: () =>
+            answer(() => {
+                if (isNextGoogleWindowClosing) {
+                    isNextGoogleWindowClosing = false
+                    return fail(failures.googleSignInCancelled)
+                }
+                const knownAccount = findAccountByEmail(googleEmail)
+                if (knownAccount) {
+                    // Google vouches for the email, so an existing account just signs in. The fake decided this on 25 Nov;
+                    // the real server decides how accounts are linked (feature 18).
+                    signedInPlayer = toPlayer(knownAccount)
+                    return succeed<GoogleSignInOutcome>({ status: googleSignInStatuses.signedIn, player: signedInPlayer })
+                }
+                pendingGoogleEmail = googleEmail
+                return succeed<GoogleSignInOutcome>({ status: googleSignInStatuses.profileToComplete })
+            }),
+
+        fetchPendingGoogleProfile: () => answer(() => succeed(pendingGoogleEmail === undefined ? undefined : { email: pendingGoogleEmail })),
 
         completeGoogleProfile: ({ username }) =>
             answer(() => {

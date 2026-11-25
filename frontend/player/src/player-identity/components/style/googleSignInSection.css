@@ -1,0 +1,7 @@
+@reference 'tailwindcss';
+@reference '@bamboom/common/theme.css';
+
+/* Google's guidelines want a light button even in the dark theme: it does not follow the theme tokens. */
+.google-button {
+    @apply w-full border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50;
+}

@@ -16,6 +16,7 @@ import { useRouter } from 'vue-router'
 import AuthAlternativeLink from '../components/AuthAlternativeLink.vue'
 import { usePasswordStrength } from '../forms/usePasswordStrength.ts'
 import { preloadPasswordStrength } from '../schemas/assessPasswordStrength.ts'
+import GoogleSignInSection from '../components/GoogleSignInSection.vue'
 
 const authService = useAuthService()
 const session = useSessionStore()
@@ -112,6 +113,8 @@ const { strength } = usePasswordStrength(password, personalInputs)
 
             <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.register.submit') }} </VButton>
         </form>
+
+        <GoogleSignInSection />
 
         <AuthAlternativeLink
             :question="t('playerIdentity.register.loginQuestion')"

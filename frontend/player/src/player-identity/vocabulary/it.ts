@@ -24,6 +24,21 @@ export default {
         loginQuestion: 'Hai già un account?',
         loginLink: 'Accedi ora'
     },
+    orDivider: 'oppure',
+    continueWithGoogle: 'Continua con Google',
+    completeGoogleProfile: {
+        title: 'Benvenuto esplosivo!',
+        subtitle: 'Scegli il tuo nickname e {highlight}!',
+        subtitleHighlight: 'inizia a giocare',
+        nicknameLabel: 'Nickname',
+        emailLabel: 'Email',
+        emailNote: 'L’email è già associata al tuo account Google.',
+        infoBanner: 'Sicuro, veloce, esplosivo!',
+        submit: 'Completa e gioca',
+        useAnotherEmail: 'Usa un’altra email',
+        loginQuestion: 'Hai già un account?',
+        loginLink: 'Accedi ora'
+    },
     forgotPassword: {
         emailStep: {
             title: 'Boom! Password esplosa?',
@@ -75,6 +90,7 @@ export default {
         tooManyAttempts: 'Troppi tentativi. Riprova tra qualche minuto.',
         resetNotConfirmed: 'Conferma il codice prima di scegliere una nuova password.',
         resetProofExpired: 'Il tempo per scegliere la nuova password è scaduto. Ricomincia.',
+        googleSignInCancelled: 'Accesso con Google annullato. Riprova quando vuoi.',
         networkUnreachable: 'Nessuna connessione. Controlla la rete e riprova.',
         requestTimeout: 'Il server ha impiegato troppo a rispondere. Riprova.',
         serverFailure: 'Qualcosa è andato storto da parte nostra. Riprova più tardi.',

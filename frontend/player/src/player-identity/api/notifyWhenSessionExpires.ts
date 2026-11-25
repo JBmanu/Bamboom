@@ -27,6 +27,9 @@ export function notifyWhenSessionExpires(authService: AuthService, onSessionExpi
         requestResetCode: watch(authService.requestResetCode),
         confirmResetCode: watch(authService.confirmResetCode),
         setNewPassword: watch(authService.setNewPassword),
-        completeGoogleProfile: watch(authService.completeGoogleProfile)
+        completeGoogleProfile: watch(authService.completeGoogleProfile),
+        continueWithGoogle: watch(authService.continueWithGoogle),
+        fetchPendingGoogleProfile: watch(authService.fetchPendingGoogleProfile),
+        cancelGoogleProfile: watch(authService.cancelGoogleProfile)
     }
 }
