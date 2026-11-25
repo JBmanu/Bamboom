@@ -24,6 +24,20 @@ export default {
         loginQuestion: 'Hai già un account?',
         loginLink: 'Accedi ora'
     },
+    orDivider: 'oppure',
+    completeGoogleProfile: {
+        title: 'Benvenuto esplosivo!',
+        subtitle: 'Scegli il tuo nickname e {highlight}!',
+        subtitleHighlight: 'inizia a giocare',
+        nicknameLabel: 'Nickname',
+        emailLabel: 'Email',
+        emailNote: 'L’email è già associata al tuo account Google.',
+        infoBanner: 'Sicuro, veloce, esplosivo!',
+        submit: 'Completa e gioca',
+        useAnotherEmail: 'Usa un’altra email',
+        loginQuestion: 'Hai già un account?',
+        loginLink: 'Accedi ora'
+    },
     forgotPassword: {
         emailStep: {
             title: 'Boom! Password esplosa?',
