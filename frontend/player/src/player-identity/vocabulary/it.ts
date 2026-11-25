@@ -25,6 +25,7 @@ export default {
         loginLink: 'Accedi ora'
     },
     orDivider: 'oppure',
+    continueWithGoogle: 'Continua con Google',
     completeGoogleProfile: {
         title: 'Benvenuto esplosivo!',
         subtitle: 'Scegli il tuo nickname e {highlight}!',

@@ -13,6 +13,7 @@ import { formSchemas } from '../schemas/formSchemas.ts'
 import { failures } from '../errors/failures.ts'
 import { FORGOT_PASSWORD_PATH, LOGIN_PATH, REGISTER_PATH } from '../routePaths.ts'
 import AuthAlternativeLink from '../components/AuthAlternativeLink.vue'
+import GoogleSignInSection from '../components/GoogleSignInSection.vue'
 
 const authService = useAuthService()
 const session = useSessionStore()
@@ -88,6 +89,8 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
             </RouterLink>
             <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.login.submit') }} </VButton>
         </form>
+
+        <GoogleSignInSection />
 
         <p class="text-center text-sm text-link">{{ t('playerIdentity.login.botFreeNote') }}</p>
 

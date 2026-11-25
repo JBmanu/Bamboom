@@ -23,6 +23,7 @@ export default {
         loginLink: 'Log in now'
     },
     orDivider: 'or',
+    continueWithGoogle: 'Continue with Google',
     completeGoogleProfile: {
         title: 'Welcome to the explosion!',
         subtitle: 'Choose your nickname and {highlight}!',
