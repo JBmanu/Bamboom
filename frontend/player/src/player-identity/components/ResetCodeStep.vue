@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBanner, VButton, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VTextField, VCollapseTransition } from '@bamboom/common'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -63,7 +63,10 @@ function changeEmail() {
 
 <template>
     <VBanner variant="info">{{ t('playerIdentity.forgotPassword.codeStep.codeSent', { email, length: RESET_CODE_LENGTH }) }}</VBanner>
-    <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+
+    <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+        <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+    </VCollapseTransition>
 
     <form ref="codeFormElement" novalidate class="auth-form" @submit.prevent="submitUnlessWaiting">
         <!-- Shown so the person can see where the code went; it is not part of the form values. -->
