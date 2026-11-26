@@ -52,7 +52,7 @@ const { strength } = usePasswordStrength(password, personalInputs)
 
 <template>
     <div class="auth-page">
-        <AuthPageHeader :title="t('playerIdentity.register.title')">
+        <AuthPageHeader :title="t('playerIdentity.register.title')" has-flanking-leaves>
             <template #subtitle>
                 <I18nT scope="global" keypath="playerIdentity.register.subtitle" tag="span">
                     <template #highlight>

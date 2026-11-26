@@ -45,7 +45,7 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
 
 <template>
     <div class="auth-page">
-        <AuthPageHeader :title="t('playerIdentity.login.title')">
+        <AuthPageHeader :title="t('playerIdentity.login.title')" has-flanking-leaves>
             <template #subtitle>
                 <I18nT scope="global" keypath="playerIdentity.login.subtitle" tag="span">
                     <template #highlight>
