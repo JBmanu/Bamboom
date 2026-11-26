@@ -20,4 +20,23 @@
 
 .banner[data-variant='error'] {
     @apply border-error bg-error-soft text-error;
+
+    @variant motion-safe {
+        animation: banner-shake 400ms ease-in-out;
+    }
+}
+
+@keyframes banner-shake {
+    20% {
+        translate: -0.5rem;
+    }
+    40% {
+        translate: 0.375rem;
+    }
+    60% {
+        translate: -0.25rem;
+    }
+    80% {
+        translate: 0.125rem;
+    }
 }

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { VBanner, VButton, VPasswordField, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VPasswordField, VTextField } from '@bamboom/common'
 import { I18nT, useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
+import BambooIcon from '~icons/withicons/bamboo-solid'
+import PointUpArrowIcon from '~icons/ph/arrow-bend-right-up-bold'
 import { useTemplateRef } from 'vue'
 import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
@@ -45,7 +47,7 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
 
 <template>
     <div class="auth-page">
-        <AuthPageHeader :title="t('playerIdentity.login.title')">
+        <AuthPageHeader :title="t('playerIdentity.login.title')" has-flanking-leaves>
             <template #subtitle>
                 <I18nT scope="global" keypath="playerIdentity.login.subtitle" tag="span">
                     <template #highlight>
@@ -87,12 +89,18 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
             <RouterLink :to="FORGOT_PASSWORD_PATH" class="self-end text-sm text-link underline">
                 {{ t('playerIdentity.login.forgotPasswordLink') }}
             </RouterLink>
-            <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.login.submit') }} </VButton>
+            <VButton type="submit" :loading="isSubmitting" class="auth-submit">
+                {{ t('playerIdentity.login.submit') }}
+                <template #end><VIcon :icon="BambooIcon" /></template>
+            </VButton>
         </form>
 
-        <GoogleSignInSection />
+        <p class="-mt-3 flex items-end justify-center gap-1 text-sm font-medium text-link">
+            <span class="-rotate-3">{{ t('playerIdentity.login.botFreeNote') }}</span>
+            <VIcon :icon="PointUpArrowIcon" class="size-6" />
+        </p>
 
-        <p class="text-center text-sm text-link">{{ t('playerIdentity.login.botFreeNote') }}</p>
+        <GoogleSignInSection />
 
         <AuthAlternativeLink
             :question="t('playerIdentity.login.registerQuestion')"

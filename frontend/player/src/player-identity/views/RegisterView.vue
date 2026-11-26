@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { I18nT, useI18n } from 'vue-i18n'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
-import { VBanner, VButton, VPasswordField, VStrengthMeter, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VPasswordField, VStrengthMeter, VTextField } from '@bamboom/common'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
 import UserIcon from '~icons/ph/user-fill'
+import BambooIcon from '~icons/withicons/bamboo-solid'
 import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import { formSchemas } from '../schemas/formSchemas.ts'
 import { failures } from '../errors/failures.ts'
@@ -52,7 +53,7 @@ const { strength } = usePasswordStrength(password, personalInputs)
 
 <template>
     <div class="auth-page">
-        <AuthPageHeader :title="t('playerIdentity.register.title')">
+        <AuthPageHeader :title="t('playerIdentity.register.title')" has-flanking-leaves>
             <template #subtitle>
                 <I18nT scope="global" keypath="playerIdentity.register.subtitle" tag="span">
                     <template #highlight>
@@ -111,7 +112,10 @@ const { strength } = usePasswordStrength(password, personalInputs)
                 <VStrengthMeter :level="strength.level" :label="strength.labelKey ? t(strength.labelKey) : ''" />
             </form.Field>
 
-            <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.register.submit') }} </VButton>
+            <VButton type="submit" :loading="isSubmitting" class="auth-submit">
+                {{ t('playerIdentity.register.submit') }}
+                <template #end><VIcon :icon="BambooIcon" /></template>
+            </VButton>
         </form>
 
         <GoogleSignInSection />

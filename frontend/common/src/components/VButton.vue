@@ -3,7 +3,7 @@ import VSpinner from './VSpinner.vue'
 
 const props = withDefaults(
     defineProps<{
-        variant?: 'primary' | 'ghost'
+        variant?: 'primary' | 'secondary' | 'ghost'
         /** Turns the button off: the browser then blocks clicks and keyboard focus on its own. */
         disabled?: boolean
         /** Shows a spinner and ignores clicks. Not `disabled`: a disabled button loses keyboard focus while the person waits. */

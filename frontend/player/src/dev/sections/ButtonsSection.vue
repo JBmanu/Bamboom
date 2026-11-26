@@ -9,6 +9,7 @@ import GallerySection from '../GallerySection.vue'
 <template>
     <GallerySection title="VButton">
         <GalleryCase label="primary"><VButton>Sign in</VButton></GalleryCase>
+        <GalleryCase label="secondary"><VButton variant="secondary">Back to login</VButton></GalleryCase>
         <GalleryCase label="ghost"><VButton variant="ghost">Back to login</VButton></GalleryCase>
         <GalleryCase label="primary, disabled"><VButton disabled>Sign in</VButton></GalleryCase>
         <GalleryCase label="primary, loading"><VButton loading>Sign in</VButton></GalleryCase>

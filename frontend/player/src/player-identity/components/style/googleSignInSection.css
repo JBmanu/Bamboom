@@ -1,7 +1,16 @@
 @reference 'tailwindcss';
 @reference '@bamboom/common/theme.css';
 
-/* Google's guidelines want a light button even in the dark theme: it does not follow the theme tokens. */
-.google-button {
-    @apply w-full border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50;
+/* Light theme of Google's branding guidelines, kept in the dark theme too: these colours do not follow the theme tokens.
+   Shadows come from the secondary variant; the long selectors win over its colours. */
+.button.google-button[data-variant] {
+    @apply w-full border border-[#747775] bg-white text-[#1f1f1f];
+}
+
+.button.google-button[data-variant]:not(:disabled):hover {
+    @apply bg-neutral-50;
+}
+
+.button.google-button[data-variant]:not(:disabled):active {
+    @apply bg-neutral-100;
 }

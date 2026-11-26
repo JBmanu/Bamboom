@@ -2,10 +2,11 @@
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { VBanner, VButton, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VTextField } from '@bamboom/common'
 import GoogleIcon from '~icons/logos/google-icon'
 import LeafIcon from '~icons/ph/leaf'
 import UserIcon from '~icons/ph/user-fill'
+import BambooIcon from '~icons/withicons/bamboo-solid'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
 import OrDivider from '../components/OrDivider.vue'
 import { failures } from '../errors/failures.ts'
@@ -14,6 +15,7 @@ import { COMPLETE_GOOGLE_PROFILE_PATH, LOGIN_PATH, REGISTER_PATH } from '../rout
 import { formSchemas } from '../schemas/formSchemas.ts'
 import { useSessionStore } from '../stores/useSessionStore.ts'
 import { useAuthService } from '../useAuthService.ts'
+import FlankingLeaves from '../components/FlankingLeaves.vue'
 
 const authService = useAuthService()
 const session = useSessionStore()
@@ -69,9 +71,11 @@ async function cancelProfileAndGoTo(path: string) {
 
 <template>
     <div class="auth-page">
-        <div class="mx-auto flex size-16 items-center justify-center rounded-full bg-white shadow-md" aria-hidden="true">
-            <GoogleIcon class="size-8" />
-        </div>
+        <FlankingLeaves>
+            <div class="flex size-16 items-center justify-center rounded-full bg-white shadow-md" aria-hidden="true">
+                <GoogleIcon class="size-8" />
+            </div>
+        </FlankingLeaves>
 
         <AuthPageHeader :title="t('playerIdentity.completeGoogleProfile.title')">
             <template #subtitle>
@@ -111,13 +115,17 @@ async function cancelProfileAndGoTo(path: string) {
             <p class="text-sm text-foreground-muted">{{ t('playerIdentity.completeGoogleProfile.emailNote') }}</p>
 
             <VBanner variant="info">{{ t('playerIdentity.completeGoogleProfile.infoBanner') }}</VBanner>
-            <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.completeGoogleProfile.submit') }}</VButton>
+            <VButton type="submit" :loading="isSubmitting" class="auth-submit">
+                {{ t('playerIdentity.completeGoogleProfile.submit') }}
+                <template #end><VIcon :icon="BambooIcon" /></template>
+            </VButton>
         </form>
 
         <OrDivider :label="t('playerIdentity.orDivider')" />
-        <VButton variant="ghost" @click="cancelProfileAndGoTo(REGISTER_PATH)">{{
-            t('playerIdentity.completeGoogleProfile.useAnotherEmail')
-        }}</VButton>
+        <VButton variant="secondary" @click="cancelProfileAndGoTo(REGISTER_PATH)">
+            <template #start><VIcon :icon="UserIcon" /></template>
+            {{ t('playerIdentity.completeGoogleProfile.useAnotherEmail') }}
+        </VButton>
 
         <!-- Not AuthAlternativeLink: this one must cancel the pending profile before leaving. -->
         <p class="text-center text-sm">

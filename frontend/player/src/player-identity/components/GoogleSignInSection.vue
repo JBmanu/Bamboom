@@ -42,7 +42,7 @@ async function continueWithGoogle() {
     <div class="flex flex-col gap-4">
         <OrDivider :label="t('playerIdentity.orDivider')" />
         <VBanner v-if="googleFailure" variant="error">{{ t(googleFailure.messageKey) }}</VBanner>
-        <VButton :loading="isWaitingForGoogle" class="google-button" @click="continueWithGoogle">
+        <VButton variant="secondary" :loading="isWaitingForGoogle" class="google-button" @click="continueWithGoogle">
             <template #start><GoogleIcon aria-hidden="true" /></template>
             {{ t('playerIdentity.continueWithGoogle') }}
         </VButton>

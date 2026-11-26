@@ -4,6 +4,7 @@ import { createPlayerApp } from '../../src/app/createPlayerApp'
 import { useResetFlowStore, useSessionStore } from '../../src/player-identity'
 import { AuthService } from '../../src/player-identity/api/authService.ts'
 import { NEW_PASSWORD_PATH } from '../../src/player-identity/routePaths.ts'
+import { waitForPageSwap } from './waitForPageSwap.ts'
 
 type PlayerApp = Awaited<ReturnType<typeof createPlayerApp>>
 
@@ -47,4 +48,5 @@ export async function openNewPasswordPage(app: PlayerApp, resetEmail = 'ada@exam
     resetFlow.markCodeRequested(resetEmail)
     resetFlow.markCodeConfirmed()
     await app.config.globalProperties.$router.push(NEW_PASSWORD_PATH)
+    await waitForPageSwap()
 }

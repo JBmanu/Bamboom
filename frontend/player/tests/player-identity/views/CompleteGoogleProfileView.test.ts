@@ -17,6 +17,7 @@ import {
     typeInto
 } from '../../utils/accessPageQueries.ts'
 import { mountPlayer } from '../../utils/mountPlayer.ts'
+import { waitForPageSwap } from '../../utils/waitForPageSwap.ts'
 
 const account = { username: 'ada', email: 'ada@example.com', password: 'correct-horse-9' }
 const googleEmail = 'ada.google@example.com'
@@ -169,7 +170,7 @@ describe('CompleteGoogleProfileView: leaving the page', () => {
         authService.failNextCall(failures.networkUnreachable)
 
         await router.push(COMPLETE_GOOGLE_PROFILE_PATH)
-        await flushPromises()
+        await waitForPageSwap()
 
         expect(container.querySelector('[role="alert"]')?.textContent).toContain('No connection. Check your network and try again.')
         expect(container.querySelector('form')).toBeNull()

@@ -37,6 +37,7 @@ async function reachNewPasswordPage() {
     await typeInto(findFieldByLabel(container, 'Code'), resetCode)
     await submitForm(container)
     await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+    await vi.waitFor(() => expect(titleOf(container)).toBe('New password?'))
 
     return { container, app, router }
 }

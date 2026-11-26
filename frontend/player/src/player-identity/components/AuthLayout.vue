@@ -18,11 +18,9 @@ defineSlots<{
             </div>
         </template>
 
-        <div class="mx-auto flex h-full w-full max-w-(--card-width) flex-col items-center gap-[2dvh] px-4 py-[2dvh]">
+        <div class="mx-auto flex h-full w-full max-w-(--card-width) flex-col items-center gap-[2dvh] overflow-clip px-4 py-[2dvh]">
             <VPicture :picture="logo" alt="Bamboom" sizes="36rem" priority class="h-auto w-(--logo-width) shrink-0" />
-            <div class="min-h-0 w-full overflow-y-auto rounded-3xl border border-border bg-surface p-6 shadow-lg">
-                <slot />
-            </div>
+            <slot />
             <div v-if="$slots.footer" class="flex shrink-0 items-center justify-center gap-2">
                 <slot name="footer" />
             </div>
