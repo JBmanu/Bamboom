@@ -24,8 +24,8 @@ const emit = defineEmits<{
 defineSlots<{
     /** The body of the modal. */
     default(): unknown
-    /** Buttons for the footer. Without them the footer is not rendered. */
-    actions(): unknown
+    /** Buttons for the footer. Without them the footer is not rendered. `close` closes like the close button: with the exit, then `update:open` and `close`. */
+    actions(slotProps: { close: () => void }): unknown
 }>()
 
 const titleId = useId()
@@ -89,7 +89,7 @@ watch(() => props.open, matchDialogToOpenProp)
             </header>
             <slot />
             <footer v-if="$slots.actions" class="actions">
-                <slot name="actions" />
+                <slot name="actions" :close="closeAfterExit" />
             </footer>
         </div>
     </dialog>

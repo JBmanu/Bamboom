@@ -9,6 +9,7 @@ const CANCEL_EVENT = 'cancel'
  */
 export function installDialogStub(): void {
     const dialogPrototype = HTMLDialogElement.prototype
+    dialogPrototype.getAnimations = () => []
 
     // Stricter than the spec on purpose: a second call throws, so our own guard gets tested.
     dialogPrototype.showModal = function showModal(this: HTMLDialogElement) {

@@ -107,8 +107,8 @@ onMounted(() => focusField('password'))
 
         <VModal v-model:open="isPasswordUpdatedShown" :title="t('playerIdentity.newPassword.updatedTitle')" @close="goToLogin">
             <p>{{ t('playerIdentity.newPassword.updatedMessage') }}</p>
-            <template #actions>
-                <VButton autofocus @click="goToLogin">{{ t('playerIdentity.newPassword.goToLogin') }}</VButton>
+            <template #actions="{ close }">
+                <VButton autofocus @click="close">{{ t('playerIdentity.newPassword.goToLogin') }}</VButton>
             </template>
         </VModal>
     </div>

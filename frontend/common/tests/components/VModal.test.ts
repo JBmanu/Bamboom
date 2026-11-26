@@ -138,6 +138,19 @@ describe('VModal', () => {
         expect(footer.text()).toBe(footerText)
     })
 
+    it('closes and reports once when an action asks to close', async () => {
+        const { wrapper } = await mountModal(
+            true,
+            {},
+            { actions: `<template #actions="{ close }"><button data-test="action" @click="close">Done</button></template>` }
+        )
+
+        await wrapper.get('[data-test="action"]').trigger('click')
+
+        expect(wrapper.emitted('update:open')).toEqual([[false]])
+        expect(wrapper.emitted('close')).toHaveLength(1)
+    })
+
     it('has no footer without actions', async () => {
         const { wrapper } = await mountModal(true)
         expect(wrapper.find('footer').exists()).toBe(false)
