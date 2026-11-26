@@ -8,6 +8,7 @@
 .button {
     @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-base font-medium no-underline select-none;
     @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring;
+    @apply motion-safe:transition-shadow;
 }
 
 .button:disabled {
@@ -20,9 +21,11 @@
 
 .button[data-variant='primary'] {
     @apply bg-primary text-on-primary not-disabled:hover:bg-primary-hover not-disabled:active:bg-primary-edge;
+    @apply shadow-md shadow-primary-edge/40 not-disabled:hover:shadow-lg not-disabled:active:shadow-xs disabled:shadow-none;
 }
 .button[data-variant='secondary'] {
     @apply bg-surface-muted text-link not-disabled:hover:bg-border not-disabled:active:bg-border;
+    @apply shadow-sm not-disabled:hover:shadow-md not-disabled:active:shadow-xs disabled:shadow-none;
 }
 .button[data-variant='ghost'] {
     @apply bg-transparent text-link not-disabled:hover:bg-surface-muted not-disabled:active:bg-border;
