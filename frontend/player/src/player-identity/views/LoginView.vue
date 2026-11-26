@@ -4,6 +4,7 @@ import { I18nT, useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
 import BambooIcon from '~icons/withicons/bamboo-solid'
+import PointUpArrowIcon from '~icons/ph/arrow-bend-right-up-bold'
 import { useTemplateRef } from 'vue'
 import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
@@ -94,9 +95,12 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
             </VButton>
         </form>
 
-        <GoogleSignInSection />
+        <p class="-mt-3 flex items-end justify-center gap-1 text-sm font-medium text-link">
+            <span class="-rotate-3">{{ t('playerIdentity.login.botFreeNote') }}</span>
+            <VIcon :icon="PointUpArrowIcon" class="size-6" />
+        </p>
 
-        <p class="text-center text-sm text-link">{{ t('playerIdentity.login.botFreeNote') }}</p>
+        <GoogleSignInSection />
 
         <AuthAlternativeLink
             :question="t('playerIdentity.login.registerQuestion')"
