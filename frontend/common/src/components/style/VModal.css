@@ -29,3 +29,26 @@
 .actions {
     @apply flex flex-wrap justify-end gap-2;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+    .modal {
+        transition:
+                opacity 200ms ease-out,
+                scale 200ms ease-out;
+    }
+
+    .modal::backdrop {
+        transition: opacity 200ms ease-out;
+    }
+
+    @starting-style {
+        .modal[open] {
+            opacity: 0;
+            scale: 0.95;
+        }
+
+        .modal[open]::backdrop {
+            opacity: 0;
+        }
+    }
+}
