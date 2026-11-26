@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { VBanner, VButton, VPasswordField, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VPasswordField, VTextField } from '@bamboom/common'
 import { I18nT, useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
+import BambooIcon from '~icons/withicons/bamboo-solid'
 import { useTemplateRef } from 'vue'
 import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
@@ -87,7 +88,10 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
             <RouterLink :to="FORGOT_PASSWORD_PATH" class="self-end text-sm text-link underline">
                 {{ t('playerIdentity.login.forgotPasswordLink') }}
             </RouterLink>
-            <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.login.submit') }} </VButton>
+            <VButton type="submit" :loading="isSubmitting" class="auth-submit">
+                {{ t('playerIdentity.login.submit') }}
+                <template #end><VIcon :icon="BambooIcon" /></template>
+            </VButton>
         </form>
 
         <GoogleSignInSection />

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { VBanner, VButton, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VTextField, VIcon } from '@bamboom/common'
 import { useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
+import RocketIcon from '~icons/ph/rocket-launch-fill'
 import { useSchemaForm } from '../forms/useSchemaForm.ts'
 import { formSchemas } from '../schemas/formSchemas.ts'
 import { useResetFlowStore } from '../stores/useResetFlowStore.ts'
@@ -47,7 +48,10 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
                 @blur="field.handleBlur"
             />
         </form.Field>
-        <VButton type="submit" :loading="isSubmitting" class="auth-submit">{{ t('playerIdentity.forgotPassword.emailStep.submit') }}</VButton>
+        <VButton type="submit" :loading="isSubmitting" class="auth-submit">
+            {{ t('playerIdentity.forgotPassword.emailStep.submit') }}
+            <template #end><VIcon :icon="RocketIcon" /></template>
+        </VButton>
     </form>
 </template>
 

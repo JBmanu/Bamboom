@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { VBanner, VButton, VPasswordField, VStrengthMeter, VModal } from '@bamboom/common'
+import { VBanner, VButton, VPasswordField, VStrengthMeter, VModal, VIcon } from '@bamboom/common'
 import { computed, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LockIcon from '~icons/ph/lock-fill'
+import SparkleIcon from '~icons/ph/sparkle-fill'
 import AuthAlternativeLink from '../components/AuthAlternativeLink.vue'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
 import { usePasswordStrength } from '../forms/usePasswordStrength.ts'
@@ -89,8 +90,9 @@ onMounted(() => focusField('password'))
                 <VStrengthMeter :level="strength.level" :label="strength.labelKey ? t(strength.labelKey) : ''" />
             </form.Field>
 
-            <VButton type="submit" :loading="isSubmitting" :disabled="mustStartAgain" class="auth-submit"
-                >{{ t('playerIdentity.newPassword.submit') }}
+            <VButton type="submit" :loading="isSubmitting" :disabled="mustStartAgain" class="auth-submit">
+                {{ t('playerIdentity.newPassword.submit') }}
+                <template #end><VIcon :icon="SparkleIcon" /></template>
             </VButton>
         </form>
 
