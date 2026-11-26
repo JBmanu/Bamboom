@@ -46,6 +46,34 @@ describe('ForgotPasswordView: the code step', () => {
         expect(codeField.getAttribute('inputmode')).toBe('numeric')
     })
 
+    it('given the right code, when it is sent, then the email step never shows again on the way to the new password page', async () => {
+        const authService = createFakeAuthService({ accounts: [account], resetCode: correctCode })
+        const { container, router } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
+        await askForCode(container)
+        await typeInto(findFieldByLabel(container, 'Code'), correctCode)
+        const titlesSeen: Array<string | null | undefined> = []
+        const observer = new MutationObserver(() => titlesSeen.push(titleOf(container)))
+        observer.observe(container, { childList: true, subtree: true, characterData: true })
+
+        await submitForm(container)
+        await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+        observer.disconnect()
+
+        expect(titlesSeen).not.toContain('Boom! Password exploded?')
+    })
+
+    it('given the code was confirmed, when the person comes back to this page, then the email step opens again', async () => {
+        const authService = createFakeAuthService({ accounts: [account], resetCode: correctCode })
+        const { container, router } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
+        await askForCode(container)
+        await typeInto(findFieldByLabel(container, 'Code'), correctCode)
+        await submitForm(container)
+        await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+
+        await router.push(FORGOT_PASSWORD_PATH)
+        await waitForPageLoad(() => expect(titleOf(container)).toBe('Boom! Password exploded?'))
+    })
+
     it('given the right code, when it is sent, then the flow is confirmed and the new password page opens', async () => {
         const authService = createFakeAuthService({ accounts: [account], resetCode: correctCode })
         const { container, app, router } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
