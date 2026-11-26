@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.13.0...player-frontend-v0.14.0) (2026-11-26)
+
+
+### Features
+
+* **player:** add exit and height motion to the access pages ([#184](https://github.com/JBmanu/Bamboom/issues/184)) ([f62171f](https://github.com/JBmanu/Bamboom/commit/f62171f1840210b33e52b8bd528145c395c70cc6))
+
 ## [0.13.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.12.0...player-frontend-v0.13.0) (2026-11-26)
 
 
