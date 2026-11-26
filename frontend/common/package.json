@@ -15,8 +15,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./theme.css": "./src/theme/theme.css",
-    "./vite": "./src/vite/index.ts",
-    "./motion": "./src/motion/index.ts"
+    "./vite": "./src/vite/index.ts"
   },
   "peerDependencies": {
     "@iconify-json/flag": "^1.2.15",

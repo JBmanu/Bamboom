@@ -42,14 +42,12 @@ const isMotionReduced = usePreferredReducedMotion().value === 'reduce'
 </script>
 
 <template>
-    <!-- Without the library: even with no duration it would wait a frame before removing the block. -->
     <template v-if="isMotionReduced">
-        <div v-if="content !== undefined" :key="contentVersion">
-            <slot :content="content!" />
+        <div v-if="content !== undefined" :key="contentVersion" class="-mb-(--collapse-gap)">
+            <div class="pb-(--collapse-gap)"><slot :content="content!" /></div>
         </div>
     </template>
     <LazyMotion v-else :features="domAnimation" strict>
-        <!-- wait: the new block enters after the old one has left, so there are never two banners or two forms. -->
         <AnimatePresence mode="wait" :initial="false">
             <m.div
                 v-if="content !== undefined"
@@ -58,9 +56,10 @@ const isMotionReduced = usePreferredReducedMotion().value === 'reduce'
                 :animate="shownState"
                 :exit="COLLAPSED"
                 :transition="COLLAPSE_TRANSITION"
+                class="-mb-(--collapse-gap)"
                 @animation-complete="releaseClipAfterEntering"
             >
-                <slot :content="content!" />
+                <div class="pb-(--collapse-gap)"><slot :content="content!" /></div>
             </m.div>
         </AnimatePresence>
     </LazyMotion>
