@@ -164,7 +164,7 @@ describe('LoginView: a refused log-in', () => {
         await logInThroughTheForm(container, account.email, wrongPassword)
         await logInThroughTheForm(container, account.email, account.password)
 
-        expect(readErrorBanner(container)).toBe('Too many attempts. Try again in a few minutes.')
+        await vi.waitFor(() => expect(readErrorBanner(container)).toBe('Too many attempts. Try again in a few minutes.'))
     })
 
     it('says when the server cannot be reached, keeps what was typed, and lets the person try again', async () => {
@@ -187,7 +187,7 @@ describe('LoginView: a refused log-in', () => {
         await logInThroughTheForm(container, account.email, account.password)
         await logInThroughTheForm(container, account.email, wrongPassword)
 
-        expect(readErrorBanner(container)).toBe('Email or password is incorrect.')
+        await vi.waitFor(() => expect(readErrorBanner(container)).toBe('Email or password is incorrect.'))
         expect(container.querySelectorAll('[role="alert"]').length).toBe(1)
     })
 })

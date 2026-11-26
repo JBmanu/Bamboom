@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBanner, VButton, VIcon, VPasswordField, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VPasswordField, VTextField, VCollapseTransition } from '@bamboom/common'
 import { I18nT, useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
@@ -57,7 +57,9 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
             </template>
         </AuthPageHeader>
 
-        <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+        <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+            <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+        </VCollapseTransition>
 
         <!-- novalidate: the browser's own bubbles would appear before our messages, in another style and language. -->
         <form ref="logInFormElement" novalidate class="auth-form" @submit.prevent="submitUnlessWaiting">
