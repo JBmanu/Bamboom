@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.12.0...player-frontend-v0.13.0) (2026-11-26)
+
+
+### Features
+
+* **player:** add motion and decorations to the access pages ([#182](https://github.com/JBmanu/Bamboom/issues/182)) ([67e2b3e](https://github.com/JBmanu/Bamboom/commit/67e2b3eaff843c8e3416279a95f7698fbc76c669))
+
 ## [0.12.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.11.0...player-frontend-v0.12.0) (2026-11-25)
 
 
