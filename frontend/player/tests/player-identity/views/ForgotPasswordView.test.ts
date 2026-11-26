@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity'
 import { FORGOT_PASSWORD_PATH, NEW_PASSWORD_PATH } from '../../../src/player-identity/routePaths'
 import { RESET_CODE_RESEND_WAIT_MS, resetFlowSteps, useResetFlowStore } from '../../../src/player-identity/stores/useResetFlowStore.ts'
@@ -12,10 +12,11 @@ const account = { username: 'ada', email: registeredEmail, password: 'correct-ho
 const correctCode = '123456' // the fake's default code
 const wrongCode = '654321'
 
-/** Sends the email through the form, so the page moves to the code step. */
+/** Sends the email through the form, so the page moves to the code step: the old step leaves first, then the new one comes. */
 async function askForCode(container: HTMLElement) {
     await typeInto(findFieldByLabel(container, 'Email'), account.email)
     await submitForm(container)
+    await vi.waitFor(() => findFieldByLabel(container, 'Code'))
 }
 
 /** Pretends the code was requested long ago, so the wait is over: the real wait is a minute. */

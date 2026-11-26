@@ -10,6 +10,7 @@ import { LOGIN_PATH } from '../routePaths.ts'
 import { resetFlowSteps, useResetFlowStore } from '../stores/useResetFlowStore.ts'
 import explosiveLetter from '../../../resource/image/layout/element/letter.png?as=picture'
 import AuthPageIllustration from '../components/AuthPageIllustration.vue'
+import { VStepTransition } from '@bamboom/common'
 
 const resetFlow = useResetFlowStore()
 const { step } = storeToRefs(resetFlow)
@@ -32,8 +33,14 @@ if (step.value === resetFlowSteps.codeConfirmed) resetFlow.clearFlow()
             </template>
         </AuthPageHeader>
 
-        <ResetCodeStep v-if="isCodeStepShown" />
-        <ResetEmailStep v-else />
+        <VStepTransition
+            v-slot="{ stepName: shownStepName }"
+            :step-name="isCodeStepShown ? 'code' : 'email'"
+            class="flex flex-col gap-(--collapse-gap)"
+        >
+            <ResetCodeStep v-if="shownStepName === 'code'" />
+            <ResetEmailStep v-else />
+        </VStepTransition>
 
         <AuthAlternativeLink
             :question="t('playerIdentity.forgotPassword.backToLoginQuestion')"
