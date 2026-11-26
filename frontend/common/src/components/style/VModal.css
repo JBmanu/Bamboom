@@ -40,6 +40,13 @@
     .modal::backdrop {
         transition: opacity 200ms ease-out;
     }
+    .modal[data-closing] {
+        opacity: 0;
+        scale: 0.95;
+    }
+    .modal[data-closing]::backdrop {
+        opacity: 0;
+    }
 
     @starting-style {
         .modal[open] {

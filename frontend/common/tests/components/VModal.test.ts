@@ -1,4 +1,4 @@
-import { enableAutoUnmount } from '@vue/test-utils'
+import { enableAutoUnmount, flushPromises } from '@vue/test-utils'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import VModal from '../../src/components/VModal.vue'
 import { installDialogStub, pressEscape } from '../utils/installDialogStub.ts'
@@ -21,6 +21,13 @@ async function mountModal(open = false, props = {}, slots = {}) {
         }
     )
     return { wrapper, dialog: wrapper.element as HTMLDialogElement }
+}
+
+function holdExitAnimation(dialog: HTMLDialogElement) {
+    let endExit = () => {}
+    const finished = new Promise<void>((resolve) => (endExit = resolve))
+    dialog.getAnimations = () => [{ finished } as unknown as Animation]
+    return endExit
 }
 
 describe('VModal', () => {
@@ -174,6 +181,34 @@ describe('VModal', () => {
             dialog.click()
 
             expect(wrapper.emitted('close')).toHaveLength(2)
+        })
+    })
+
+    describe('with an exit animation', () => {
+        it('given an exit animation, when the person closes it, then it closes and reports only after the exit ends', async () => {
+            const { wrapper, dialog } = await mountModal(true)
+            const endExit = holdExitAnimation(dialog)
+
+            dialog.click()
+
+            expect(dialog.open).toBe(true)
+            expect(wrapper.emitted('close')).toBeUndefined()
+            endExit()
+            await flushPromises()
+            expect(dialog.open).toBe(false)
+            expect(wrapper.emitted('close')).toHaveLength(1)
+        })
+
+        it('given an exit started by the parent, when the parent opens it again before the end, then it stays open', async () => {
+            const { wrapper, dialog } = await mountModal(true)
+            const endExit = holdExitAnimation(dialog)
+
+            await wrapper.setProps({ open: false })
+            await wrapper.setProps({ open: true })
+            endExit()
+            await flushPromises()
+
+            expect(dialog.open).toBe(true)
         })
     })
 })
