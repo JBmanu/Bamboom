@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBanner, VButton, VTextField, VIcon } from '@bamboom/common'
+import { VBanner, VButton, VTextField, VIcon, VCollapseTransition } from '@bamboom/common'
 import { useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LeafIcon from '~icons/ph/leaf'
@@ -30,7 +30,9 @@ const { form, serverFailure, isSubmitting, submitUnlessWaiting, translateFirstEr
 </script>
 
 <template>
-    <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+    <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+        <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+    </VCollapseTransition>
 
     <p class="text-center text-sm">{{ t('playerIdentity.forgotPassword.emailStep.instruction') }}</p>
 

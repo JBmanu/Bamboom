@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createFakeAuthService } from '../../../src/player-identity'
 import { FORGOT_PASSWORD_PATH, NEW_PASSWORD_PATH } from '../../../src/player-identity/routePaths'
 import { RESET_CODE_RESEND_WAIT_MS, resetFlowSteps, useResetFlowStore } from '../../../src/player-identity/stores/useResetFlowStore.ts'
@@ -12,10 +12,11 @@ const account = { username: 'ada', email: registeredEmail, password: 'correct-ho
 const correctCode = '123456' // the fake's default code
 const wrongCode = '654321'
 
-/** Sends the email through the form, so the page moves to the code step. */
+/** Sends the email through the form, so the page moves to the code step: the old step leaves first, then the new one comes. */
 async function askForCode(container: HTMLElement) {
     await typeInto(findFieldByLabel(container, 'Email'), account.email)
     await submitForm(container)
+    await vi.waitFor(() => findFieldByLabel(container, 'Code'))
 }
 
 /** Pretends the code was requested long ago, so the wait is over: the real wait is a minute. */
@@ -44,6 +45,34 @@ describe('ForgotPasswordView: the code step', () => {
         expect(document.activeElement).toBe(codeField)
         expect(codeField.autocomplete).toBe('one-time-code')
         expect(codeField.getAttribute('inputmode')).toBe('numeric')
+    })
+
+    it('given the right code, when it is sent, then the email step never shows again on the way to the new password page', async () => {
+        const authService = createFakeAuthService({ accounts: [account], resetCode: correctCode })
+        const { container, router } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
+        await askForCode(container)
+        await typeInto(findFieldByLabel(container, 'Code'), correctCode)
+        const titlesSeen: Array<string | null | undefined> = []
+        const observer = new MutationObserver(() => titlesSeen.push(titleOf(container)))
+        observer.observe(container, { childList: true, subtree: true, characterData: true })
+
+        await submitForm(container)
+        await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+        observer.disconnect()
+
+        expect(titlesSeen).not.toContain('Boom! Password exploded?')
+    })
+
+    it('given the code was confirmed, when the person comes back to this page, then the email step opens again', async () => {
+        const authService = createFakeAuthService({ accounts: [account], resetCode: correctCode })
+        const { container, router } = await mountPlayer(FORGOT_PASSWORD_PATH, { authService })
+        await askForCode(container)
+        await typeInto(findFieldByLabel(container, 'Code'), correctCode)
+        await submitForm(container)
+        await waitForPageLoad(() => expect(router.currentRoute.value.path).toBe(NEW_PASSWORD_PATH))
+
+        await router.push(FORGOT_PASSWORD_PATH)
+        await waitForPageLoad(() => expect(titleOf(container)).toBe('Boom! Password exploded?'))
     })
 
     it('given the right code, when it is sent, then the flow is confirmed and the new password page opens', async () => {

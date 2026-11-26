@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { I18nT, useI18n } from 'vue-i18n'
 import AuthPageHeader from '../components/AuthPageHeader.vue'
-import { VBanner, VButton, VIcon, VPasswordField, VStrengthMeter, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VPasswordField, VStrengthMeter, VTextField, VCollapseTransition } from '@bamboom/common'
 import LeafIcon from '~icons/ph/leaf'
 import LockIcon from '~icons/ph/lock-fill'
 import UserIcon from '~icons/ph/user-fill'
@@ -65,7 +65,9 @@ const { strength } = usePasswordStrength(password, personalInputs)
             </template>
         </AuthPageHeader>
 
-        <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+        <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+            <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+        </VCollapseTransition>
 
         <form ref="registerFormElement" novalidate class="auth-form" @submit.prevent="submitUnlessWaiting">
             <form.Field v-slot="{ field }" name="username">

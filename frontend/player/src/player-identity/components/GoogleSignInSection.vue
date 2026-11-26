@@ -2,7 +2,7 @@
 import { ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { VBanner, VButton } from '@bamboom/common'
+import { VBanner, VButton, VCollapseTransition } from '@bamboom/common'
 import GoogleIcon from '~icons/logos/google-icon'
 import { googleSignInStatuses } from '../api/authService.ts'
 import type { Failure } from '../errors/failures.ts'
@@ -33,15 +33,16 @@ async function continueWithGoogle() {
         return
     }
     session.startSession(answer.value.player)
-    // Opening the login again lets the route guard decide where a signed-in person goes: this module does not know the home.
     await router.replace({ path: LOGIN_PATH, force: true })
 }
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
+    <div class="google-sign-in">
         <OrDivider :label="t('playerIdentity.orDivider')" />
-        <VBanner v-if="googleFailure" variant="error">{{ t(googleFailure.messageKey) }}</VBanner>
+        <VCollapseTransition v-slot="{ content: shownFailure }" :content="googleFailure">
+            <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+        </VCollapseTransition>
         <VButton variant="secondary" :loading="isWaitingForGoogle" class="google-button" @click="continueWithGoogle">
             <template #start><GoogleIcon aria-hidden="true" /></template>
             {{ t('playerIdentity.continueWithGoogle') }}

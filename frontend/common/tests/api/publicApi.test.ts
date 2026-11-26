@@ -14,7 +14,9 @@ describe('the public API', () => {
         'ThemeToggle',
         'VPasswordField',
         'VStrengthMeter',
-        'LanguageSwitcher'
+        'VStepTransition',
+        'LanguageSwitcher',
+        'VCollapseTransition'
     ])('exports %s', (name) => {
         expect(common).toHaveProperty(name)
     })

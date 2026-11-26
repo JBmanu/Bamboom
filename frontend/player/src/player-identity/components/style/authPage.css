@@ -1,9 +1,10 @@
 @reference 'tailwindcss';
 @reference '@bamboom/common/theme.css';
 
-/* The blocks of a screen of the access pages: header, banner, form, link. */
 .auth-page {
-    @apply flex flex-col gap-6;
+    --collapse-gap: --spacing(6);
+    @apply flex flex-col;
+    gap: var(--collapse-gap);
 }
 
 .auth-form {

@@ -24,32 +24,45 @@ const emit = defineEmits<{
 defineSlots<{
     /** The body of the modal. */
     default(): unknown
-    /** Buttons for the footer. Without them the footer is not rendered. */
-    actions(): unknown
+    /** Buttons for the footer. Without them the footer is not rendered. `close` closes like the close button: with the exit, then `update:open` and `close`. */
+    actions(slotProps: { close: () => void }): unknown
 }>()
 
 const titleId = useId()
 const { t } = useI18n()
 const dialogElement = ref<HTMLDialogElement>()
+const CLOSING_ATTRIBUTE = 'data-closing'
 
-// One comparison covers both directions and keeps showModal() from throwing on a dialog that is already open.
 function matchDialogToOpenProp() {
     const dialog = dialogElement.value
-    if (!dialog || dialog.open === props.open) return
-    if (props.open) dialog.showModal()
-    else dialog.close()
+    if (!dialog) return
+    if (props.open) {
+        dialog.removeAttribute(CLOSING_ATTRIBUTE) // reopened during its exit: the styles reverse and the pending close does nothing
+        if (!dialog.open) dialog.showModal()
+    } else {
+        closeAfterExit()
+    }
 }
 
-// The browser fires this for every closing. If `open` is still true the person closed it; otherwise the parent did.
 function reportClosingByPerson() {
     if (!props.open) return
     emit('update:open', false)
     emit('close')
 }
 
-// Closing from the inside always goes through the dialog: its `close` event then reaches reportClosingByPerson.
-function closeDialog() {
-    dialogElement.value?.close()
+function closeAfterExit() {
+    const dialog = dialogElement.value
+    if (!dialog?.open) return
+    dialog.setAttribute(CLOSING_ATTRIBUTE, '')
+    const exitAnimations = dialog.getAnimations()
+    if (exitAnimations.length === 0) closeIfStillClosing(dialog)
+    else Promise.allSettled(exitAnimations.map((animation) => animation.finished)).then(() => closeIfStillClosing(dialog))
+}
+
+function closeIfStillClosing(dialog: HTMLDialogElement) {
+    if (!dialog.hasAttribute(CLOSING_ATTRIBUTE)) return
+    dialog.removeAttribute(CLOSING_ATTRIBUTE)
+    dialog.close() // the `close` event reaches reportClosingByPerson
 }
 
 onMounted(matchDialogToOpenProp)
@@ -57,11 +70,18 @@ watch(() => props.open, matchDialogToOpenProp)
 </script>
 
 <template>
-    <dialog ref="dialogElement" class="modal" :aria-labelledby="titleId" @close="reportClosingByPerson" @click.self="closeDialog">
+    <dialog
+        ref="dialogElement"
+        class="modal"
+        :aria-labelledby="titleId"
+        @cancel.prevent="closeAfterExit"
+        @close="reportClosingByPerson"
+        @click.self="closeAfterExit"
+    >
         <div class="content">
             <header class="header">
                 <h2 :id="titleId" class="title">{{ title }}</h2>
-                <VButton variant="ghost" :aria-label="t('common.modal.close')" @click="closeDialog">
+                <VButton variant="ghost" :aria-label="t('common.modal.close')" @click="closeAfterExit">
                     <template #start>
                         <VIcon :icon="XIcon" />
                     </template>
@@ -69,7 +89,7 @@ watch(() => props.open, matchDialogToOpenProp)
             </header>
             <slot />
             <footer v-if="$slots.actions" class="actions">
-                <slot name="actions" />
+                <slot name="actions" :close="closeAfterExit" />
             </footer>
         </div>
     </dialog>

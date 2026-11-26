@@ -2,7 +2,7 @@
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { VBanner, VButton, VIcon, VTextField } from '@bamboom/common'
+import { VBanner, VButton, VIcon, VTextField, VCollapseTransition } from '@bamboom/common'
 import GoogleIcon from '~icons/logos/google-icon'
 import LeafIcon from '~icons/ph/leaf'
 import UserIcon from '~icons/ph/user-fill'
@@ -87,7 +87,9 @@ async function cancelProfileAndGoTo(path: string) {
             </template>
         </AuthPageHeader>
 
-        <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+        <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+            <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+        </VCollapseTransition>
 
         <form v-if="pendingEmail" ref="profileFormElement" novalidate class="auth-form" @submit.prevent="submitUnlessWaiting">
             <form.Field v-slot="{ field }" name="username">

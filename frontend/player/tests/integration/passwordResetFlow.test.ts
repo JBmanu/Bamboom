@@ -32,7 +32,8 @@ async function reachNewPasswordPage() {
     await typeInto(findFieldByLabel(container, 'Email'), account.email)
     await submitForm(container)
     await vi.waitFor(() => expect(titleOf(container)).toBe('Check your email'))
-    expect(router.currentRoute.value.path).toBe(FORGOT_PASSWORD_PATH) // same page: only the phase changes
+    expect(router.currentRoute.value.path).toBe(FORGOT_PASSWORD_PATH)
+    await vi.waitFor(() => findFieldByLabel(container, 'Code'))
 
     await typeInto(findFieldByLabel(container, 'Code'), resetCode)
     await submitForm(container)

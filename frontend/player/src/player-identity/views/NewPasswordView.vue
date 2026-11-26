@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBanner, VButton, VPasswordField, VStrengthMeter, VModal, VIcon } from '@bamboom/common'
+import { VBanner, VButton, VPasswordField, VStrengthMeter, VModal, VIcon, VCollapseTransition } from '@bamboom/common'
 import { computed, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LockIcon from '~icons/ph/lock-fill'
@@ -70,7 +70,10 @@ onMounted(() => focusField('password'))
             <template #subtitle>{{ t('playerIdentity.newPassword.subtitle') }}</template>
         </AuthPageHeader>
 
-        <VBanner v-if="serverFailure" variant="error">{{ t(serverFailure.messageKey) }}</VBanner>
+        <VCollapseTransition v-slot="{ content: shownFailure }" :content="serverFailure">
+            <VBanner variant="error">{{ t(shownFailure.messageKey) }}</VBanner>
+        </VCollapseTransition>
+
         <VButton v-if="mustStartAgain" class="auth-submit" @click="startAgain">{{ t('playerIdentity.newPassword.startAgain') }}</VButton>
 
         <form ref="newPasswordFormElement" novalidate class="auth-form" @submit.prevent="submitUnlessWaiting">
@@ -104,8 +107,8 @@ onMounted(() => focusField('password'))
 
         <VModal v-model:open="isPasswordUpdatedShown" :title="t('playerIdentity.newPassword.updatedTitle')" @close="goToLogin">
             <p>{{ t('playerIdentity.newPassword.updatedMessage') }}</p>
-            <template #actions>
-                <VButton autofocus @click="goToLogin">{{ t('playerIdentity.newPassword.goToLogin') }}</VButton>
+            <template #actions="{ close }">
+                <VButton autofocus @click="close">{{ t('playerIdentity.newPassword.goToLogin') }}</VButton>
             </template>
         </VModal>
     </div>
