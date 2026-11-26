@@ -122,7 +122,7 @@ async function cancelProfileAndGoTo(path: string) {
         </form>
 
         <OrDivider :label="t('playerIdentity.orDivider')" />
-        <VButton variant="ghost" @click="cancelProfileAndGoTo(REGISTER_PATH)">
+        <VButton variant="secondary" @click="cancelProfileAndGoTo(REGISTER_PATH)">
             <template #start><VIcon :icon="UserIcon" /></template>
             {{ t('playerIdentity.completeGoogleProfile.useAnotherEmail') }}
         </VButton>

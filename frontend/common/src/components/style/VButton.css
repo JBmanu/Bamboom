@@ -21,6 +21,9 @@
 .button[data-variant='primary'] {
     @apply bg-primary text-on-primary not-disabled:hover:bg-primary-hover not-disabled:active:bg-primary-edge;
 }
+.button[data-variant='secondary'] {
+    @apply bg-surface-muted text-link not-disabled:hover:bg-border not-disabled:active:bg-border;
+}
 .button[data-variant='ghost'] {
     @apply bg-transparent text-link not-disabled:hover:bg-surface-muted not-disabled:active:bg-border;
 }
