@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { shallowRef, watch } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import AuthLayout from '../components/AuthLayout.vue'
+import { type AuthPageTransition, chooseAuthPageTransition } from '../transitions/chooseAuthPageTransition.ts'
+
+const currentRoute = useRoute()
+const cardTransition = shallowRef<AuthPageTransition>('card-fade')
+
+watch(
+    () => currentRoute.path,
+    (openedPath, leftPath) => {
+        cardTransition.value = chooseAuthPageTransition(leftPath, openedPath)
+    }
+)
 </script>
 
 <template>
     <AuthLayout>
         <RouterView v-slot="{ Component: AccessPage, route }">
             <!-- out-in: the old card leaves before the new one arrives, so there are never two cards or two forms. -->
-            <Transition name="card-flip" mode="out-in">
+            <Transition :name="cardTransition" mode="out-in">
                 <!-- The key makes every page a new card: without it Vue would reuse the div and nothing would turn. -->
                 <div
                     v-if="AccessPage"
@@ -21,4 +33,4 @@ import AuthLayout from '../components/AuthLayout.vue'
     </AuthLayout>
 </template>
 
-<style scoped src="../components/style/authCardFlip.css" />
+<style scoped src="../components/style/authCardTransitions.css" />
