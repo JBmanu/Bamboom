@@ -18,6 +18,7 @@ export { default as ThemeToggle } from './components/ThemeToggle.vue'
 export { default as VPasswordField } from './components/VPasswordField.vue'
 export { default as VStrengthMeter } from './components/VStrengthMeter.vue'
 export { default as LanguageSwitcher } from './components/LanguageSwitcher.vue'
+export { default as VCollapseTransition } from './components/VCollapseTransition.vue'
 
 // --- THEME ----
 export { THEME_STORAGE_KEY, themes, preferences } from './theme/themeConstants'
