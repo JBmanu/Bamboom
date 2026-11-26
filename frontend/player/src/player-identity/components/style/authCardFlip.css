@@ -1,0 +1,19 @@
+/* Two half turns: the old card turns until it is edge-on, then the new one completes the turn. */
+@media (prefers-reduced-motion: no-preference) {
+    .auth-card.card-flip-leave-active {
+        transition: transform 150ms ease-in;
+    }
+
+    .auth-card.card-flip-enter-active {
+        transition: transform 200ms ease-out;
+    }
+
+    /* A wide perspective keeps the nearer edge from growing much while the card turns. */
+    .auth-card.card-flip-enter-from {
+        transform: perspective(1600px) rotateY(-90deg);
+    }
+
+    .auth-card.card-flip-leave-to {
+        transform: perspective(1600px) rotateY(90deg);
+    }
+}

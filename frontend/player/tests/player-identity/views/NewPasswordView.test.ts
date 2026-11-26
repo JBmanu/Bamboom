@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises } from '@vue/test-utils'
 import { FORGOT_PASSWORD_PATH, LOGIN_PATH } from '../../../src/player-identity/routePaths.ts'
 import { assessPasswordStrength } from '../../../src/player-identity/schemas/assessPasswordStrength.ts'
 import {
@@ -36,7 +35,6 @@ async function openPage({ authService = createFakeAuthService({ accounts: [accou
         await authService.confirmResetCode({ code: RESET_CODE })
     }
     await openNewPasswordPage(app, RESET_EMAIL)
-    await flushPromises()
     return { container, app, router }
 }
 
