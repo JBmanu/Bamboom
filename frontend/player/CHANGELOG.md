@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.11.0...player-frontend-v0.12.0) (2026-11-25)
+
+
+### Features
+
+* **player:** add the google sign-in screens with a fake backend ([#180](https://github.com/JBmanu/Bamboom/issues/180)) ([e40278a](https://github.com/JBmanu/Bamboom/commit/e40278a8073c2ffd7e3b75edd835fe6be7c204d1))
+
 ## [0.11.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.10.0...player-frontend-v0.11.0) (2026-11-24)
 
 
