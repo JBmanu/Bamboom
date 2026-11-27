@@ -13,7 +13,7 @@ defineSlots<{
 <template>
     <VLayer class="auth-layout h-full">
         <template #base>
-            <div class="hidden h-full items-end justify-start pb-(--bamboo-bottom) pl-(--bamboo-left) lg:flex">
+            <div class="hidden h-full items-end justify-end pr-(--bamboo-from-center) pb-(--bamboo-bottom) lg:flex">
                 <VPicture :picture="bambooExplosion" alt="" sizes="20vw" class="h-(--bamboo-height) w-auto" />
             </div>
         </template>
@@ -27,7 +27,7 @@ defineSlots<{
         </div>
 
         <template #overlay>
-            <div class="hidden h-full items-end justify-end pb-(--panda-bottom) pr-(--panda-right) lg:flex">
+            <div class="hidden h-full items-end justify-start pb-(--panda-bottom) pl-(--panda-from-center) lg:flex">
                 <VPicture :picture="pandaSitting" alt="" sizes="20vw" class="h-(--panda-height) w-auto" />
             </div>
         </template>
@@ -41,16 +41,20 @@ defineSlots<{
     /* Logo width. Its height is half of it (1526x765), so the last term also decides how much height it takes from the card. */
     --logo-width: min(calc(100vw - 2rem), 36rem, 48dvh);
 
-    /* Distance of each side image from the screen edge and from the bottom. */
-    --bamboo-left: 7rem;
-    --bamboo-bottom: 14dvh;
-    --panda-right: 3rem;
+    /* Space between each side image and the card, and distance from the bottom. */
+    --bamboo-gap: -4rem;
+    --bamboo-bottom: 10dvh;
+    --panda-gap: -2rem;
     --panda-bottom: 17dvh;
 
-    /* Height of each side image: the first number is the wanted height. The second is a cap, the free width beside the card
-       times height/width of the picture, so on a narrow window the image cannot reach the form. */
+    /* Measured from the center of the page, like the card: the images stay beside it when the window is resized. */
+    --bamboo-from-center: calc(50% + var(--card-width) / 2 + var(--bamboo-gap));
+    --panda-from-center: calc(50% + var(--card-width) / 2 + var(--panda-gap));
+
+    /* Height of each side image: the first number is the wanted height. The second is a cap, the free width left of
+       the gap times height/width of the picture, so on a narrow window the image shrinks instead of being squeezed. */
     --side-space: calc((100vw - var(--card-width)) / 2);
-    --bamboo-height: min(54dvh, calc(var(--side-space) * 1278 / 745));
-    --panda-height: min(39dvh, calc(var(--side-space) * 1354 / 1097));
+    --bamboo-height: min(54dvh, calc((var(--side-space) - var(--bamboo-gap)) * 1278 / 745));
+    --panda-height: min(39dvh, calc((var(--side-space) - var(--panda-gap)) * 1354 / 1097));
 }
 </style>
