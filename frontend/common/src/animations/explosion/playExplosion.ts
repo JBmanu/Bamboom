@@ -7,16 +7,26 @@ const SETTLE_SECONDS = 0.6
 const FLIGHT_SECONDS = 0.9
 const FADE_SECONDS = 0.35
 
+export type BurstOptions = {
+    delaySeconds: number
+    reachScale: number
+}
+
 /**
  * Makes the content pop and throws one spark along each flight.
- * `sparks[i]` follows `flights[i]`.
+ * `sparks[i]` follows `flights[i]`. Nothing moves or shows before `delaySeconds` have passed.
  * @returns a function that stops the animations and removes the styles they set.
  */
-export function playExplosion(content: HTMLElement, sparks: HTMLElement[], flights: SparkFlight[]): () => void {
+export function playExplosion(
+    content: HTMLElement,
+    sparks: HTMLElement[],
+    flights: SparkFlight[],
+    { delaySeconds, reachScale }: BurstOptions
+): () => void {
     const animations = gsap.context(() => {
-        const contentWidth = content.offsetWidth
+        const reachWidth = content.offsetWidth * reachScale
 
-        gsap.timeline()
+        gsap.timeline({ delay: delaySeconds })
             .to(content, { scale: POP_SCALE, duration: POP_SECONDS, ease: 'power2.out' })
             .to(content, { scale: 1, duration: SETTLE_SECONDS, ease: 'elastic.out(1, 0.4)', clearProps: 'transform' })
 
@@ -26,15 +36,17 @@ export function playExplosion(content: HTMLElement, sparks: HTMLElement[], fligh
                 spark,
                 { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0.4, rotation: 0, opacity: 1 },
                 {
-                    x: flight.rightShare * contentWidth,
-                    y: flight.downShare * contentWidth,
+                    x: flight.rightShare * reachWidth,
+                    y: flight.downShare * reachWidth,
                     scale: 1,
                     rotation: flight.turnDegrees,
                     duration: FLIGHT_SECONDS,
+                    delay: delaySeconds,
+                    immediateRender: false,
                     ease: 'power3.out'
                 }
             )
-            gsap.to(spark, { opacity: 0, delay: FLIGHT_SECONDS - FADE_SECONDS, duration: FADE_SECONDS })
+            gsap.to(spark, { opacity: 0, delay: delaySeconds + FLIGHT_SECONDS - FADE_SECONDS, duration: FADE_SECONDS })
         })
     })
 

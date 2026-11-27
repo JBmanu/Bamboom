@@ -9,8 +9,12 @@ const props = withDefaults(
         blastLeftPercent?: number
         /** Where the blast starts, as a percentage of the content height, from the top. */
         blastTopPercent?: number
+        /** How long the effect waits after the content appears, to follow another one. */
+        delaySeconds?: number
+        /** How far the sparks fly: 2 is twice the usual distance. Raise it when the content already draws a blast. */
+        reachScale?: number
     }>(),
-    { blastLeftPercent: 50, blastTopPercent: 50 }
+    { blastLeftPercent: 50, blastTopPercent: 50, delaySeconds: 0, reachScale: 1 }
 )
 
 defineSlots<{
@@ -35,7 +39,8 @@ let stopExplosion: (() => void) | undefined
 async function explode(blownElement: HTMLElement, sparkElements: HTMLElement[]) {
     const { playExplosion } = await import('../animations/explosion/playExplosion')
     if (isRemoved) return
-    stopExplosion = playExplosion(blownElement, sparkElements, sparkFlights)
+    const burstOptions = { delaySeconds: props.delaySeconds, reachScale: props.reachScale }
+    stopExplosion = playExplosion(blownElement, sparkElements, sparkFlights, burstOptions)
 }
 
 onMounted(() => {
