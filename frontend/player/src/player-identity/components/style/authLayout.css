@@ -61,3 +61,26 @@
 :deep(.auth-panda) {
     @apply h-(--panda-height) w-auto;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+    :deep(.auth-panda) {
+        animation: startled-hop 600ms ease-out 550ms;
+    }
+}
+
+@keyframes startled-hop {
+    35% {
+        translate: 0 -1.75rem;
+        rotate: -4deg;
+    }
+
+    65% {
+        translate: 0 0;
+        rotate: 2deg;
+    }
+
+    80% {
+        translate: 0 -0.35rem;
+        rotate: 0deg;
+    }
+}

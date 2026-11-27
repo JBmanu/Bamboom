@@ -14,7 +14,9 @@ defineSlots<{
     <VLayer class="auth-layout">
         <template #base>
             <div class="auth-bamboo-side">
-                <VPicture :picture="bambooExplosion" alt="" sizes="20vw" class="auth-bamboo" />
+                <VExplosionBurst :blast-left-percent="54" :blast-top-percent="33" :delay-seconds="0.35" :reach-scale="1.7">
+                    <VPicture :picture="bambooExplosion" alt="" sizes="20vw" class="auth-bamboo" />
+                </VExplosionBurst>
             </div>
         </template>
 
