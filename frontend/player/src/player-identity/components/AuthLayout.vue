@@ -14,7 +14,12 @@ defineSlots<{
     <VLayer class="auth-layout h-full">
         <template #base>
             <div class="hidden h-full items-end justify-end pr-(--bamboo-from-center) pb-(--bamboo-bottom) lg:flex">
-                <VPicture :picture="bambooExplosion" alt="" sizes="20vw" class="h-(--bamboo-height) w-auto" />
+                <VPicture
+                    :picture="bambooExplosion"
+                    alt=""
+                    sizes="20vw"
+                    class="h-(--bamboo-height) w-auto [mask-image:linear-gradient(to_bottom,black_96%,transparent_99%)]"
+                />
             </div>
         </template>
 
