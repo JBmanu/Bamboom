@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { usePreferredReducedMotion } from '@vueuse/core'
-import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
 import { planSparkFlights, type SparkShape } from '../animations/explosion/planSparkFlights'
 
 const props = withDefaults(
@@ -9,13 +9,22 @@ const props = withDefaults(
         blastLeftPercent?: number
         /** Where the blast starts, as a percentage of the content height, from the top. */
         blastTopPercent?: number
-        /** How long the effect waits after the content appears, to follow another one. */
+        /** While `true` the content stays still. The explosion is released when it turns `false`, and happens only once. */
+        isOnHold?: boolean
+        /** How long the explosion waits after it is released. */
         delaySeconds?: number
         /** How far the sparks fly: 2 is twice the usual distance. Raise it when the content already draws a blast. */
         reachScale?: number
     }>(),
-    { blastLeftPercent: 50, blastTopPercent: 50, delaySeconds: 0, reachScale: 1 }
+    { blastLeftPercent: 50, blastTopPercent: 50, isOnHold: false, delaySeconds: 0, reachScale: 1 }
 )
+
+const emit = defineEmits<{
+    /** The blast begins, once `delaySeconds` have passed. Listen to it to overlap another explosion with this one. */
+    blastStarted: []
+    /** The explosion is over. Listen to it to start another explosion after this one. */
+    blastFinished: []
+}>()
 
 defineSlots<{
     /** What explodes. It is shown at once, with or without the effect. */
@@ -34,20 +43,41 @@ const contentBox = useTemplateRef<HTMLElement>('contentBox')
 const sparkLayer = useTemplateRef<HTMLElement>('sparkLayer')
 
 let isRemoved = false
+let isReleased = false
 let stopExplosion: (() => void) | undefined
+
+/** Without an animation both events are still sent, so a chain of explosions never stalls. */
+function reportBlastWithoutAnimation() {
+    emit('blastStarted')
+    emit('blastFinished')
+}
 
 async function explode(blownElement: HTMLElement, sparkElements: HTMLElement[]) {
     const { playExplosion } = await import('../animations/explosion/playExplosion')
     if (isRemoved) return
-    const burstOptions = { delaySeconds: props.delaySeconds, reachScale: props.reachScale }
-    stopExplosion = playExplosion(blownElement, sparkElements, sparkFlights, burstOptions)
+    stopExplosion = playExplosion(blownElement, sparkElements, sparkFlights, {
+        delaySeconds: props.delaySeconds,
+        reachScale: props.reachScale,
+        onBlastStart: () => emit('blastStarted'),
+        onBlastFinish: () => emit('blastFinished')
+    })
 }
 
-onMounted(() => {
-    if (isMotionReduced) return
+function releaseBlastOnce() {
+    if (props.isOnHold || isReleased) return
+    isReleased = true
+    if (isMotionReduced) {
+        reportBlastWithoutAnimation()
+        return
+    }
     const sparkElements = Array.from(sparkLayer.value!.children) as HTMLElement[]
-    explode(contentBox.value!, sparkElements).catch(() => {})
-})
+    explode(contentBox.value!, sparkElements).catch(() => {
+        if (!isRemoved) reportBlastWithoutAnimation()
+    })
+}
+
+onMounted(releaseBlastOnce)
+watch(() => props.isOnHold, releaseBlastOnce)
 
 onBeforeUnmount(() => {
     isRemoved = true
@@ -66,7 +96,6 @@ onBeforeUnmount(() => {
             class="pointer-events-none absolute z-10"
             :style="{ left: `${props.blastLeftPercent}%`, top: `${props.blastTopPercent}%` }"
         >
-            <!-- Invisible until the library moves them: if it never arrives, nothing is left on screen. -->
             <span v-for="(flight, index) in sparkFlights" :key="index" class="absolute opacity-0" :class="SPARK_CLASSES[flight.shape]" />
         </div>
     </div>

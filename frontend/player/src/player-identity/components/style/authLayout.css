@@ -63,8 +63,8 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-    :deep(.auth-panda) {
-        animation: startled-hop 600ms ease-out 550ms;
+    :deep(.auth-panda--startled) {
+        animation: startled-hop 600ms ease-out 200ms;
     }
 }
 
