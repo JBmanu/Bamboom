@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { LanguageSwitcher, ThemeToggle, VSpinner } from '@bamboom/common'
+import { LanguageSwitcher, ThemeToggle, VSpinner, VPicture, VLayer } from '@bamboom/common'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterView, useRouter } from 'vue-router'
 import { readSignedInHint } from '../player-identity'
+import meadow from '../../resource/image/background/meadow.png?as=picture'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -21,12 +22,18 @@ router.isReady().then(showFirstPage, showFirstPage)
         <LanguageSwitcher />
         <ThemeToggle />
     </div>
-    <!-- Under lg the strip on top is kept free: the controls would sit over the logo. -->
-    <main tabindex="-1" class="h-dvh overflow-hidden bg-background pt-14 text-foreground focus:outline-none lg:pt-0">
-        <!-- Someone who was signed in will most likely see the home: a spinner instead of a flash of the login. -->
-        <div v-if="!isFirstPageReady && wasSignedInLastTime" class="flex h-full items-center justify-center text-4xl">
-            <VSpinner :label="t('app.startup.restoringSession')" />
-        </div>
-        <RouterView />
-    </main>
+    <VLayer class="h-dvh bg-background">
+        <template #base>
+            <div class="flex h-full flex-col justify-end">
+                <VPicture :picture="meadow" alt="" sizes="100vw" class="h-auto w-full dark:opacity-80 [@media(max-height:30rem)]:hidden" />
+            </div>
+        </template>
+
+        <main tabindex="-1" class="h-dvh overflow-hidden pt-14 text-foreground focus:outline-none lg:pt-0">
+            <div v-if="!isFirstPageReady && wasSignedInLastTime" class="flex h-full items-center justify-center text-4xl">
+                <VSpinner :label="t('app.startup.restoringSession')" />
+            </div>
+            <RouterView />
+        </main>
+    </VLayer>
 </template>

@@ -42,15 +42,15 @@ defineSlots<{
     --logo-width: min(calc(100vw - 2rem), 36rem, 48dvh);
 
     /* Distance of each side image from the screen edge and from the bottom. */
-    --bamboo-left: 3rem;
-    --bamboo-bottom: 12dvh;
+    --bamboo-left: 7rem;
+    --bamboo-bottom: 14dvh;
     --panda-right: 3rem;
-    --panda-bottom: 20dvh;
+    --panda-bottom: 17dvh;
 
     /* Height of each side image: the first number is the wanted height. The second is a cap, the free width beside the card
        times height/width of the picture, so on a narrow window the image cannot reach the form. */
     --side-space: calc((100vw - var(--card-width)) / 2);
-    --bamboo-height: min(42dvh, calc(var(--side-space) * 1278 / 745));
-    --panda-height: min(32dvh, calc(var(--side-space) * 1354 / 1097));
+    --bamboo-height: min(54dvh, calc(var(--side-space) * 1278 / 745));
+    --panda-height: min(39dvh, calc(var(--side-space) * 1354 / 1097));
 }
 </style>
