@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.14.0...player-frontend-v0.15.0) (2026-11-27)
+
+
+### Features
+
+* **player:** add the meadow background and the explosion effects ([#186](https://github.com/JBmanu/Bamboom/issues/186)) ([12f469d](https://github.com/JBmanu/Bamboom/commit/12f469d090039a99d43cd24c4875acccc5121ca4))
+
 ## [0.14.0](https://github.com/JBmanu/Bamboom/compare/player-frontend-v0.13.0...player-frontend-v0.14.0) (2026-11-26)
 
 
