@@ -1,36 +1,37 @@
 @reference 'tailwindcss';
 @reference '@bamboom/common/theme.css';
 
-/* Every size of the layout is decided here. */
 .auth-layout {
     @apply h-full;
     --card-width: 32rem;
-    /* Logo width. Its height is half of it (1526x765), so the last term also decides how much height it takes from the card. */
-    --logo-width: min(calc(100vw - 2rem), 36rem, 48dvh);
+    --free-width-beside-card: calc((100vw - var(--card-width)) / 2);
 
-    /* Space between each side image and the card (negative: it overlaps the card), and distance from the bottom. */
-    --bamboo-gap: -4rem;
-    --bamboo-bottom: 10dvh;
-    --panda-gap: -2rem;
-    --panda-bottom: 17dvh;
+    --logo-max-height: 24dvh;
+    --logo-width-per-height: 2;
+    --logo-width: min(calc(100vw - 2rem), 36rem, calc(var(--logo-max-height) * var(--logo-width-per-height)));
 
-    /* Measured from the center of the page, like the card: the images stay beside it when the window is resized. */
-    --bamboo-from-center: calc(50% + var(--card-width) / 2 + var(--bamboo-gap));
-    --panda-from-center: calc(50% + var(--card-width) / 2 + var(--panda-gap));
+    --bamboo-card-gap: -4rem;
+    --bamboo-bottom-space: 10dvh;
+    --bamboo-distance-from-right-edge: calc(50% + var(--card-width) / 2 + var(--bamboo-card-gap));
+    --bamboo-preferred-height: 54dvh;
+    --bamboo-widest-width: calc(var(--free-width-beside-card) - var(--bamboo-card-gap));
+    --bamboo-height-per-width: calc(1278 / 745);
+    --bamboo-height: min(var(--bamboo-preferred-height), calc(var(--bamboo-widest-width) * var(--bamboo-height-per-width)));
+    --bamboo-sunken-foot-mask: linear-gradient(to bottom, black 96%, transparent 99%);
 
-    /* Height of each side image: the first number is the wanted height. The second is a cap, the free width left of
-       the gap times height/width of the picture, so on a narrow window the image shrinks instead of being squeezed. */
-    --side-space: calc((100vw - var(--card-width)) / 2);
-    --bamboo-height: min(54dvh, calc((var(--side-space) - var(--bamboo-gap)) * 1278 / 745));
-    --panda-height: min(39dvh, calc((var(--side-space) - var(--panda-gap)) * 1354 / 1097));
+    --panda-card-gap: -2rem;
+    --panda-bottom-space: 17dvh;
+    --panda-distance-from-left-edge: calc(50% + var(--card-width) / 2 + var(--panda-card-gap));
+    --panda-preferred-height: 39dvh;
+    --panda-widest-width: calc(var(--free-width-beside-card) - var(--panda-card-gap));
+    --panda-height-per-width: calc(1354 / 1097);
+    --panda-height: min(var(--panda-preferred-height), calc(var(--panda-widest-width) * var(--panda-height-per-width)));
 }
 
-/* The clip is needed only on narrow screens, where a spark would widen the page. Elsewhere it would cut the sparks of the logo. */
 .auth-column {
     @apply mx-auto flex h-full w-full max-w-(--card-width) flex-col items-center gap-[2dvh] overflow-clip px-4 py-[2dvh] sm:overflow-visible;
 }
 
-/* The wrapper is now the flex item: it is the one that must not shrink. */
 .auth-logo-burst {
     @apply shrink-0;
 }
@@ -40,22 +41,20 @@
 }
 
 .auth-bamboo-side {
-    @apply hidden h-full items-end justify-end pr-(--bamboo-from-center) pb-(--bamboo-bottom) lg:flex;
+    @apply hidden h-full items-end justify-end pr-(--bamboo-distance-from-right-edge) pb-(--bamboo-bottom-space) lg:flex;
 }
 
 .auth-panda-side {
-    @apply hidden h-full items-end justify-start pb-(--panda-bottom) pl-(--panda-from-center) lg:flex;
+    @apply hidden h-full items-end justify-start pb-(--panda-bottom-space) pl-(--panda-distance-from-left-edge) lg:flex;
 }
 
-/* The <img> elements are rendered by VPicture: scoped selectors reach them only through :deep(). */
 :deep(.auth-logo) {
     @apply h-auto w-(--logo-width);
 }
 
 :deep(.auth-bamboo) {
     @apply h-(--bamboo-height) w-auto;
-    /* The foot fades out, so the bamboo looks sunk into the meadow. */
-    mask-image: linear-gradient(to bottom, black 96%, transparent 99%);
+    mask-image: var(--bamboo-sunken-foot-mask);
 }
 
 :deep(.auth-panda) {
