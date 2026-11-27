@@ -15,6 +15,7 @@ describe('the public API', () => {
         'VPasswordField',
         'VStrengthMeter',
         'VStepTransition',
+        'VExplosionBurst',
         'LanguageSwitcher',
         'VCollapseTransition'
     ])('exports %s', (name) => {

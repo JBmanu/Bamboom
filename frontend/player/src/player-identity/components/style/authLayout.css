@@ -1,0 +1,85 @@
+@reference 'tailwindcss';
+@reference '@bamboom/common/theme.css';
+
+.auth-layout {
+    @apply h-full;
+    --card-width: 32rem;
+    --free-width-beside-card: calc((100vw - var(--card-width)) / 2);
+
+    --logo-max-height: 24dvh;
+    --logo-width-per-height: 2;
+    --logo-width: min(calc(100vw - 2rem), 36rem, calc(var(--logo-max-height) * var(--logo-width-per-height)));
+
+    --bamboo-card-gap: -4rem;
+    --bamboo-bottom-space: 10dvh;
+    --bamboo-distance-from-right-edge: calc(50% + var(--card-width) / 2 + var(--bamboo-card-gap));
+    --bamboo-preferred-height: 54dvh;
+    --bamboo-widest-width: calc(var(--free-width-beside-card) - var(--bamboo-card-gap));
+    --bamboo-height-per-width: calc(1278 / 745);
+    --bamboo-height: min(var(--bamboo-preferred-height), calc(var(--bamboo-widest-width) * var(--bamboo-height-per-width)));
+    --bamboo-sunken-foot-mask: linear-gradient(to bottom, black 96%, transparent 99%);
+
+    --panda-card-gap: -2rem;
+    --panda-bottom-space: 17dvh;
+    --panda-distance-from-left-edge: calc(50% + var(--card-width) / 2 + var(--panda-card-gap));
+    --panda-preferred-height: 39dvh;
+    --panda-widest-width: calc(var(--free-width-beside-card) - var(--panda-card-gap));
+    --panda-height-per-width: calc(1354 / 1097);
+    --panda-height: min(var(--panda-preferred-height), calc(var(--panda-widest-width) * var(--panda-height-per-width)));
+}
+
+.auth-column {
+    @apply mx-auto flex h-full w-full max-w-(--card-width) flex-col items-center gap-[2dvh] overflow-clip px-4 py-[2dvh] sm:overflow-visible;
+}
+
+.auth-logo-burst {
+    @apply shrink-0;
+}
+
+.auth-footer {
+    @apply flex shrink-0 items-center justify-center gap-2;
+}
+
+.auth-bamboo-side {
+    @apply hidden h-full items-end justify-end pr-(--bamboo-distance-from-right-edge) pb-(--bamboo-bottom-space) lg:flex;
+}
+
+.auth-panda-side {
+    @apply hidden h-full items-end justify-start pb-(--panda-bottom-space) pl-(--panda-distance-from-left-edge) lg:flex;
+}
+
+:deep(.auth-logo) {
+    @apply h-auto w-(--logo-width);
+}
+
+:deep(.auth-bamboo) {
+    @apply h-(--bamboo-height) w-auto;
+    mask-image: var(--bamboo-sunken-foot-mask);
+}
+
+:deep(.auth-panda) {
+    @apply h-(--panda-height) w-auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :deep(.auth-panda--startled) {
+        animation: startled-hop 600ms ease-out 200ms;
+    }
+}
+
+@keyframes startled-hop {
+    35% {
+        translate: 0 -1.75rem;
+        rotate: -4deg;
+    }
+
+    65% {
+        translate: 0 0;
+        rotate: 2deg;
+    }
+
+    80% {
+        translate: 0 -0.35rem;
+        rotate: 0deg;
+    }
+}
